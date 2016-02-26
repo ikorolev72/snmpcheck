@@ -2,7 +2,7 @@
 # korolev-ia [at] yandex.ru
 
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/home/admin/lib' ,'/home/admin/lib'; } 
+BEGIN{ unshift @INC, '/opt/' ,'/home/admin/lib'; } 
 use COMMON_ENV;
 #use strict;
 #use warnings;
@@ -76,5 +76,5 @@ sub Action {
 			return 0;
 		}
 	}
-return 1;
+return 0;
 }
