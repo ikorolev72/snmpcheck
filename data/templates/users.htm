@@ -53,24 +53,6 @@ function isNumberInt(inputString) {
 <div  class="parent">
 
 <div  class="left_div">
-<table border=1>
-		<tr>
-			<td colspan=5> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new user </a></td></tr>
-
-   <TMPL_LOOP NAME=USERS_LIST_LOOP>
-		<tr>
-			<td> Login: </td>
-			<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'><TMPL_VAR NAME=LOGIN></a></td>
-			<td> User name: </td>
-			<td> <TMPL_VAR NAME=NAME></td>
-			<td> [ <a href="" onclick="confirm_prompt('<TMPL_VAR NAME=LOGIN>','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
-		</tr>
-   </TMPL_LOOP>
-</table>
-</div>
-
-<div  class="right_div">
-
 <TMPL_IF NAME=SHOWFORM> 
 
 <form action='<TMPL_VAR NAME=ACTION>' method='post' enctype='multipart/form-data' name='form1'>
@@ -99,8 +81,28 @@ function isNumberInt(inputString) {
         <br>
 
 </form>
-</div>
+
+<TMPL_ELSE>
+
+<table border=1>
+		<tr>
+			<td colspan=5> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new user </a></td></tr>
+
+   <TMPL_LOOP NAME=USERS_LIST_LOOP>
+		<tr>
+			<td> Login: </td>
+			<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'><TMPL_VAR NAME=LOGIN></a></td>
+			<td> User name: </td>
+			<td> <TMPL_VAR NAME=NAME></td>
+			<td> [ <a href="" onclick="confirm_prompt('<TMPL_VAR NAME=LOGIN>','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
+		</tr>
+   </TMPL_LOOP>
+
+</table>
+
 </TMPL_IF> 
+
+</div>
 
 </div>
 <hr>

@@ -30,22 +30,15 @@ $dbh=db_connect() ;
 my $show_form=0;
 my $table='users';
 
-my $row=GetRecord ( $dbh, $Param->{id}, $table );
-if( $row ) {
-	$template->param( ID=>$row->{id} );
-}
-else{
-	message2 ( " Cannot to get record from table $table with id = $Param->{id}" );
-}
-
 
 if( 0 == Action() ) {
 	$show_form=1;
-	$template->param( SHOWFORM=>1 );
-	$template->param( EDIT=>$Param->{edit} );
+
 }
 	 
 if( $show_form ) {
+	$template->param( SHOWFORM=>1 );
+	$template->param( EDIT=>$Param->{edit} );
   if( $Param->{edit} ) {
 	my $row=GetRecord ( $dbh, $Param->{id}, $table );
 	if( $row ) {		
@@ -57,7 +50,7 @@ if( $show_form ) {
 		message2 ( " Cannot to get record from table $table with id = $Param->{id}" );
 	}
   }
-}
+} 
 
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 $template->param( TITLE=>"Change password" );
@@ -73,7 +66,19 @@ db_disconnect( $dbh );
 ##############################################
 
 sub Action {
-	my $row;	
+	unless( $Param->{id} ) {
+		message2 ( "incorrect parameter, cannot see id " );
+		return 0;
+	}
+	
+	my $row=GetRecord ( $dbh, $Param->{id}, $table );	
+	if( $row ) {
+		$template->param( ID=>$row->{id} );
+	}
+	else{
+		message2 ( " Cannot to get record from table $table with id = $Param->{id} " );
+		return 0;
+	}
 
 	if( $Param->{save} ) {
 		# if exist fiels id, then we edit the record
@@ -88,6 +93,7 @@ sub Action {
 			message2 ( "Record updated succsesfuly" );
 			return 1;
 		} else {
+			message2 ( "Cannot update record" );
 			return 0;
 		}
 			

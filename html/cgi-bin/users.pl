@@ -31,16 +31,16 @@ my $table='users';
 my $record;
 
 
-if( 0 == Action() ) {
+unless ( Action() ) {
 	$show_form=1;
+};
+
+
+
+if( $show_form ) {
 	$template->param( SHOWFORM=>1 );
 	$template->param( EDIT=>$Param->{edit} );
 	$template->param( NEW=>$Param->{new} );
-}
-	
- 
-
-if( $show_form ) {
 
   if( $Param->{new} ) {
 		$template->param( LOGIN=> $Param->{login} );
@@ -58,7 +58,7 @@ if( $show_form ) {
 		message2 ( " Cannot to get record from table $table with id = $Param->{id}" );
 	}
   }
-}
+} else {
 
 # show list of users
 	$stmt =qq( SELECT id, name, login  from users order by login; );
@@ -71,12 +71,12 @@ if( $show_form ) {
 	while (my $row = $sth->fetchrow_hashref) {
 		my %row_data;   
 		foreach( keys( %{$row}) ) {
-			#print $_;
 			$row_data{ $_ }=$row->{$_};
 		}
 		push(@loop_data, \%row_data);
 	}
 	$template->param(USERS_LIST_LOOP => \@loop_data);
+}
  
 #print "<pre>".Dumper( $ENV{'SCRIPT_NAME'} )."</pre>";
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
@@ -112,9 +112,10 @@ sub Action {
 			}
 			
 			if ( InsertRecord ( $dbh, $Param->{id}, 'users', $row ) ) {
-				message2 ( "Record updated succsesfuly" );
+				message2 ( "Record inserted succsesfuly" );
 				return 1;
 			} else {
+				message2 ( "Cannot insert record" );
 				return 0;
 			}
 		}	
@@ -133,6 +134,7 @@ sub Action {
 			message2 ( "Record updated succsesfuly" );
 			return 1;
 		} else {
+			message2 ( "Cannot update record" );
 			return 0;
 		}
 			
@@ -150,6 +152,7 @@ sub Action {
 				message2 ( "Record deleted succsesfuly" );
 				return 1;
 			} else {
+				message2 ( "Cannot delete record" );
 				return 0;
 			}
 	}	
@@ -158,11 +161,14 @@ return 1;
 
 
 sub check_login_name_record {
-	if( CheckField ( $Param->{login} ,'login', "Field 'login' ") &&
-		CheckField ( $Param->{name} ,'text', "Field 'name' ") ){
-			return 1;
+	my $retval=1;
+	unless( CheckField ( $Param->{login} ,'login', "Field 'login' " )) {
+		$retval=0;
+	} 
+	unless( CheckField ( $Param->{name} ,'text', "Field 'name' ") ){
+		$retval=0;
 		}
-	return 0;
+	return $retval;
 }
 
 sub check_password_record {
