@@ -1,0 +1,197 @@
+<html>
+<head>
+	<title>
+		<TMPL_VAR NAME=TITLE>
+	</title>
+	<META http-equiv=Content-Type content='text/html; charset=iso-8859-1;'>
+	<LINK href='/main.css' type=text/css rel=stylesheet>
+
+<style>
+
+body {
+	font-family: verdana, arial, sans-serif; 
+}
+
+
+.left_div {
+	width: 50%;
+	height: 100%;
+	float:left;
+}
+
+.right_div {
+	width: 50%;
+	height: 100%;
+	float:right;
+}
+
+</style>
+	
+<script language="JavaScript">
+  function confirm_prompt( text,url ) {
+     if (confirm('You sure to delete "' + text +'" ?' )) {
+      window.location = url ;
+    }
+  }
+function isNumberInt(inputString) {
+  return (!isNaN(parseInt(inputString))) ? true : false;
+}
+</script>
+	
+	
+</head>
+<body>
+<a href='/'>home</a>
+<h3>
+	<TMPL_VAR NAME=TITLE>
+</h3>
+
+<font color=red> <h4> <TMPL_VAR NAME=MESSAGES> </h4> </font>
+
+<hr>
+
+<div  class="parent">
+
+
+<TMPL_IF NAME=SHOWFORM> 
+
+<div  class="left_div">
+
+<form action='<TMPL_VAR NAME=ACTION>' method='post' enctype='multipart/form-data' name='form1'>
+  <input name='id' type='hidden' value='<TMPL_VAR NAME=ID>' >
+  <input name='new' type='hidden' value='<TMPL_VAR NAME=NEW>' >
+  <input name='edit' type='hidden' value='<TMPL_VAR NAME=EDIT>' >
+  <table border='1' cellspacing='0' cellpadding='2'>
+
+
+			<tr valign='top'>
+			<td> name </td>
+			<td> <input name='name' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=NAME>'> </td>
+
+			<tr valign='top'>
+			<td> desc </td>
+			<td> <input name='desc' type='text' size='20' maxlength='200' value='<TMPL_VAR NAME=DESC>'> </td>
+
+			<tr valign='top'>
+			<td> ip </td>
+			<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
+
+			<tr valign='top'>
+			<td> auth </td>
+			<td> <input name='auth' type='checkbox' <TMPL_IF NAME=AUTH> checked </TMPL_IF> > </td>
+
+			<tr valign='top'>
+			<td> snmpuser </td>
+			<td> <input name='snmpuser' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNMPUSER>'> </td>
+
+			<tr valign='top'>
+			<td> snmpap </td>
+			<td> <input name='snmpap' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNMPAP>'> </td>
+
+			<tr valign='top'>
+			<td> snmppk </td>
+			<td> <input name='snmppk' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNMPPK>'> </td>
+
+			<tr valign='top'>
+			<td> snmpr </td>
+			<td> <input name='snmpr' type='text' size='3' maxlength='3' value='<TMPL_VAR NAME=SNMPR>'> </td>
+
+			<tr valign='top'>
+			<td> snmpt </td>
+			<td> <input name='snmpt' type='text' size='3' maxlength='3' value='<TMPL_VAR NAME=SNMPT>'> </td>
+
+			<tr valign='top'>
+			<td> snmpapro </td>
+			<td>
+				<select name='snmppro'>	
+					<TMPL_IF NAME=SNMPPRO>
+					<option value='<TMPL_VAR NAME=SNMPAPRO>' selected><TMPL_VAR NAME=SNMPAPRO></option>
+					</TMPL_IF>
+					<option value='MD5'>MD5</option>
+					<option value='SHA'>SHA</option>
+				</select>
+			
+			<tr valign='top'>
+			<td> snmppro </td>
+			<td> 
+				<select name='snmppro'>	
+					<TMPL_IF NAME=SNMPPRO>
+					<option value='<TMPL_VAR NAME=SNMPPRO>' selected><TMPL_VAR NAME=SNMPPRO></option>
+					</TMPL_IF>
+					<option value='AES'>AES</option>
+					<option value='DES'>DES</option>
+				</select>
+
+			<tr valign='top'>
+			<td> snmplevel </td>
+			<td> 
+				<select name='snmplevel'>	
+					<TMPL_IF NAME=SNMPLEVEL>
+					<option value='<TMPL_VAR NAME=SNMPLEVEL>' selected><TMPL_VAR NAME=SNMPLEVEL></option>
+					</TMPL_IF>
+					<option value='authPriv'>authPriv</option>
+					<option value='noAuthNoPriv'>noAuthNoPriv</option>
+					<option value='authNoPriv'>authNoPriv</option>
+				</select>
+
+			<tr valign='top'>
+            <td>&nbsp;</td>
+            <td><input name='save' type='submit' id='save' value='Save'></td>
+          </tr>
+		  
+  </table>
+        <br>
+
+</form>
+</div>
+
+
+<TMPL_ELSE>
+
+<div  class="left_div">
+<table border=1>
+	<tr>
+		<td colspan=13> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new record </a></td></tr>
+	</tr>
+	<tr>
+		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'><TMPL_VAR NAME=NAME></a></td>
+		<td> desc </td>
+		<td> ip </td>
+		<td> auth </td>
+		<td> snmpuser </td>
+		<td> snmpap </td>
+		<td> snmppk </td>
+		<td> snmpr </td>
+		<td> snmpt </td>
+		<td> snmpapro </td>
+		<td> snmppro </td>
+		<td> snmplevel </td>
+		<td> [ <a href='' onclick="confirm_prompt('<TMPL_VAR NAME=NAME>','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
+	</tr>
+
+   <TMPL_LOOP NAME=USERS_LIST_LOOP>
+	<tr>
+		<td> <TMPL_VAR NAME=NAME></td>
+		<td> <TMPL_VAR NAME=DESC></td>
+		<td> <TMPL_VAR NAME=IP></td>
+		<td> <TMPL_VAR NAME=AUTH></td>
+		<td> <TMPL_VAR NAME=SNMPUSER></td>
+		<td> <TMPL_VAR NAME=SNMPAP></td>
+		<td> <TMPL_VAR NAME=SNMPPK></td>
+		<td> <TMPL_VAR NAME=SNMPR></td>
+		<td> <TMPL_VAR NAME=SNMPT></td>
+		<td> <TMPL_VAR NAME=SNMPAPRO></td>
+		<td> <TMPL_VAR NAME=SNMPPRO></td>
+		<td> <TMPL_VAR NAME=SNMPLEVEL></td>
+	</tr>
+   </TMPL_LOOP>
+</table>
+
+
+</div>
+</TMPL_IF> 
+
+</div>
+
+</body>
+</html>
