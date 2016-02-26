@@ -46,9 +46,10 @@ if(  Action() ==0 ) {
 	                    );	
 			print header(-cookie=>[$cookie1]);						
 	message2 ( "Login successfull" );			
+	$show_form=0;
 }
 	 
-$template->param( SHOWFORM=>1 );
+$template->param( SHOWFORM=>$show_form );
 $template->param( LOGIN=>$Param->{login} );
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 $template->param( TITLE=>"Login" );

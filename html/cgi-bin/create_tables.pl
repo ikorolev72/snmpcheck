@@ -8,14 +8,14 @@ $dbh=db_connect();
 
 $stmt =" CREATE TABLE IF NOT EXISTS `Users` (  id INTEGER PRIMARY KEY AUTOINCREMENT ,     login TEXT,    name TEXT,   password TEXT ) ; ";
 do_sql( $stmt );
+$pass=sha1_hex( 'root123' );
+$stmt =" insert into  users (    login ,    name ,   password  ) values ( 'root' , 'Super user' ,  '$pass' ) ; ";
+
+do_sql( $stmt );
 $pass=sha1_hex( 'support123' );
 $stmt =" insert into  users (    login ,    name ,   password  ) values ( 'support' , 'Support user' ,  '$pass' ) ; ";
-#do_sql( $stmt );
-#$stmt =" CREATE TABLE IF NOT EXISTS `secrets` (  id INTEGER ,     login TEXT,    secret TEXT) ; ";
+do_sql( $stmt );
 
-#$stmt ="DROP TABLE snmpworker; ";
-#do_sql( $stmt );
-#exit;
 
 $stmt =" CREATE TABLE IF NOT EXISTS snmpworker (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -68,8 +68,6 @@ values (
 
 do_sql( $stmt );
 exit;
-#$rec=$sth->fetchrow_hashref;
-#print Dumper( $rec);
 
 
 sub do_sql {

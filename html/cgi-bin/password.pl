@@ -76,7 +76,7 @@ sub Action {
 		$template->param( ID=>$row->{id} );
 	}
 	else{
-		message2 ( " Cannot to get record from table $table with id = $Param->{id} " );
+		message2 ( " Cannot to get record from table $table with id = $Param->{id}" );
 		return 0;
 	}
 
