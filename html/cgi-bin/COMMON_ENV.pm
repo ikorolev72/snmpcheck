@@ -151,7 +151,7 @@ sub InsertRecord {
 		push (@V , $row->{$_} );
 		push ( @Q, '?');
 	}
-	my $stmt ="INSERT into users ( ". join(',', @F). ") values ( ". join(',', @Q). " ) ;";
+	my $stmt ="INSERT into $table ( ". join(',', @F). ") values ( ". join(',', @Q). " ) ;";
 	my $sth = $dbh->prepare( $stmt );
 	my $rv;
 	unless ( $rv = $sth->execute( @V )  || $rv < 0  ) {
@@ -178,6 +178,16 @@ sub CheckField {
 		#$constrains->{login}->{no_angle_brackets}=1;
 		#$constrains->{login}->{no_quotes}=1;
 
+		$constrains->{int}->{numeric}=1;
+		$constrains->{int}->{max}=20;
+		$constrains->{int}->{min}=1;
+		$constrains->{int}->{no_spaces}=1;
+		#$constrains->{int}->{no_special_chars}=1;
+
+		$constrains->{ip}->{ip}=1;
+		$constrains->{ip}->{max}=15;
+		$constrains->{ip}->{min}=7;
+		$constrains->{ip}->{no_spaces}=1;
 
 		$constrains->{login}->{max}=50;
 		$constrains->{login}->{min}=4;
@@ -189,6 +199,10 @@ sub CheckField {
 		$constrains->{text}->{min}=0;
 		$constrains->{text}->{no_angle_brackets}=1;
 
+		$constrains->{text_no_empty}->{max}=254;
+		$constrains->{text_no_empty}->{min}=1;
+		
+		
 		$constrains->{html}->{max}=254;
 		$constrains->{html}->{min}=0;
 						
@@ -203,6 +217,18 @@ sub CheckField {
 
 	foreach $key ( keys ( %{ $constrains->{$type} } ) ) {
 		#print "# $f # $type -";
+		if( $key eq 'numeric' ) {
+			unless( $f=~/^\d+$/ ) {
+				message2( "$prefix must be numeric integer" );
+				$retval=0;
+			}
+		}
+		if( $key eq 'ip' ) {
+			unless( $f=~/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/ ) {
+				message2( "$prefix must be IP address " );
+				$retval=0;
+			}
+		}
 		if( $key eq 'max' ) {
 			if( length( $f ) > $constrains->{$type}->{max} ) {
 				message2( "$prefix must be less than  $constrains->{$type}->{max} letter(s)" );

@@ -13,13 +13,13 @@ $stmt =" insert into  users (    login ,    name ,   password  ) values ( 'suppo
 #do_sql( $stmt );
 #$stmt =" CREATE TABLE IF NOT EXISTS `secrets` (  id INTEGER ,     login TEXT,    secret TEXT) ; ";
 
-$stmt ="DROP TABLE snmpworker; ";
+#$stmt ="DROP TABLE snmpworker; ";
 #do_sql( $stmt );
-
+#exit;
 
 $stmt =" CREATE TABLE IF NOT EXISTS snmpworker (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	name  		TEXT,
+	sname  		TEXT,
 	desc  		TEXT,
 	ip		text,
 	auth		BOOLEAN,
@@ -34,10 +34,10 @@ $stmt =" CREATE TABLE IF NOT EXISTS snmpworker (
 );  ";
 
 
-#do_sql( $stmt );
+do_sql( $stmt );
 
 $stmt =" insert into  snmpworker (    
-	name  	,
+	sname  	,
 	desc  	,
 	ip	,
 	auth	,

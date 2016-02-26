@@ -14,7 +14,7 @@ body {
 
 
 .left_div {
-	width: 50%;
+	width: 90%;
 	height: 100%;
 	float:left;
 }
@@ -66,7 +66,7 @@ function isNumberInt(inputString) {
 
 			<tr valign='top'>
 			<td> name </td>
-			<td> <input name='name' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=NAME>'> </td>
+			<td> <input name='sname' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNAME>'> </td>
 
 			<tr valign='top'>
 			<td> desc </td>
@@ -77,9 +77,13 @@ function isNumberInt(inputString) {
 			<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
 
 			<tr valign='top'>
-			<td> auth </td>
-			<td> <input name='auth' type='checkbox' <TMPL_IF NAME=AUTH> checked </TMPL_IF> > </td>
-
+			<td> auth </td>			
+			<td> 
+				<select name='auth'>	
+					<option value='1' <TMPL_IF NAME=AUTH> selected </TMPL_IF> >Yes</option>
+					<option value='0' <TMPL_UNLESS NAME=AUTH> selected </TMPL_UNLESS> >No</option>
+				</select>
+			
 			<tr valign='top'>
 			<td> snmpuser </td>
 			<td> <input name='snmpuser' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNMPUSER>'> </td>
@@ -103,8 +107,8 @@ function isNumberInt(inputString) {
 			<tr valign='top'>
 			<td> snmpapro </td>
 			<td>
-				<select name='snmppro'>	
-					<TMPL_IF NAME=SNMPPRO>
+				<select name='snmpapro'>	
+					<TMPL_IF NAME=SNMPAPRO>
 					<option value='<TMPL_VAR NAME=SNMPAPRO>' selected><TMPL_VAR NAME=SNMPAPRO></option>
 					</TMPL_IF>
 					<option value='MD5'>MD5</option>
@@ -154,7 +158,7 @@ function isNumberInt(inputString) {
 		<td colspan=13> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new record </a></td></tr>
 	</tr>
 	<tr>
-		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'><TMPL_VAR NAME=NAME></a></td>
+		<td> sname </td>
 		<td> desc </td>
 		<td> ip </td>
 		<td> auth </td>
@@ -166,12 +170,12 @@ function isNumberInt(inputString) {
 		<td> snmpapro </td>
 		<td> snmppro </td>
 		<td> snmplevel </td>
-		<td> [ <a href='' onclick="confirm_prompt('<TMPL_VAR NAME=NAME>','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
+		<td>  </td>
 	</tr>
 
    <TMPL_LOOP NAME=USERS_LIST_LOOP>
 	<tr>
-		<td> <TMPL_VAR NAME=NAME></td>
+		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'><TMPL_VAR NAME=SNAME></a></td>
 		<td> <TMPL_VAR NAME=DESC></td>
 		<td> <TMPL_VAR NAME=IP></td>
 		<td> <TMPL_VAR NAME=AUTH></td>
@@ -183,6 +187,7 @@ function isNumberInt(inputString) {
 		<td> <TMPL_VAR NAME=SNMPAPRO></td>
 		<td> <TMPL_VAR NAME=SNMPPRO></td>
 		<td> <TMPL_VAR NAME=SNMPLEVEL></td>
+		<td> [ <a href='' onclick="confirm_prompt('<TMPL_VAR NAME=NAME>','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
 	</tr>
    </TMPL_LOOP>
 </table>
