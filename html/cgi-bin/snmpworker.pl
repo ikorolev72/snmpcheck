@@ -57,6 +57,7 @@ if( $show_form ) {
 	$template->param( SNMPAPRO=>$Param->{snmpapro} || 'MD5');
 	$template->param( SNMPPRO=>$Param->{snmppro} || 'DEC' );
 	$template->param( SNMPLEVEL=>$Param->{snmplevel} || 'authPriv' );
+	$template->param( WORKER=>$Param->{worker}  );
   }
   if( $Param->{edit} ) {
 	my $row=GetRecord ( $dbh, $Param->{id}, $table );
@@ -74,6 +75,7 @@ if( $show_form ) {
 		$template->param( SNMPAPRO=>$row->{snmpapro} );
 		$template->param( SNMPPRO=>$row->{snmppro} );
 		$template->param( SNMPLEVEL=>$row->{snmplevel} );
+		$template->param( WORKER=>$row->{worker}  );
 	}
 	else{
 		message2 ( " Cannot to get record from table $table with id = $Param->{id}" );
@@ -134,6 +136,7 @@ sub Action {
 		$row->{snmpapro}=$Param->{snmpapro} ;
 		$row->{snmppro}=$Param->{snmppro} ;
 		$row->{snmplevel}=$Param->{snmplevel} ;
+		$row->{worker}=$Param->{worker} ;
 		
 		unless( $Param->{id} ) { # if we save the new record 					
 			if ( InsertRecord ( $dbh, $Param->{id},  $table, $row ) ) {
@@ -211,6 +214,9 @@ sub check_smnpworker_record {
 			$retval=0 ;
 	}
 	unless( CheckField ( $Param->{ snmplevel } ,'text_no_empty', "Field 'snmplevel' ") ){
+			$retval=0 ;
+	}
+	unless( CheckField ( $Param->{ worker } ,'filename', "Field 'worker script' ") ){
 			$retval=0 ;
 	}
 	return $retval;

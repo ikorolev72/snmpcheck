@@ -13,6 +13,17 @@ $Paths->{LOG}="$Paths->{HOME}/data/log/snmpcheck.log";
 $Paths->{GROUPS}="$Paths->{HOME}/data/iplist/groups/";
 $Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
 $Paths->{TASKS}="$Paths->{HOME}/data/tasks";
+$Paths->{WORKER}="$Paths->{HOME}/worker";
+$Paths->{JSON}="$Paths->{HOME}/json";
+
+
+
+$Task->{1}='added';
+$Task->{2}='started';
+$Task->{3}='running';
+$Task->{4}='finished';
+$Task->{5}='failed';
+$Task->{6}='canceled';
 
 
 sub get_groups {
@@ -52,6 +63,13 @@ sub get_date {
 	$year+=1900;$mon++;
     return sprintf( "%s-%.2i-%.2i %.2i:%.2i:%.2i",$year,$mon,$mday,$hour,$min,$sec);
 }	
+
+sub generate_filename {
+	my $time=shift() || time();
+	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime($time);
+	$year+=1900;$mon++;
+    return sprintf( "%s-%.2i-%.2i_%.2i-%.2i-%.2i",$year,$mon,$mday,$hour,$min,$sec);
+}
 	
 
 sub w2log {
@@ -174,6 +192,31 @@ sub InsertRecord {
 	}
 	return ( 1 );	
 }
+
+
+
+sub GetNextSequence {
+	my $dbh=shift;
+	my $table='sequ';
+	my $stmt ="update $table set id=id+1; ";
+	my $sth = $dbh->prepare( $stmt );
+	my $rv;
+	unless ( $rv = $sth->execute( ) || $rv < 0 ) {
+		message2 ( "Someting wrong with database  : $DBI::errstr" );
+		w2log ( "Sql( $stmt ) Someting wrong with database  : $DBI::errstr" );
+		return 0;
+	}
+	$stmt ="select id from $table";
+	$sth = $dbh->prepare( $stmt );
+	unless ( $rv = $sth->execute(  ) || $rv < 0 ) {
+		message2 ( "Someting wrong with database  : $DBI::errstr" );
+		w2log ( "Sql( $stmt ) Someting wrong with database  : $DBI::errstr" );
+		return 0;
+	}
+	my $row=$sth->fetchrow_hashref;
+	return ( $row->{id} );	
+}
+
 
 
 sub CheckField {
@@ -303,7 +346,7 @@ sub CheckField {
 			}
 		}
 		if( $key eq 'no_special_chars' ) {
-			if(  $f=~/^[\w\.\s]*$/ ) {
+			unless(  $f=~/^[\w\.\s]*$/ ) {
 				message2( "$prefix "."must have not special chars" );
 				$retval=0;
 			}

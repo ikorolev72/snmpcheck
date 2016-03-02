@@ -7,13 +7,16 @@ use Data::Dumper;
 $dbh=db_connect();
 
 $stmt =" CREATE TABLE IF NOT EXISTS `Users` (  id INTEGER PRIMARY KEY AUTOINCREMENT ,     login TEXT,    name TEXT,   password TEXT ) ; ";
-do_sql( $stmt );
+#do_sql( $stmt );
 $pass=sha1_hex( 'root123' );
 $stmt =" insert into  users (    login ,    name ,   password  ) values ( 'root' , 'Super user' ,  '$pass' ) ; ";
 
-do_sql( $stmt );
+#do_sql( $stmt );
 $pass=sha1_hex( 'support123' );
 $stmt =" insert into  users (    login ,    name ,   password  ) values ( 'support' , 'Support user' ,  '$pass' ) ; ";
+#do_sql( $stmt );
+
+$stmt =" drop table  snmpworker ; ";
 do_sql( $stmt );
 
 
@@ -30,7 +33,8 @@ $stmt =" CREATE TABLE IF NOT EXISTS snmpworker (
 	snmpt		INTEGER,
 	snmpapro	text,	
 	snmppro		text,	
-	snmplevel	text	
+	snmplevel	text,
+	worker		text	
 );  ";
 
 
@@ -48,7 +52,8 @@ $stmt =" insert into  snmpworker (
 	snmpt	,
 	snmpapro,
 	snmppro	,
-	snmplevel
+	snmplevel,
+	worker
 ) 
 values (  
 	'ntpcheck'  	,
@@ -62,7 +67,8 @@ values (
 	1	,
 	'MD5',
 	'DES'	,
-	'Authpriv'
+	'Authpriv',
+	'ntpcheck.pl'
 ) ; ";
 
 

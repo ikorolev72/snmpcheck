@@ -73,6 +73,10 @@ function isNumberInt(inputString) {
 			<td> <input name='desc' type='text' size='20' maxlength='200' value='<TMPL_VAR NAME=DESC>'> </td>
 
 			<tr valign='top'>
+			<td> worker script</td>
+			<td> <input name='worker' type='text' size='20' maxlength='100' value='<TMPL_VAR NAME=WORKER>'> </td>
+
+			<tr valign='top'>
 			<td> ip </td>
 			<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
 
@@ -157,11 +161,12 @@ function isNumberInt(inputString) {
 <div  class="left_div">
 <table border=1>
 	<tr>
-		<td colspan=13> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new record </a></td></tr>
+		<td colspan=14> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new record </a></td></tr>
 	</tr>
 	<tr>
 		<td> sname </td>
 		<td> desc </td>
+		<td> worker </td>
 		<td> ip </td>
 		<td> auth </td>
 		<td> snmpuser </td>
@@ -179,6 +184,7 @@ function isNumberInt(inputString) {
 	<tr>
 		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'><TMPL_VAR NAME=SNAME></a></td>
 		<td> <TMPL_VAR NAME=DESC></td>
+		<td> <TMPL_VAR NAME=WORKER></td>
 		<td> <TMPL_VAR NAME=IP></td>
 		<td> <TMPL_VAR NAME=AUTH></td>
 		<td> <TMPL_VAR NAME=SNMPUSER></td>
