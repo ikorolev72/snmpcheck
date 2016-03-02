@@ -10,6 +10,19 @@ $Paths->{HOME}='C:/GIT/snmpcheck/';
 $Paths->{TEMPLATE}="$Paths->{HOME}/data/templates";
 $Paths->{DB}="$Paths->{HOME}/data/db";
 $Paths->{LOG}="$Paths->{HOME}/data/log/snmpcheck.log";
+$Paths->{GROUPS}="$Paths->{HOME}/data/iplist/groups/";
+$Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
+$Paths->{TASKS}="$Paths->{HOME}/data/tasks";
+
+
+sub get_groups {
+	my $html_dir=$Paths->{GROUPS};
+	my @ls;
+	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
+		@ls = reverse sort grep { -f "$html_dir/$_" } readdir(DIR);
+	closedir DIR;
+	return @ls;
+}
 
 
 sub db_connect {
@@ -184,11 +197,23 @@ sub CheckField {
 		$constrains->{int}->{no_spaces}=1;
 		#$constrains->{int}->{no_special_chars}=1;
 
+		$constrains->{ip_op_empty}->{ip_op_empty}=1;
+		$constrains->{ip_op_empty}->{max}=15;
+		$constrains->{ip_op_empty}->{min}=0;
+		$constrains->{ip_op_empty}->{no_spaces}=1;
+
 		$constrains->{ip}->{ip}=1;
 		$constrains->{ip}->{max}=15;
 		$constrains->{ip}->{min}=7;
 		$constrains->{ip}->{no_spaces}=1;
 
+		$constrains->{filename}->{max}=254;
+		$constrains->{filename}->{min}=1;
+		$constrains->{filename}->{no_angle_brackets}=1;
+		$constrains->{filename}->{no_quotes}=1;
+		$constrains->{filename}->{no_special_chars}=1;
+		
+		
 		$constrains->{login}->{max}=50;
 		$constrains->{login}->{min}=4;
 		$constrains->{login}->{no_spaces}=1;
@@ -210,6 +235,11 @@ sub CheckField {
 		$constrains->{password}->{min}=6;
 		$constrains->{password}->{no_spaces}=1;
 
+		$constrains->{boolean}->{boolean}=1;
+		$constrains->{boolean}->{max}=1;
+		$constrains->{boolean}->{min}=0;
+
+		
 	unless( $constrains->{$type} ) {
 		return 0;
 	}
@@ -217,10 +247,24 @@ sub CheckField {
 
 	foreach $key ( keys ( %{ $constrains->{$type} } ) ) {
 		#print "# $f # $type -";
+		if( $key eq 'boolean' ) {
+			unless( $f=~/^[0|1]*$/ ) {
+				message2( "$prefix must be 1 or 0" );
+				$retval=0;
+			}
+		}
 		if( $key eq 'numeric' ) {
 			unless( $f=~/^\d+$/ ) {
 				message2( "$prefix must be numeric integer" );
 				$retval=0;
+			}
+		}
+		if( $key eq 'ip_or_empty' ) {
+			if( $f ne '' ) {
+			unless( $f=~/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/ ) {
+				message2( "$prefix must be empty or IP address " );
+				$retval=0;
+			}
 			}
 		}
 		if( $key eq 'ip' ) {
@@ -255,7 +299,7 @@ sub CheckField {
 			}
 		}
 		if( $key eq 'no_special_chars' ) {
-			if(  $f=~/^\w$/ ) {
+			if(  $f=~/^[\w\.]*$/ ) {
 				message2( "$prefix "."must have not special chars" );
 				$retval=0;
 			}
@@ -276,6 +320,23 @@ sub CheckField {
 	return $retval;	
 }
 
+sub ReadFile {
+	my $filename=shift;
+	my $ret="";
+	open (IN,"$filename") || w2log("Can't open file $filename") ;
+		while (<IN>) { $ret.=$_; }
+	close (IN);
+	return $ret;
+}	
+
+sub WriteFile {
+	my $filename=shift;
+	my $body=shift;
+	unless( open (OUT,">$filename")) { w2log("Can't open file $filename" ) ;return 0; }
+	print OUT $body;
+	close (OUT);
+	return 1;
+}	
 
 
 
