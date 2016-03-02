@@ -29,13 +29,31 @@ body {
 	
 <script language="JavaScript">
   function confirm_prompt( text,url ) {
-     if (confirm('You sure to delete "' + text +'" ?' )) {
+     if (confirm( text )) {
       window.location = url ;
     }
   }
+  
 function isNumberInt(inputString) {
   return (!isNaN(parseInt(inputString))) ? true : false;
 }
+
+function cutLongText( field ) {
+
+   var elem, size, text, ftext;
+	elem = document.getElementById( field );
+	text = elem.innerHTML;
+	size = 100;
+	ftext=elem.innerHTML;
+	if (text.length > size) {
+		text = text.slice(0, size);
+	}
+   	elem.innerHTML = text +'<a href="#" onclick="return alert( ftext );">...</a>';
+}
+</script>
+
+
+
 </script>
 	
 	
@@ -51,9 +69,10 @@ function isNumberInt(inputString) {
 <hr>
 
 <div  class="parent">
-
 <div  class="left_div">
+
 <TMPL_IF NAME=SHOWFORM> 
+
 
 <form action='<TMPL_VAR NAME=ACTION>' method='post' enctype='multipart/form-data' name='form1'>
   <input name='id' type='hidden' value='<TMPL_VAR NAME=ID>' >
@@ -82,6 +101,10 @@ function isNumberInt(inputString) {
 				</select>
 				</td>
 			<tr valign='top'>
+			<td> Description </td>
+			<td> <input name='desc' type='text' size='50' maxlength='254' value='<TMPL_VAR NAME=DESC>'> </td>
+				
+			<tr valign='top'>
             <td>&nbsp;</td>
             <td><input name='save' type='submit' id='save' value='Save'></td>
           </tr>
@@ -91,10 +114,45 @@ function isNumberInt(inputString) {
 
 </form>
 
-<TMPL_ELSE>
+
+</TMPL_IF> 
+
+<TMPL_IF NAME=SHOWFORM_TO_TASK> 
+
+
+<form action='<TMPL_VAR NAME=ACTION_TASK_ADD>' method='post' enctype='multipart/form-data' name='form1'>
+	<input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>' >
+	<input name='desc' type='hidden' value='<TMPL_VAR NAME=DESC>'>  
+	<input name='ip' type='hidden' value='<TMPL_VAR NAME=IP>'>  
+	<input name='group' type='hidden' value='<TMPL_VAR NAME=GROUP>'>  
+	<input name='all_ipasolink' type='hidden' value='<TMPL_VAR NAME=ALL_IPASOLINK>'>  
+	
+  <table border='1' cellspacing='0' cellpadding='2'>
+			<tr valign='top'>
+			<td> Add task for worker </td>
+			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
+			<tr valign='top'>
+			<td> Selected IP </td>
+			<td> 
+					<b>IP:</b><TMPL_VAR NAME=IP>  <TMPL_IF  NAME=GROUP><b>Group:</b><TMPL_VAR NAME=GROUP></TMPL_IF>  <b>IP list for all iPasolink:</b><TMPL_IF  NAME=ALL_IPASOLINK>Yes<TMPL_ELSE>No</TMPL_IF></td>
+
+			<tr valign='top'>
+			<td> Description </td>
+			<td> <TMPL_VAR NAME=DESC> </td>
+			<tr valign='top'>
+            <td>&nbsp;</td>
+            <td>&nbsp;[ <a href="" onclick="confirm_prompt( 'Cancel process task add','/'); return false;">Cancel</a> ] &nbsp; <input name='save' type='submit' id='save' value='Submit task'></td>
+          </tr>
+		  
+  </table>
+        <br>
+
+</form>
+
 
 
 </TMPL_IF> 
+
 
 </div>
 

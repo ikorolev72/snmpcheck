@@ -1,0 +1,96 @@
+<html>
+<head>
+	<title>
+		<TMPL_VAR NAME=TITLE>
+	</title>
+	<META http-equiv=Content-Type content='text/html; charset=iso-8859-1;'>
+	<LINK href='/main.css' type=text/css rel=stylesheet>
+
+<style>
+
+body {
+	font-family: verdana, arial, sans-serif; 
+}
+
+
+.left_div {
+	width: 90%;
+	height: 100%;
+	float:left;
+}
+
+.right_div {
+	width: 50%;
+	height: 100%;
+	float:right;
+}
+
+</style>
+	
+<script language="JavaScript">
+  function confirm_prompt( text,url ) {
+     if (confirm('You sure to delete "' + text +'" ?' )) {
+      window.location = url ;
+    }
+  }
+function isNumberInt(inputString) {
+  return (!isNaN(parseInt(inputString))) ? true : false;
+}
+</script>
+	
+	
+</head>
+<body>
+<a href='/'>home</a>
+<h3>
+	<TMPL_VAR NAME=TITLE>
+</h3>
+
+<font color=red> <h4> <TMPL_VAR NAME=MESSAGES> </h4> </font>
+
+<hr>
+
+<div  class="parent">
+
+<div  class="left_div">
+<TMPL_IF NAME=SHOWFORM> 
+
+
+<form action='<TMPL_VAR NAME=ACTION_TASK_ADD>' method='post' enctype='multipart/form-data' name='form1'>
+  <input name='id' type='hidden' value='<TMPL_VAR NAME=ID>' >
+  <input name='new' type='hidden' value='<TMPL_VAR NAME=NEW>' >
+  <input name='edit' type='hidden' value='<TMPL_VAR NAME=EDIT>' >
+  <table border='1' cellspacing='0' cellpadding='2'>
+			<tr valign='top'>
+			<td> Add task for worker </td>
+			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
+			<tr valign='top'>
+			<td> Description </td>
+			<td> <input name='desc' type='text' size='50' maxlength='254' value='<TMPL_VAR NAME=DESC>'> </td>
+			<tr valign='top'>
+			<td> Selected IP </td>
+			<td> 
+				<input name='ip' type='hidden' value='<TMPL_VAR NAME=IP>'>  
+				<input name='group' type='hidden' value='<TMPL_VAR NAME=GROUP>'>  
+				<input name='all_ipasolink' type='hidden' value='<TMPL_VAR NAME=ALL_IPASOLINK>'>  
+					<b>IP:</b><TMPL_VAR NAME=IP>  <TMPL_IF  NAME=GROUP><b>Group:</b><TMPL_VAR NAME=GROUP></TMPL_IF>  <b>IP list for all iPasolink:</b><TMPL_IF  NAME=ALL_IPASOLINK>Yes<TMPL_ELSE>No</TMPL_IF></td>
+
+			<tr valign='top'>
+            <td>&nbsp;</td>
+            <td><input name='save' type='submit' id='save' value='Submit task'></td>
+          </tr>
+		  
+  </table>
+        <br>
+
+</form>
+
+
+</TMPL_IF> 
+
+</div>
+
+</div>
+
+</body>
+</html>

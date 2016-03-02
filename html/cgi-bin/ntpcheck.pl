@@ -16,13 +16,15 @@ use CGI::Cookie;
 use CGI qw/:standard/;
 
 
+$sname="ntpcheck";
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'ntpcheck.htm', die_on_bad_params=>0 );
+$template->param( SNAME=> $sname  );
+$title="NTP status check tool";
+
 
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
-
-#print "Content-type: text/html\n\n" ;
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
@@ -34,25 +36,39 @@ my $table='users';
 
 
 if(  Action() ==0 ) {
-	my $show_form=0;
-	# task planing
-}	
+	$show_form=1;
+	$template->param( SHOWFORM=>1 );
+	$template->param( SHOWFORM_TO_TASK_=> 0 );
+	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+	$template->param( MESSAGES=> $message );
+	$template->param( TITLE=> $title );
+} else {
+	$template->param( SHOWFORM=> 0 );
+	$template->param( SHOWFORM_TO_TASK => 1 );
+	$template->param( LOGIN=>$Param->{login} );
+	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+	$template->param( ACTION_TASK_ADD=>  "/cgi-bin/task_add.pl" );
+	$template->param( TITLE=>"$title. Ready to add task" );
+	$template->param( MESSAGES=> $message );
+
+}
+
+
+$template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
+$template->param( IP=> $Param->{ip} );
+$template->param( GROUP=> $Param->{group} );
+$template->param( ALL_IPASOLINK=> $Param->{all_ipasolink} );
+
+
 foreach $group ( get_groups() ) {
 	my %row_data;   
 	$row_data{ GROUP }=$group;
 	push(@loop_data, \%row_data);
 }
 $template->param(GROUP_LIST_LOOP => \@loop_data);
-
-
 	 
-$template->param( SHOWFORM=>$show_form );
-$template->param( LOGIN=>$Param->{login} );
-$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-$template->param( TITLE=>"NTP status check tool" );
-$template->param( MESSAGES=> $message );
 
-  # print the template output
+# print the template output
 print "Content-type: text/html\n\n" ;
 print  $template->output;
 
@@ -62,13 +78,9 @@ db_disconnect( $dbh );
 ##############################################
 
 sub Action {
-	my $row;
 	if( $Param->{save} ) {
-		unless( check_ntpcheck_record()  ) {	
-			return 0;
-		}
-			
-	}
+		return( check_record()  );
+	}	
 return 0;
 }
 
@@ -79,13 +91,17 @@ sub check_record {
 	unless( CheckField ( $Param->{ip} ,'ip_op_empty', "Field 'ip' " )) {
 			$retval=0;
 	} 
-	unless( CheckField ( $Param->{group} ,'text_no_empty', "Field 'group' ") ){
+	unless( CheckField ( $Param->{group} ,'text', "Field 'group' ") ){
 		$retval=0;
 	}
-	unless( CheckField ( $Param->{group} ,'text_no_empty', "Field 'group' ") ){
+	unless( CheckField ( $Param->{all_ipasolink} ,'boolean', "Field 'IP list for all iPasolink' ") ){
 		$retval=0;
 	}
-	unless( CheckField ( $Param->{all_ipasolink} ,'text_no_empty', "Field 'group' ") ){
+	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
+		$retval=0;
+	}
+	if( !$Param->{ip} && !$Param->{group} && !$Param->{all_ipasolink} ) {
+		message2( "Must be set 'ip address' or 'group' or 'IP list for all iPasolink'" );
 		$retval=0;
 	}
 	return $retval;

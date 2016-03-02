@@ -209,9 +209,9 @@ sub CheckField {
 
 		$constrains->{filename}->{max}=254;
 		$constrains->{filename}->{min}=1;
-		$constrains->{filename}->{no_angle_brackets}=1;
 		$constrains->{filename}->{no_quotes}=1;
 		$constrains->{filename}->{no_special_chars}=1;
+		$constrains->{filename}->{no_spaces}=1;
 		
 		
 		$constrains->{login}->{max}=50;
@@ -227,6 +227,9 @@ sub CheckField {
 		$constrains->{text_no_empty}->{max}=254;
 		$constrains->{text_no_empty}->{min}=1;
 		
+		$constrains->{desc}->{max}=254;
+		$constrains->{desc}->{min}=1;
+		$constrains->{desc}->{no_special_chars}=1;
 		
 		$constrains->{html}->{max}=254;
 		$constrains->{html}->{min}=0;
@@ -239,6 +242,7 @@ sub CheckField {
 		$constrains->{boolean}->{max}=1;
 		$constrains->{boolean}->{min}=0;
 
+		
 		
 	unless( $constrains->{$type} ) {
 		return 0;
@@ -299,7 +303,7 @@ sub CheckField {
 			}
 		}
 		if( $key eq 'no_special_chars' ) {
-			if(  $f=~/^[\w\.]*$/ ) {
+			if(  $f=~/^[\w\.\s]*$/ ) {
 				message2( "$prefix "."must have not special chars" );
 				$retval=0;
 			}

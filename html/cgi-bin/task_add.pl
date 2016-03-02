@@ -2,32 +2,44 @@
 
 BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
 use COMMON_ENV;
+use HTML::Template;
+use DBI;
+use CGI::Carp qw ( fatalsToBrowser );
+use CGI qw(param);
+use Digest::SHA qw(sha1 sha1_hex );
+#use Data::Dumper;
 
-use Getopt::Long;
+$query = new CGI;
+foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
-GetOptions (
-        'sname=s' => \$sname,
-        'desc=s' => \$desc,
-        'ip=s' => \$ip,
-        "time=i" => \$time,
-        "output=s" => \$output,
-        "param=s" => \@Param,
-        "help|h|?"  => \$help ) or show_help();
+$ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
+$template = HTML::Template->new(filename => 'task_add.htm', die_on_bad_params=>0 );
 
-		
-		
-if($help) {
-	show_help() ;
-	exit 0;
-}
+
+
 
 $dbh=db_connect() ;
 
-unless( check_arguments() ) {
-	$MSG=~s/\<br\>/\n/g;
-	w2log( "Cannot add task. Incorrect arguments $0:\n $MSG\n" )  ;
-	exit 1;
+
+if(  Action() ==0 ) {
+	$show_form=1;
+	$template->param( SHOWFORM=>1 );
+	$template->param( TITLE=>"Add the task" );
+	$template->param( IP=> $Param->{ip} );
+	$template->param( GROUP=> $Param->{group} );
+	$template->param( ALL_IPASOLINK=> $Param->{all_ipasolink} );
+	
+} else {
+	message2( "Task '$param0>{desc}' added. Please, check it in <a href='/cgi-bin/task_list.pl'> Task list </a>" ) ;
+	$template->param( SHOWFORM=> 0 );
+	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+	$template->param( ACTION_TASK_ADD=>  "/cgi-bin/task_add.pl" );
+	$template->param( TITLE=>"Task added" );
+	$template->param( MESSAGES=> $message );
 }
+
+$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+$template->param( MESSAGES=> $message );
 
 my $row;
 $row->{ sname } =$sname;
@@ -62,10 +74,10 @@ $0 --sname=ntpcheck  --desc='NTP check task'  --ip='1.1.1.1,2.2.2.2,3.3.3.3' --t
 
 sub check_arguments {
 	$retval=1;
-	unless( CheckField ( $desc ,'text', "Fields 'desc' ") ){
+	unless( CheckField ( $Param->{desc} ,'text', "Fields 'desc' ") ){
 			$retval=0 ;
 	}	
-	unless( CheckField ( $sname ,'login', "Fields 'sname' ") ){
+	unless( CheckField ( $Param->{sname} ,'login', "Fields 'sname' ") ){
 			$retval=0 ;
 	} else {
 		my $table='snmpworker';
