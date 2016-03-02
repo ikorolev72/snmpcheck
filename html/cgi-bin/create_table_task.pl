@@ -16,8 +16,8 @@ $dbh=db_connect();
 #$stmt = "insert into sequ( id ) values ( 0 );" ;
 #do_sql( $stmt );
 
-#$stmt = "drop table IF EXISTS tasks ;" ;
-#do_sql( $stmt );
+$stmt = "drop table IF EXISTS tasks ;" ;
+do_sql( $stmt );
 
 $stmt =" CREATE TABLE IF NOT EXISTS tasks (
 	id 		INTEGER,

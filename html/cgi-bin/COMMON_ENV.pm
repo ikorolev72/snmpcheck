@@ -272,7 +272,7 @@ sub CheckField {
 		
 		$constrains->{desc}->{max}=254;
 		$constrains->{desc}->{min}=1;
-		$constrains->{desc}->{no_special_chars}=1;
+		#$constrains->{desc}->{no_special_chars}=1;
 		
 		$constrains->{html}->{max}=254;
 		$constrains->{html}->{min}=0;
@@ -346,7 +346,7 @@ sub CheckField {
 			}
 		}
 		if( $key eq 'no_special_chars' ) {
-			unless(  $f=~/^[\w\.\s]*$/ ) {
+			unless(  $f=~/^[\w\.\s-]*$/ ) {
 				message2( "$prefix "."must have not special chars" );
 				$retval=0;
 			}

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!perl
 
 BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
 use COMMON_ENV;
@@ -18,6 +18,8 @@ $template = HTML::Template->new(filename => 'task_add.htm', die_on_bad_params=>0
 
 $table='tasks';
 $id=0; # id of new task
+$sname=$Param->{sname};
+$outfile=$sname."_".generate_filename()."_log.csv";
 
 
 $dbh=db_connect() ;
@@ -26,7 +28,7 @@ $dbh=db_connect() ;
 if(  Action() ==0 ) {
 	message2( "Cannot add new task" );	
 } else {
-	message2( "Task '$param0>{desc}' added. Please, check it in <a href='/cgi-bin/task_list.pl'> Task list </a>" ) ;
+	message2( "Task '$Param->{desc}' added. Please, check it in <a href='/cgi-bin/task_list.pl'> Task list </a>" ) ;
 
 	###########################################
 	######### there we start the worker !!!!!
@@ -47,7 +49,7 @@ if(  Action() ==0 ) {
 				$mess="Cannot write file $json_file: $!";
 		};
 		
-		system( "$Paths->{WORKER}/$row->{worker} -t $id -j $json_file >/dev/null 2>&1 &" ) ;
+		system( "$Paths->{WORKER}/$row->{worker} --id=$id --json=$json_file >/dev/null 2>&1 &" ) ;
 		
 		undef $row;
 		my $row;
@@ -81,7 +83,7 @@ sub Action {
 			return 0;
 		}
 			
-		$row->{id}=GetNexSequence( $dbh ) ;
+		$row->{id}=GetNextSequence( $dbh ) ;
 		$row->{sname}=$Param->{sname} ;
 		$row->{desc}=$Param->{desc} ;
 		$row->{user}='' ; # USER !!!!
@@ -89,14 +91,13 @@ sub Action {
 		$row->{dt}=time() ;
 		$row->{param}=JSON->new->utf8->encode($Param); 
 		$row->{status}=1 ; # added
-		$row->{outfile}=$sname."_".generate_filename()."_log.csv" ;
+		$row->{outfile}=$outfile ;
 		$row->{mess}='' ;
 		
 				
 		if ( InsertRecord ( $dbh, $row->{id},  $table, $row ) ) {
 			message2 ( "Record inserted succsesfuly" );
 			$id=$row->{id};
-			$outfile=$row->{outfile};
 			return 1;
 		} else {
 			message2 ( "Cannot insert record" );
@@ -105,13 +106,13 @@ sub Action {
 							
 	}
 
-return 1;
+return 0;
 }
 
 
 
 
-sub check_arguments {
+sub check_record {
 	$retval=1;
 	unless( CheckField ( $Param->{desc} ,'text', "Fields 'desc' ") ){
 			$retval=0 ;
@@ -127,7 +128,7 @@ sub check_arguments {
 		}		
 	}
 
-	unless( CheckField ( $output ,'filename', "option 'output' ") ){
+	unless( CheckField ( $outfile ,'filename', "Fields 'outfile' $outfile ") ){
 		$retval=0 ;
 	}
 	return $retval;
