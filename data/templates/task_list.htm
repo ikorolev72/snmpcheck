@@ -14,7 +14,7 @@ body {
 
 
 .left_div {
-	width: 90%;
+	width: 95%;
 	height: 100%;
 	float:left;
 }
@@ -42,9 +42,9 @@ function isNumberInt(inputString) {
 </head>
 <body>
 <a href='/'>home</a>
-<h3>
-	<TMPL_VAR NAME=TITLE>
-</h3>
+<h3> 		<TMPL_VAR NAME=TITLE> 	</h3>
+	[ <a href='<TMPL_VAR NAME=REQUEST_URI>'>Refresh</a> ]
+	
 
 <font color=red> <h4> <TMPL_VAR NAME=MESSAGES> </h4> </font>
 
@@ -100,6 +100,14 @@ function isNumberInt(inputString) {
 			</TMPL_IF>				
 			> <TMPL_VAR NAME=STATUS> </td>
 
+			<tr valign='top'>
+			<td> Progress </td>
+			<td> <TMPL_VAR NAME=PROGRESS> </td>
+
+			<tr valign='top'>
+			<td> Task messages </td>
+			<td> <TMPL_VAR NAME=MESS> </td>
+
 			
 			<tr valign='top'>
 			<td> Output file </td>
@@ -127,6 +135,7 @@ function isNumberInt(inputString) {
 		<td> Task added </td>
 		<td> Status updated  </td>
 		<td> Status </td>
+		<td> Progress </td>
 		<td> Output file </td>
 		<td> Task messages </td>
 		<td>  </td>
@@ -152,6 +161,7 @@ function isNumberInt(inputString) {
 			</TMPL_IF>				
 		
 		> <TMPL_VAR NAME=STATUS></td>
+		<td> <TMPL_VAR NAME=PROGRESS></td>
 		<td> 
 			<TMPL_IF NAME="OUTFILE">	
 				<a href='<TMPL_VAR NAME=OUTFILE>'> Download </a> </td>

@@ -5,8 +5,9 @@ use COMMON_ENV;
 
 use Getopt::Long;
 
+
 GetOptions (
-        'task=i' => \$id,
+        'id=i' => \$id,
         'json=s' => \$json_file,
         "help|h|?"  => \$help ) or show_help();
 
@@ -28,12 +29,40 @@ unless( -f $json_file ) {
   my $json_text   = <$fh>;
   $Param = decode_json( $json_text );
 
-foreach( 0..9 )  {
-	WriteFile("C:/GIT/tmp/$_.txt", Dumper( $Param ) );  
-	sleep 20;
+  
+my $json_out="$Paths->{JSON}/$id.out.json";
+my $row;
+my $timenow=time();
+$count_max=9;
+foreach $count ( 0..$count_max )  {
+	if( time() - $timenow  > 10 ) {
+		$timenow=time();
+		$row->{dt}=time();
+		$row->{status}=3; # running
+		$row->{id}=$id;
+		$row->{mess}='All ok';
+		$row->{progress}=int( $count*100/$count_max ) ;
+		unless( WriteFile( $json_out, JSON->new->utf8->encode($row) ) ){
+				w2log ("Cannot write file $json_file: $!");
+		}
+	}
+	sleep 5;
+	$|=1;
+	print $count;
 }
 
-  
+$timenow=time();
+$row->{dt}=time();
+$row->{status}=4; # finished
+$row->{id}=$id;
+$row->{mess}='Finished successfully';
+$row->{progress}=100 ;
+unless( WriteFile( $json_out, JSON->new->utf8->encode($row) ) ){
+		w2log ("Cannot write file $json_file: $!");
+}
+
+exit 0;
+ 
   
   
 sub show_help {

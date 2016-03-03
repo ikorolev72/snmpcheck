@@ -8,7 +8,6 @@ use DBI;
 #use warnings;
 use HTML::Template;
 use DBI;
-use CGI::Carp qw ( fatalsToBrowser );
 use CGI qw(param);
 use Digest::SHA qw(sha1 sha1_hex );
 use Data::Dumper;

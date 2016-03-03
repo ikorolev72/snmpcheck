@@ -27,6 +27,7 @@ $stmt =" CREATE TABLE IF NOT EXISTS tasks (
 	param		text,
 	status		INTEGER,
 	outfile		text,
+	progress	INTEGER,
 	mess		text
 );  ";
 

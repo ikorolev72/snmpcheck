@@ -2,6 +2,7 @@
 
 BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
 use COMMON_ENV;
+use CGI::Carp qw ( fatalsToBrowser );
 
 
 
@@ -33,20 +34,20 @@ if(  Action() ==0 ) {
 	my $status=2;
 		unless( -f "$Paths->{WORKER}/$row->{worker}" ) {			
 				$status=5 ; # failed
-				message2( "Not found worker '$Paths->{WORKER}/$row->{worker}' for '$Param->{sname}' " );
-				w2log( "Cannot start the task '$id'. Not found worker with name '$Param->{sname}'");
-				$mess="Not found worker with name $Param->{sname}";
+				$mess="Not found worker '$Paths->{WORKER}/$row->{worker}' for '$Param->{sname}'";			
+				message2( "Cannot start the task. $mess"  );
+				w2log( "Cannot start the task. $mess" );
 		}
 		my $json_file="$Paths->{JSON}/$id.param.json";
 		unless( WriteFile( $json_file, JSON->new->utf8->encode($Param) ) ){
-				$status=5 ; # failed
-				message2( "Cannot write file $json_file: $!" );
+				$status=5 ; # failed				
 				$mess="Cannot write file $json_file: $!";
+				message2( $mess );
 		};
-		
-		#system( "$Paths->{WORKER}/$row->{worker} --id=$id --json=$json_file >/dev/null 2>&1 " ) ;
-		
-		message2( encode_entities( "$Paths->{WORKER}/$row->{worker} --id=$id --json=$json_file >/dev/null 2>&1 " ));
+		my $cmd="$Paths->{WORKER}/$row->{worker} --id=$id --json=$json_file > c:/git/tmp/log.txt 2>&1 &" ;
+		#my $cmd="$Paths->{WORKER}/$row->{worker}  > c:/git/tmp/log.txt 2>&1 " ;
+		w2log ( "Start the worker : $cmd " );
+		system( $cmd ) ;
 		
 		undef $row;
 		my $row;
