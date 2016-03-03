@@ -1,9 +1,7 @@
 #!/usr/bin/perl
 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
 use COMMON_ENV;
-use Digest::SHA qw(sha1 sha1_hex );
-use Data::Dumper;
-
 
 
 

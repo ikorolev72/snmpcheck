@@ -2,18 +2,10 @@
 # korolev-ia [at] yandex.ru
 
 
-BEGIN{ unshift @INC, '/opt/' ,'/home/admin/lib'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
 use COMMON_ENV;
-#use strict;
-#use warnings;
-use HTML::Template;
-use DBI;
-use CGI::Carp qw ( fatalsToBrowser );
-use CGI qw(param);
-use Digest::SHA qw(sha1 sha1_hex );
-use Data::Dumper;
-use CGI::Cookie;
-use CGI qw/:standard/;
+
+
 
 
 $sname="ntpcheck";
@@ -40,7 +32,6 @@ if(  Action() ==0 ) {
 	$template->param( SHOWFORM=>1 );
 	$template->param( SHOWFORM_TO_TASK_=> 0 );
 	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-	$template->param( MESSAGES=> $message );
 	$template->param( TITLE=> $title );
 } else {
 	$template->param( SHOWFORM=> 0 );
@@ -49,7 +40,6 @@ if(  Action() ==0 ) {
 	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 	$template->param( ACTION_TASK_ADD=>  "/cgi-bin/task_add.pl" );
 	$template->param( TITLE=>"$title. Ready to add task" );
-	$template->param( MESSAGES=> $message );
 
 }
 
@@ -69,6 +59,7 @@ $template->param(GROUP_LIST_LOOP => \@loop_data);
 	 
 
 # print the template output
+$template->param( MESSAGES=> $message );
 print "Content-type: text/html\n\n" ;
 print  $template->output;
 

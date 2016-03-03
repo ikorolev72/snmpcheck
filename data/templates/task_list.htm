@@ -1,0 +1,172 @@
+<html>
+<head>
+	<title>
+		<TMPL_VAR NAME=TITLE>
+	</title>
+	<META http-equiv=Content-Type content='text/html; charset=iso-8859-1;'>
+	<LINK href='/main.css' type=text/css rel=stylesheet>
+
+<style>
+
+body {
+	font-family: verdana, arial, sans-serif; 
+}
+
+
+.left_div {
+	width: 90%;
+	height: 100%;
+	float:left;
+}
+
+.right_div {
+	width: 50%;
+	height: 100%;
+	float:right;
+}
+
+</style>
+	
+<script language="JavaScript">
+  function confirm_prompt( text,url ) {
+     if (confirm( text  )) {
+      window.location = url ;
+    }
+  }
+function isNumberInt(inputString) {
+  return (!isNaN(parseInt(inputString))) ? true : false;
+}
+</script>
+	
+	
+</head>
+<body>
+<a href='/'>home</a>
+<h3>
+	<TMPL_VAR NAME=TITLE>
+</h3>
+
+<font color=red> <h4> <TMPL_VAR NAME=MESSAGES> </h4> </font>
+
+<hr>
+
+<div  class="parent">
+
+<div  class="left_div">
+<TMPL_IF NAME=SHOWFORM> 
+  <table border='1' cellspacing='0' cellpadding='2'>
+
+
+			<tr valign='top'>
+			<td> Task ID </td>
+			<td> <TMPL_VAR NAME=ID> </td>
+
+			<tr valign='top'>
+			<td> Type of task </td>
+			<td> <TMPL_VAR NAME=SNAME> </td>
+
+			<tr valign='top'>
+			<td> Description </td>
+			<td> <TMPL_VAR NAME=DESC> </td>
+
+			<tr valign='top'>
+			<td> Worker </td>
+			<td> <TMPL_VAR NAME=WORKER> </td>
+
+			<tr valign='top'>
+			<td> Paramemters </td>
+			<td> <TMPL_VAR NAME=PARAM> </td>
+
+			<tr valign='top'>
+			<td> Task added </td>
+			<td> <TMPL_VAR NAME=DT> </td>
+			
+			<tr valign='top'>
+			<td> Status updated </td>
+			<td> <TMPL_VAR NAME=SDT> </td>
+
+			<tr valign='top'>
+			<td> Status </td>
+			<td 
+			<TMPL_IF NAME="STATUS_RED">	
+				bgcolor='#FBEFF2'
+			</TMPL_IF>	
+			<TMPL_IF NAME="STATUS_YELLOW">	
+				bgcolor='#ECF6CE'
+			</TM			
+			</TMPL_IF>	
+			<TMPL_IF NAME="STATUS_GREEN">	
+				bgcolor='#CEF6CE'
+			</TMPL_IF>				
+			> <TMPL_VAR NAME=STATUS> </td>
+
+			
+			<tr valign='top'>
+			<td> Output file </td>
+			<td> 
+			<TMPL_IF NAME="OUTFILE">	
+				<a href='<TMPL_VAR NAME=OUTFILE>'> Download </a> </td>
+			</TMPL_IF>				
+
+
+			<tr valign='top'>
+            <td>&nbsp;</td>
+            <td><a href='<TMPL_VAR NAME=ACTION>'>Return to task list</a></td>
+          </tr>
+		  
+  </table>
+
+
+
+<TMPL_ELSE>
+
+<table border=1>
+	<tr>
+		<td> Description </td>
+		<td> Type of task </td>
+		<td> Task added </td>
+		<td> Status updated  </td>
+		<td> Status </td>
+		<td> Output file </td>
+		<td> Task messages </td>
+		<td>  </td>
+	</tr>
+
+   <TMPL_LOOP NAME=USERS_LIST_LOOP>
+	<tr>
+
+		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'> <TMPL_VAR NAME=DESC> </a> </td>
+		<td> <TMPL_VAR NAME=SNAME></td>
+		<td> <TMPL_VAR NAME=DT></td>
+		<td> <TMPL_VAR NAME=SDT></td>
+		<td
+			<TMPL_IF NAME="STATUS_RED">	
+				bgcolor='#FBEFF2'
+			</TMPL_IF>	
+			<TMPL_IF NAME="STATUS_YELLOW">	
+				bgcolor='#ECF6CE'
+			</TM			
+			</TMPL_IF>	
+			<TMPL_IF NAME="STATUS_GREEN">	
+				bgcolor='#CEF6CE'
+			</TMPL_IF>				
+		
+		> <TMPL_VAR NAME=STATUS></td>
+		<td> 
+			<TMPL_IF NAME="OUTFILE">	
+				<a href='<TMPL_VAR NAME=OUTFILE>'> Download </a> </td>
+			</TMPL_IF>						
+		<td> <TMPL_VAR NAME=MESS></td>
+		<td> [ <a href='' onclick="confirm_prompt('Are you sure to delete Task _<TMPL_VAR NAME=desc>_ and all output files','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
+	</tr>
+   </TMPL_LOOP>
+</table>
+
+</TMPL_IF> 
+
+</div>
+
+</div>
+
+</body>
+</html>

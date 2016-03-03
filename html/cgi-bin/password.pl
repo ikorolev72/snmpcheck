@@ -1,18 +1,9 @@
 #!perl
 # korolev-ia [at] yandex.ru
 
-
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/home/admin/lib' ,'/home/admin/lib'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
 use COMMON_ENV;
-#use strict;
-#use warnings;
-use HTML::Template;
-use DBI;
-use CGI::Carp qw ( fatalsToBrowser );
-use CGI qw(param);
-use Digest::SHA qw(sha1 sha1_hex );
-use Data::Dumper;
-use CGI::Cookie;
+
 
 
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
@@ -54,9 +45,9 @@ if( $show_form ) {
 
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 $template->param( TITLE=>"Change password" );
-$template->param( MESSAGES=> $message );
 
   # print the template output
+$template->param( MESSAGES=> $message );
 print "Content-type: text/html\n\n" ;
 print  $template->output;
 

@@ -4,6 +4,22 @@
 
 BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/home/admin/lib' ,'/home/admin/lib'; } 
 use DBI;
+#use strict;
+#use warnings;
+use HTML::Template;
+use DBI;
+use CGI::Carp qw ( fatalsToBrowser );
+use CGI qw(param);
+use Digest::SHA qw(sha1 sha1_hex );
+use Data::Dumper;
+use CGI::Cookie;
+use CGI qw/:standard/;
+use JSON;
+use HTML::Entities;
+
+
+
+
 
 $Paths->{HOME}='C:/GIT/snmpcheck/';
 #$Paths->{HOME}='/var/www';
@@ -12,9 +28,11 @@ $Paths->{DB}="$Paths->{HOME}/data/db";
 $Paths->{LOG}="$Paths->{HOME}/data/log/snmpcheck.log";
 $Paths->{GROUPS}="$Paths->{HOME}/data/iplist/groups/";
 $Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
-$Paths->{TASKS}="$Paths->{HOME}/data/tasks";
 $Paths->{WORKER}="$Paths->{HOME}/worker";
-$Paths->{JSON}="$Paths->{HOME}/json";
+$Paths->{JSON}="$Paths->{HOME}/data/json";
+$Paths->{OUTFILE}="$Paths->{HOME}/html/reports";
+
+$Url->{OUTFILE}='/reports';
 
 
 

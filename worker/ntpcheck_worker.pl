@@ -2,8 +2,6 @@
 
 BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
 use COMMON_ENV;
-use JSON;
-use Data::Dumper;
 
 use Getopt::Long;
 
@@ -29,8 +27,12 @@ unless( -f $json_file ) {
   open( my $fh, '<', $json_file );
   my $json_text   = <$fh>;
   $Param = decode_json( $json_text );
-  
- print Dumper( $Param ); 
+
+foreach( 0..9 )  {
+	WriteFile("C:/GIT/tmp/$_.txt", Dumper( $Param ) );  
+	sleep 20;
+}
+
   
   
   

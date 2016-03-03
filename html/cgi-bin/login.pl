@@ -2,18 +2,10 @@
 # korolev-ia [at] yandex.ru
 
 
-BEGIN{ unshift @INC, '/opt/' ,'/home/admin/lib'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
 use COMMON_ENV;
-#use strict;
-#use warnings;
-use HTML::Template;
-use DBI;
-use CGI::Carp qw ( fatalsToBrowser );
-use CGI qw(param);
-use Digest::SHA qw(sha1 sha1_hex );
-use Data::Dumper;
-use CGI::Cookie;
-use CGI qw/:standard/;
+
+
 
 
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
@@ -53,9 +45,9 @@ $template->param( SHOWFORM=>$show_form );
 $template->param( LOGIN=>$Param->{login} );
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 $template->param( TITLE=>"Login" );
-$template->param( MESSAGES=> $message );
 
   # print the template output
+$template->param( MESSAGES=> $message );
 print  $template->output;
 
  
