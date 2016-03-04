@@ -150,7 +150,7 @@ function cutLongText( field ) {
   
 			<tr valign='top'>
 			<td> NTP server4 IP address </td>    
-			<td> <INPUT TYPE="text" NAME="ntp4" required SIZE=20 maxlength='20'> </td>
+			<td> <INPUT TYPE="text" NAME="ntp4" SIZE=20 maxlength='20'> </td>
 			<tr valign='top'>
 			<td> NTP server4 polling time </td>    
 			<td>  
@@ -218,11 +218,30 @@ function cutLongText( field ) {
 	<input name='ip' type='hidden' value='<TMPL_VAR NAME=IP>'>  
 	<input name='group' type='hidden' value='<TMPL_VAR NAME=GROUP>'>  
 	<input name='all_ipasolink' type='hidden' value='<TMPL_VAR NAME=ALL_IPASOLINK>'>  
+
+	<input name='ntp1' type='hidden' value='<TMPL_VAR NAME=NTP1>'>  
+	<input name='ntp2' type='hidden' value='<TMPL_VAR NAME=NTP2>'>  
+	<input name='ntp3' type='hidden' value='<TMPL_VAR NAME=NTP3>'>  
+	<input name='ntp4' type='hidden' value='<TMPL_VAR NAME=NTP4>'>  
+
+	<input name='ntp1_pool' type='hidden' value='<TMPL_VAR NAME=NTP1_POOL>'>  
+	<input name='ntp2_pool' type='hidden' value='<TMPL_VAR NAME=NTP2_POOL>'>  
+	<input name='ntp3_pool' type='hidden' value='<TMPL_VAR NAME=NTP3_POOL>'>  
+	<input name='ntp4_pool' type='hidden' value='<TMPL_VAR NAME=NTP4_POOL>'>  
+	
 	
   <table border='1' cellspacing='0' cellpadding='2'>
 			<tr valign='top'>
 			<td> Add task for worker </td>
 			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
+			<tr valign='top'>
+			<td> NTP servers and pool time </td>
+			<td> 
+				<b>NTP1:</b> '<TMPL_VAR NAME=NTP1>' <b>Pool time:</b>'<TMPL_VAR NAME=NTP1_POOL>'<br>
+				<b>NTP2:</b> '<TMPL_VAR NAME=NTP2>' <b>Pool time:</b>'<TMPL_VAR NAME=NTP2_POOL>'<br>
+				<b>NTP3:</b> '<TMPL_VAR NAME=NTP3>' <b>Pool time:</b>'<TMPL_VAR NAME=NTP3_POOL>'<br>
+				<b>NTP4:</b> '<TMPL_VAR NAME=NTP4>' <b>Pool time:</b>'<TMPL_VAR NAME=NTP4_POOL>'<br>
+
 			<tr valign='top'>
 			<td> Selected IP </td>
 			<td> 

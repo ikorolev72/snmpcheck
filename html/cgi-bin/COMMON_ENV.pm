@@ -60,6 +60,16 @@ sub get_groups {
 }
 
 
+sub get_workers {
+	my $html_dir=$Paths->{WORKER};
+	my @ls;
+	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
+		@ls = reverse sort grep { -f "$html_dir/$_" } readdir(DIR);
+	closedir DIR;
+	return @ls;
+}
+
+
 sub update_task_status {
 	my $dbh=shift;
 	my $row=shift;

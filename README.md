@@ -8,17 +8,17 @@ Project for checking snmp and get the results in csv
 
 ##  The Latest Version
 
-	version 1.1 2016.03.04
+	version 1.2 2016.03.04
 	
 ### There are realised:
 - add/edit/remove user form/table
 - login form
 - password change form
 - add/edit/remove snmpworkers form/table 
-- add ntpcheck task form (with dummy worker) and start task
+- add ntpcheck or 'ntp ip change' tasks form (with dummy worker) and start task
 - add/remove/show tasks table. task monitoring, task status/progress/warning update, message system between tasks level and workers.
 - html templates
-- dummy worker
+- two dummy workers
 
 
 ### What not yet ready:
@@ -60,7 +60,7 @@ install HTML::Entities
 Extract the tar archive to /opt/snmpckeck :
 ```
 # gunzip snmpcheck.tar.gz
-# tar -C /opt snmpcheck.tar
+# tar -C /opt -xf snmpcheck.tar
 ```
 Set the owner
 ```

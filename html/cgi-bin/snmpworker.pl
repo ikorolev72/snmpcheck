@@ -94,10 +94,21 @@ if( $show_form ) {
 	}
 	$template->param(USERS_LIST_LOOP => \@loop_data);
 }
+
+foreach $w ( get_workers() ) {
+	my %row_data;   
+	$row_data{ LOOP_WORKER }=$w;
+	push(@loop_data, \%row_data);
+}
+$template->param(WORKER_LIST_LOOP => \@loop_data);
+
+
  
 #print "<pre>".Dumper( $ENV{'SCRIPT_NAME'} )."</pre>";
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 $template->param( TITLE=>"Add / Edit / Delete worker settings" );
+
+
 
 
   # print the template output

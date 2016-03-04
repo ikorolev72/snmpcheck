@@ -9,7 +9,7 @@ use CGI::Carp qw ( fatalsToBrowser );
 
 
 
-$sname="ntpcheck";
+$sname="ntp_ip_change";
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'ntp_ip_change.htm', die_on_bad_params=>0 );
 $template->param( SNAME=> $sname  );
@@ -49,6 +49,17 @@ $template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
 $template->param( IP=> $Param->{ip} );
 $template->param( GROUP=> $Param->{group} );
 $template->param( ALL_IPASOLINK=> $Param->{all_ipasolink} );
+
+$template->param( NTP1=> $Param->{ntp1} );
+$template->param( NTP2=> $Param->{ntp2} );
+$template->param( NTP3=> $Param->{ntp3} );
+$template->param( NTP4=> $Param->{ntp4} );
+$template->param( NTP1_POOL=> $Param->{ntp1_poll} );
+$template->param( NTP2_POOL=> $Param->{ntp2_poll} );
+$template->param( NTP3_POOL=> $Param->{ntp3_poll} );
+$template->param( NTP4_POOL=> $Param->{ntp4_poll} );
+
+
 
 
 foreach $group ( get_groups() ) {

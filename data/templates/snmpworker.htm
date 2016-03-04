@@ -66,7 +66,7 @@ function isNumberInt(inputString) {
 
 			<tr valign='top'>
 			<td> name </td>
-			<td> <input name='sname' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNAME>'> </td>
+			<td> <input name='sname' type='text' size='20' maxlength='20' required  value='<TMPL_VAR NAME=SNAME>'> </td>
 
 			<tr valign='top'>
 			<td> desc </td>
@@ -74,7 +74,18 @@ function isNumberInt(inputString) {
 
 			<tr valign='top'>
 			<td> worker script</td>
-			<td> <input name='worker' type='text' size='20' maxlength='100' value='<TMPL_VAR NAME=WORKER>'> </td>
+			<td>
+			
+				<select name='worker'>	
+					<TMPL_IF NAME=WORKER>
+					<option value='<TMPL_VAR NAME=WORKER>' selected><TMPL_VAR NAME=WORKER></option>
+					</TMPL_IF>
+					<TMPL_LOOP NAME=WORKER_LIST_LOOP>				
+						<option value='<TMPL_VAR NAME=LOOP_WORKER>' ><TMPL_VAR NAME=LOOP_WORKER></option>
+					</TMPL_LOOP>					
+				</select>
+				</td>
+			
 
 			<tr valign='top'>
 			<td> ip </td>
