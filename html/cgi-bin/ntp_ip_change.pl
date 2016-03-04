@@ -11,9 +11,9 @@ use CGI::Carp qw ( fatalsToBrowser );
 
 $sname="ntpcheck";
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
-$template = HTML::Template->new(filename => 'ntpcheck.htm', die_on_bad_params=>0 );
+$template = HTML::Template->new(filename => 'ntp_ip_change.htm', die_on_bad_params=>0 );
 $template->param( SNAME=> $sname  );
-$title="NTP status check tool";
+$title="iPasolink NTP server IP change";
 
 
 $query = new CGI;
@@ -80,9 +80,36 @@ return 0;
 
 sub check_record {
 	my $retval=1;
-	unless( CheckField ( $Param->{ip} ,'ip_op_empty', "Field 'ip' " )) {
+	unless( CheckField ( $Param->{ntp1} ,'ip', "Field 'NTP server1 IP address' " )) {
 			$retval=0;
 	} 
+	unless( CheckField ( $Param->{ntp2} ,'ip_op_empty', "Field 'NTP server2 IP address' " )) {
+			$retval=0;
+	} 
+	unless( CheckField ( $Param->{ntp3} ,'ip_op_empty', "Field 'NTP server3 IP address' " )) {
+			$retval=0;
+	} 
+	unless( CheckField ( $Param->{ntp4} ,'ip_op_empty', "Field 'NTP server4 IP address' " )) {
+			$retval=0;
+	} 
+	unless( CheckField ( $Param->{ntp1_poll} ,'int', "Field 'NTP server1 polling time' " )) {
+			$retval=0;
+	} 
+	unless( CheckField ( $Param->{ntp2_poll} ,'int', "Field 'NTP server2 polling time' " )) {
+			$retval=0;
+	} 
+	unless( CheckField ( $Param->{ntp3_poll} ,'int', "Field 'NTP server3 polling time' " )) {
+			$retval=0;
+	} 
+	unless( CheckField ( $Param->{ntp4_poll} ,'int', "Field 'NTP server4 polling time' " )) {
+			$retval=0;
+	} 
+
+
+
+	unless( CheckField ( $Param->{ip} ,'ip_op_empty', "Field 'ip' " )) {
+			$retval=0;
+	} 	
 	unless( CheckField ( $Param->{group} ,'text', "Field 'group' ") ){
 		$retval=0;
 	}

@@ -1,0 +1,254 @@
+<html>
+<head>
+	<title>
+		<TMPL_VAR NAME=TITLE>
+	</title>
+	<META http-equiv=Content-Type content='text/html; charset=iso-8859-1;'>
+	<LINK href='/main.css' type=text/css rel=stylesheet>
+
+<style>
+
+body {
+	font-family: verdana, arial, sans-serif; 
+}
+
+
+.left_div {
+	width: 50%;
+	height: 100%;
+	float:left;
+}
+
+.right_div {
+	width: 50%;
+	height: 100%;
+	float:right;
+}
+
+</style>
+	
+<script language="JavaScript">
+  function confirm_prompt( text,url ) {
+     if (confirm( text )) {
+      window.location = url ;
+    }
+  }
+  
+function isNumberInt(inputString) {
+  return (!isNaN(parseInt(inputString))) ? true : false;
+}
+
+function cutLongText( field ) {
+
+   var elem, size, text, ftext;
+	elem = document.getElementById( field );
+	text = elem.innerHTML;
+	size = 100;
+	ftext=elem.innerHTML;
+	if (text.length > size) {
+		text = text.slice(0, size);
+	}
+   	elem.innerHTML = text +'<a href="#" onclick="return alert( ftext );">...</a>';
+}
+</script>
+
+
+
+</script>
+	
+	
+</head>
+<body>
+<a href='/'>home</a>
+<h3>
+	<TMPL_VAR NAME=TITLE>
+</h3>
+
+<font color=red> <h4> <TMPL_VAR NAME=MESSAGES> </h4> </font>
+
+<hr>
+
+<div  class="parent">
+<div  class="left_div">
+
+<TMPL_IF NAME=SHOWFORM> 
+
+
+<form action='<TMPL_VAR NAME=ACTION>' method='post' enctype='multipart/form-data' name='form1'>
+  <input name='id' type='hidden' value='<TMPL_VAR NAME=ID>' >
+  <input name='new' type='hidden' value='<TMPL_VAR NAME=NEW>' >
+  <input name='edit' type='hidden' value='<TMPL_VAR NAME=EDIT>' >
+  <table border='1' cellspacing='0' cellpadding='2'>
+  
+			<tr valign='top'>
+			<td> NTP server1 IP address </td>    
+			<td> <INPUT TYPE="text" NAME="ntp1" required SIZE=20> </td>
+			<tr valign='top'>
+			<td> NTP server1 polling time </td>    
+			<td>  
+				<select id = "ntp1_poll" NAME="ntp1_poll" SIZE=1>
+				<option value = "6">1 [min] 4 [sec] (64 [sec])</option>
+				<option value = "7">2 [min] 8 [sec] (128 [sec])</option>
+				<option selected value = "8">4 [min] 16 [sec] (256 [sec])</option>
+				<option value = "9">8 [min] 32 [sec] (512 [sec])</option>
+				<option value = "10">17 [min] 4 [sec] (1024 [sec])</option>
+				<option value = "11">34 [min] 8 [sec] (2048 [sec])</option>
+				<option value = "12">1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
+				<option value = "13">2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
+				<option value = "14">4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
+				<option value = "15">9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
+				<option value = "16">18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
+				<option value = "17">36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				</select>
+			</td>
+
+			<tr valign='top'>
+			<td> NTP server2 IP address </td>    
+			<td> <INPUT TYPE="text" NAME="ntp2" SIZE=20 maxlength='20'> </td>
+			<tr valign='top'>
+			<td> NTP server2 polling time </td>    
+			<td>  
+				<select id = "ntp2_poll" NAME="ntp2_poll" SIZE=1>
+				<option value = "6">1 [min] 4 [sec] (64 [sec])</option>
+				<option value = "7">2 [min] 8 [sec] (128 [sec])</option>
+				<option selected value = "8">4 [min] 16 [sec] (256 [sec])</option>
+				<option value = "9">8 [min] 32 [sec] (512 [sec])</option>
+				<option value = "10">17 [min] 4 [sec] (1024 [sec])</option>
+				<option value = "11">34 [min] 8 [sec] (2048 [sec])</option>
+				<option value = "12">1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
+				<option value = "13">2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
+				<option value = "14">4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
+				<option value = "15">9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
+				<option value = "16">18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
+				<option value = "17">36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				</select>
+			</td>
+
+
+			<tr valign='top'>
+			<td> NTP server3 IP address </td>    
+			<td> <INPUT TYPE="text" NAME="ntp3" SIZE=20 maxlength='20'> </td>
+			<tr valign='top'>
+			<td> NTP server3 polling time </td>    
+			<td>  
+				<select id = "ntp3_poll" NAME="ntp3_poll" SIZE=1>
+				<option value = "6">1 [min] 4 [sec] (64 [sec])</option>
+				<option value = "7">2 [min] 8 [sec] (128 [sec])</option>
+				<option selected value = "8">4 [min] 16 [sec] (256 [sec])</option>
+				<option value = "9">8 [min] 32 [sec] (512 [sec])</option>
+				<option value = "10">17 [min] 4 [sec] (1024 [sec])</option>
+				<option value = "11">34 [min] 8 [sec] (2048 [sec])</option>
+				<option value = "12">1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
+				<option value = "13">2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
+				<option value = "14">4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
+				<option value = "15">9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
+				<option value = "16">18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
+				<option value = "17">36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				</select>
+			</td>
+			
+  
+			<tr valign='top'>
+			<td> NTP server4 IP address </td>    
+			<td> <INPUT TYPE="text" NAME="ntp4" required SIZE=20 maxlength='20'> </td>
+			<tr valign='top'>
+			<td> NTP server4 polling time </td>    
+			<td>  
+				<select id = "ntp4_poll" NAME="ntp4_poll" SIZE=1>
+				<option value = "6">1 [min] 4 [sec] (64 [sec])</option>
+				<option value = "7">2 [min] 8 [sec] (128 [sec])</option>
+				<option selected value = "8">4 [min] 16 [sec] (256 [sec])</option>
+				<option value = "9">8 [min] 32 [sec] (512 [sec])</option>
+				<option value = "10">17 [min] 4 [sec] (1024 [sec])</option>
+				<option value = "11">34 [min] 8 [sec] (2048 [sec])</option>
+				<option value = "12">1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
+				<option value = "13">2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
+				<option value = "14">4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
+				<option value = "15">9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
+				<option value = "16">18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
+				<option value = "17">36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				</select>
+			</td>
+  
+  
+			<tr valign='top'>
+			<td> NE IP </td>
+			<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
+			<tr valign='top'>
+			<td> Select group </td>
+			<td>			
+				<select name='group'>	
+					<option value='' ></option>
+					<TMPL_LOOP NAME=GROUP_LIST_LOOP>				
+						<option value='<TMPL_VAR NAME=GROUP>' ><TMPL_VAR NAME=GROUP></option>
+					</TMPL_LOOP>					
+				</select>
+				</td>
+			<tr valign='top'>
+			<td> Generate IP list for all iPasolink</td>
+			<td> 				
+				<select name='all_ipasolink'>	
+					<option value='1' <TMPL_IF NAME=ALL_IPASOLINK> selected </TMPL_IF> >Yes</option>
+					<option value='0' <TMPL_UNLESS NAME=ALL_IPASOLINK> selected </TMPL_UNLESS> >No</option>
+				</select>
+				</td>
+			<tr valign='top'>
+			<td> Description </td>
+			<td> <input name='desc' type='text' size='50' maxlength='254' value='<TMPL_VAR NAME=DESC>'> </td>
+				
+			<tr valign='top'>
+            <td>&nbsp;</td>
+            <td><input name='save' type='submit' id='save' value='Save'></td>
+          </tr>
+		  
+  </table>
+        <br>
+
+</form>
+
+
+</TMPL_IF> 
+
+<TMPL_IF NAME=SHOWFORM_TO_TASK> 
+
+
+<form action='<TMPL_VAR NAME=ACTION_TASK_ADD>' method='post' enctype='multipart/form-data' name='form1'>
+	<input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>' >
+	<input name='desc' type='hidden' value='<TMPL_VAR NAME=DESC>'>  
+	<input name='ip' type='hidden' value='<TMPL_VAR NAME=IP>'>  
+	<input name='group' type='hidden' value='<TMPL_VAR NAME=GROUP>'>  
+	<input name='all_ipasolink' type='hidden' value='<TMPL_VAR NAME=ALL_IPASOLINK>'>  
+	
+  <table border='1' cellspacing='0' cellpadding='2'>
+			<tr valign='top'>
+			<td> Add task for worker </td>
+			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
+			<tr valign='top'>
+			<td> Selected IP </td>
+			<td> 
+					<b>IP:</b><TMPL_VAR NAME=IP>  <TMPL_IF  NAME=GROUP><b>Group:</b><TMPL_VAR NAME=GROUP></TMPL_IF>  <b>IP list for all iPasolink:</b><TMPL_IF  NAME=ALL_IPASOLINK>Yes<TMPL_ELSE>No</TMPL_IF></td>
+
+			<tr valign='top'>
+			<td> Description </td>
+			<td> <TMPL_VAR NAME=DESC> </td>
+			<tr valign='top'>
+            <td>&nbsp;</td>
+            <td>&nbsp;[ <a href="" onclick="confirm_prompt( 'Cancel process task add','/'); return false;">Cancel</a> ] &nbsp; <input name='save' type='submit' id='save' value='Submit task'></td>
+          </tr>
+		  
+  </table>
+        <br>
+
+</form>
+
+
+
+</TMPL_IF> 
+
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
 use COMMON_ENV;
 
 
@@ -22,6 +22,7 @@ $stmt =" CREATE TABLE IF NOT EXISTS tasks (
 	sname  		TEXT,
 	desc  		TEXT,
 	user  		TEXT,
+	pdt		text,	
 	sdt		text,	
 	dt		text,	
 	param		text,

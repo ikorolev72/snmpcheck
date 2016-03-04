@@ -1,6 +1,6 @@
-#!perl
+#!/usr/bin/perl
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
 use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
@@ -19,6 +19,25 @@ $sname=$Param->{sname};
 $dbh=db_connect() ;
 
 
+
+
+
+update_status($dbh); 
+
+$template->param( REQUEST_URI => "$ENV{'REQUEST_URI'}" );
+
+if( $Param->{del} ) {
+	$template->param( REQUEST_URI => "$ENV{'SCRIPT_NAME'}" );
+	my $row=GetRecord( $dbh , $Param->{id}, $table  );
+		if( $row ) {
+			unlink( "$Paths->{JSON}/$row->{id}.\w+\.json" ) ;
+			unlink( "$Paths->{OUTFILE}/$row->{outfile}" ) ;
+			DeleteRecord( $dbh, $Param->{id}, $table  );
+		} else {
+			message2( "Cannot found the record with id: $Param->{id}" ) ;
+		}
+}
+
 if( $Param->{edit} ) {
 		# if we will show full page of one task
 		$template->param( SHOWFORM=>1 );
@@ -34,7 +53,7 @@ if( $Param->{edit} ) {
 				$template->param( DT=>  get_date($row->{dt}) ); 
 				$template->param( SDT=> get_date( $row->{sdt} ) ); 
 				$template->param( STATUS=> $Task->{ $row->{status} } ); 
-				$template->param( PROGRESS=> $row->{progress}  ); 
+				$template->param( PROGRESS=> "$row->{progress} %"  ); 
 					if( 4==$row->{status} ) {
 						$template->param( STATUS_GREEN=>1 );
 					}
@@ -57,7 +76,6 @@ if( $Param->{edit} ) {
 } else { 
 		# if we will show the list of tasks	
 		
-	update_status($dbh); 
 	$template->param( SHOWFORM=>0 );
 
 	# show list of workers
@@ -77,7 +95,7 @@ if( $Param->{edit} ) {
 		$row_data{ DT }=get_date( $row->{dt} ); 
 		$row_data{ SDT }=get_date( $row->{sdt} ); 
 		$row_data{ STATUS }=$Task->{ $row->{status} }  ; 
-		$row_data{ PROGRESS }=$Task->{ $row->{progress} }  ; 
+		$row_data{ PROGRESS }= "$row->{progress} %"  ; 
 				if( 4==$row->{status} ) {
 					$row_data{ STATUS_GREEN }=1 ;
 				}
@@ -99,8 +117,9 @@ if( $Param->{edit} ) {
 }
 
 
+
+
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-$template->param( REQUEST_URI => "$ENV{'REQUEST_URI'}" );
 $template->param( MESSAGES=> $message );
 print "Content-type: text/html\n\n" ;
 print  $template->output;
@@ -111,7 +130,6 @@ db_disconnect( $dbh );
 
 
 sub update_status {
-	local $/;
 	my $dbh=shift;
 	my $timeout=3600; # set timeout for tasks to 1 hour
 	# SELECT * FROM COMPANY WHERE AGE NOT IN ( 25, 27 );
@@ -127,35 +145,47 @@ sub update_status {
 	while (my $row = $sth->fetchrow_hashref) {
 		my $json_out="$Paths->{JSON}/$row->{id}.out.json";
 		unless( -f $json_out ) {
-			if ( time() - $row->{dt} > $timeout )  { 
-				my $nrow;
-				$nrow->{ dt }=time();
-				$nrow->{ status }=5; # failed by timeout
-				$nrow->{ mess }="Task failed by timeout";						
-				$nrow->{ progress }=1;						
-				UpdateRecord ( $dbh, $row->{id}, $table, $nrow ) ;				
-				next;
-			}
+#			if ( time() - $row->{pdt} > $timeout )  { # task do not start during timeout after planed time
+#				my $nrow;
+#				$nrow->{ dt }=time();
+#				$nrow->{ status }=5; # failed by timeout
+#				$nrow->{ mess }="Task planed start at ". get_date( $row->{pdt} ) ." but do not start during $timeout sec. Failed by timeout";						
+#				$nrow->{ progress }=1;						
+#				update_task_status ( $dbh, $nrow ) ;				
+#				next;
+#			}
+#			if ( time() - $row->{dt} > $timeout )  {  # time of task do not changed during timeout
+#				my $nrow;
+#				$nrow->{ dt }=time();
+#				$nrow->{ status }=5; # failed by timeout
+#				$nrow->{ mess }="Do not get any messages from task during $timeout sec. Failed by timeout";						
+#				$nrow->{ progress }=1;						
+#				update_task_status ( $dbh, $nrow ) ;				
+#				next;
+#			}
+			next;
 		}
 		
-		open( my $fh, '<', $json_out );
-		my $json_text   = <$fh>;
+		my $json_text   = ReadFile(  $json_out ); 
 
-		my $nrow = decode_json( $json_text );	
+		my $nrow = JSON->new->utf8->decode($json_text) ;		
 		$nrow->{ dt }=time();
 		if( $row->{dt} == $nrow->{ dt }   )  {
-				if( time() - $row->{dt} < $timeout ) {
+				if(  time() - $row->{dt} > $timeout ) {
 					$nrow->{ status }=5; # failed by timeout
-					$nrow->{ mess }="Task failed by timeout";						
-					UpdateRecord ( $dbh, $row->{id}, $table, $nrow ) ;				
+					$nrow->{ mess }="Do not get any messages from task during $timeout sec. Failed by timeout";						
+					$nrow->{ progress }=1;						
+					update_task_status ( $dbh, $nrow ) ;			
 					next;
 				}
 			next;
 		}
-		UpdateRecord ( $dbh, $row->{id}, $table, $nrow ) ;				
+		update_task_status ( $dbh, $nrow ) ;			
 	}		
 	return 1;
 }
+
+
 
 
 

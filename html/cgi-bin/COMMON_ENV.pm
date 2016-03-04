@@ -2,7 +2,8 @@
 # korolev-ia [at] yandex.ru
 
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/home/admin/lib' ,'/home/admin/lib'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
+
 use DBI;
 #use strict;
 #use warnings;
@@ -20,16 +21,22 @@ use HTML::Entities;
 
 
 
+
 $Paths->{HOME}='C:/GIT/snmpcheck/';
-#$Paths->{HOME}='/var/www';
+if( -d '/opt/snmpcheck' ) { 
+	$Paths->{HOME}='/opt/snmpcheck/';
+}	
 $Paths->{TEMPLATE}="$Paths->{HOME}/data/templates";
 $Paths->{DB}="$Paths->{HOME}/data/db";
 $Paths->{LOG}="$Paths->{HOME}/data/log/snmpcheck.log";
+$Paths->{WORKER_LOG}="$Paths->{HOME}/data/log/worker.log"; # usualy must be /dev/null
+#Paths->{WORKER_LOG}="/dev/nullaly must be /dev/null
 $Paths->{GROUPS}="$Paths->{HOME}/data/iplist/groups/";
 $Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
 $Paths->{WORKER}="$Paths->{HOME}/worker";
 $Paths->{JSON}="$Paths->{HOME}/data/json";
 $Paths->{OUTFILE}="$Paths->{HOME}/html/reports";
+$Paths->{TASK_UPDATE}="$Paths->{HOME}/html/cgi-bin/task_update.pl";
 
 $Url->{OUTFILE}='/reports';
 
@@ -52,6 +59,13 @@ sub get_groups {
 	return @ls;
 }
 
+
+sub update_task_status {
+	my $dbh=shift;
+	my $row=shift;
+	my $table='tasks';			
+	return( UpdateRecord ( $dbh, $row->{id}, $table, $row ) )  ;	
+}
 
 sub db_connect {
 	
@@ -162,14 +176,15 @@ sub UpdateRecord {
 	my $id=shift;
 	my $table=shift;
 	my $row=shift;
-	my @Val,@Col;
-
+	my @Val=();
+	my @Col=();
 	foreach $key ( keys %{ $row }) {
 		push ( @Col," $key = ? " ) ;
 		push ( @Val, $row->{$key} ) ;
 	}
 		push ( @Val, $id ) ;
 	my $stmt ="UPDATE $table set " . join(',',@Col ). " where id=?  ";
+	#w2log( $stmt,@Col );
 	#unless ( $dbh->do( $stmt,  @Val ) ) {
 	#	message2 ( "Someting wrong with database  : $DBI::errstr" );
 	#	w2log ( "Sql( $stmt )Someting wrong with database  : $DBI::errstr" );

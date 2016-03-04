@@ -1,52 +1,38 @@
 #!/usr/bin/perl
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
 use COMMON_ENV;
 
 use Getopt::Long;
 
 
 GetOptions (
-        'json=s' => \$json_text,
+        'json=s' => \$json_file,
         "help|h|?"  => \$help ) or show_help();
 
 
 
-unless(  $json ) {
+unless(  -f $json ) {
+	print STDERR "File not found $json: $!" ;
 	show_help();
 	exit 1;
 }
 
 
+my $json_text=ReadFile( $json);
+my $row = JSON->new->utf8->decode($json_text) ;		
 
 $dbh=db_connect() ;
-
-update_status( $dbh, $json_text );
-
+update_task_status( $dbh, $row );
 db_disconnect( $dbh );
-
-
-  
+ 
 
 exit 0;
  
-
-
-sub update_status {
-	my $dbh=shift;
-	my $json_text=shift;
-	my $table='tasks';			
-	my $row = decode_json( $json_text );	
-	UpdateRecord ( $dbh, $row->{id}, $table, $row ) ;				
-	return 1;
-}
-
-
- 
   
 sub show_help {
-print STDOUT "Usage: $0  --json='JSON_PARAMETERS' [ --help ]
+print STDOUT "Usage: $0  --json='JSON_FILE' [ --help ]
 Sample:
-$0  --json='{\"progress\":100,\"status\":4,\"dt\":1457033722,\"mess\":\"Finished successfully\",\"id\":\"39\"}'
+$0  --json='/tmp/123.json'
 ";
 }

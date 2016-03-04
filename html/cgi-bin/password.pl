@@ -1,7 +1,7 @@
-#!perl
+#!/usr/bin/perl
 # korolev-ia [at] yandex.ru
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
 use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
