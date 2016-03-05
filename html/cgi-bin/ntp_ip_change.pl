@@ -41,7 +41,6 @@ if(  Action() ==0 ) {
 	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 	$template->param( ACTION_TASK_ADD=>  "/cgi-bin/task_add.pl" );
 	$template->param( TITLE=>"$title. Ready to add task" );
-
 }
 
 

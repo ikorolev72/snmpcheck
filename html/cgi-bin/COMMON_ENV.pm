@@ -29,14 +29,15 @@ if( -d '/opt/snmpcheck' ) {
 $Paths->{TEMPLATE}="$Paths->{HOME}/data/templates";
 $Paths->{DB}="$Paths->{HOME}/data/db";
 $Paths->{LOG}="$Paths->{HOME}/data/log/snmpcheck.log";
-$Paths->{WORKER_LOG}="$Paths->{HOME}/data/log/worker.log"; # usualy must be /dev/null
-#Paths->{WORKER_LOG}="/dev/nullaly must be /dev/null
+$Paths->{WORKER_LOG}="$Paths->{HOME}/data/log/worker.log";  # after all tests it can be set to /dev/null 
+#$Paths->{WORKER_LOG}="/dev/null";
 $Paths->{GROUPS}="$Paths->{HOME}/data/iplist/groups/";
 $Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
-$Paths->{WORKER}="$Paths->{HOME}/worker";
+$Paths->{WORKER_DIR}="$Paths->{HOME}/worker";
 $Paths->{JSON}="$Paths->{HOME}/data/json";
 $Paths->{OUTFILE}="$Paths->{HOME}/html/reports";
 $Paths->{TASK_UPDATE}="$Paths->{HOME}/html/cgi-bin/task_update.pl";
+$Paths->{PID_DIR}="$Paths->{HOME}/data/pid";
 
 $Url->{OUTFILE}='/reports';
 
@@ -61,7 +62,7 @@ sub get_groups {
 
 
 sub get_workers {
-	my $html_dir=$Paths->{WORKER};
+	my $html_dir=$Paths->{WORKER_DIR};
 	my @ls;
 	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
 		@ls = reverse sort grep { -f "$html_dir/$_" } readdir(DIR);

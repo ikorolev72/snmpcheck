@@ -26,48 +26,7 @@ if(  Action() ==0 ) {
 } else {
 	message2( "Task '$Param->{desc}' added. Please, check it in <a href='/cgi-bin/task_list.pl'> Task list </a>" ) ;
 
-	
-	###########################################
-	######### there we start the worker !!!!!
-	# if planed task then do not start
-	unless( $Param->{ pdt } ) { 
 
-	my $row=GetRecordByField ( $dbh,  'snmpworker', 'sname', $Param->{sname} );
-	my $mess='';
-	my $status=2;
-		unless( -f "$Paths->{WORKER}/$row->{worker}" ) {			
-				$status=5 ; # failed
-				$mess="Not found worker '$Paths->{WORKER}/$row->{worker}' for '$Param->{sname}'";			
-				message2( "Cannot start the task. $mess"  );
-				w2log( "Cannot start the task. $mess" );
-		}
-		$Param->{id}=$id;
-		my $json_text=JSON->new->utf8->encode($Param) ;
-		my $json_file="$Paths->{JSON}/$id.param.json";
-		unless( WriteFile( $json_file, JSON->new->utf8->encode($Param) ) ){
-				$status=5 ; # failed				
-				$mess="Cannot write file $json_file: $!";
-				message2( $mess );
-		};	
-		# start
-		my $cmd="$Paths->{WORKER}/$row->{worker} --json=$json_file >> $Paths->{WORKER_LOG} 2>&1 &" ;
-		w2log ( "Start the worker : $cmd " );
-		system( "$cmd" ) ;
-		
-		undef $row;
-		my $row;
-		$row->{status}=$status ; # failed
-		$row->{mess}=$mess ;
-		$row->{dt}=time() ;
-		$row->{progress}=0 ;
-		$row->{id}=$id ;
-		# system( "$Paths->{TASK_UPDATE} --json='".encode_json( $row )."'" ) ;
-
-		update_task_status(  $dbh , $row );
-		
-	}
-	
-	#########################################
 }
 
 $template->param( MESSAGES=> $message );
@@ -93,6 +52,7 @@ sub Action {
 		$row->{desc}=$Param->{desc} ;
 		$row->{user}='' ; # USER !!!!
 		$row->{sdt}=time() ;
+		$row->{pdt}=time() ; # planed time of starting task. there can be inserted future time
 		$row->{dt}=time() ;
 		$row->{param}=JSON->new->utf8->encode($Param); 
 		$row->{status}=1 ; # added
