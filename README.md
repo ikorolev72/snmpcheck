@@ -8,7 +8,7 @@ Project for checking snmp and get the results in csv
 
 ##  The Latest Version
 
-	version 1.2 2016.03.04
+	version 1.3 2016.03.05
 	
 ### There are realised:
 - add/edit/remove user form/table
@@ -19,11 +19,12 @@ Project for checking snmp and get the results in csv
 - add/remove/show tasks table. task monitoring, task status/progress/warning update, message system between tasks level and workers.
 - html templates
 - two dummy workers
+- command line tool 'task starter'. 
 
 
 ### What not yet ready:
 - autentification do not used 
-- not crontab task starting ( task start only from 'add task' page now ), but prepared hook for it.
+- _not crontab task starting ( task start only from 'add task' page now ), but prepared hook for it._
 - do not test real workers
 - do not collect ip yet ( from pgsql, only from existing group ) 
 
