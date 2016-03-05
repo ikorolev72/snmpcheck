@@ -24,7 +24,6 @@ Project for checking snmp and get the results in csv
 
 ### What not yet ready:
 - autentification do not used 
-- _not crontab task starting ( task start only from 'add task' page now ), but prepared hook for it._
 - do not test real workers
 - do not collect ip yet ( from pgsql, only from existing group ) 
 
