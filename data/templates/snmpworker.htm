@@ -5,43 +5,11 @@
 	</title>
 	<META http-equiv=Content-Type content='text/html; charset=iso-8859-1;'>
 	<LINK href='/main.css' type=text/css rel=stylesheet>
-
-<style>
-
-body {
-	font-family: verdana, arial, sans-serif; 
-}
-
-
-.left_div {
-	width: 90%;
-	height: 100%;
-	float:left;
-}
-
-.right_div {
-	width: 50%;
-	height: 100%;
-	float:right;
-}
-
-</style>
-	
-<script language="JavaScript">
-  function confirm_prompt( text,url ) {
-     if (confirm('You sure to delete "' + text +'" ?' )) {
-      window.location = url ;
-    }
-  }
-function isNumberInt(inputString) {
-  return (!isNaN(parseInt(inputString))) ? true : false;
-}
-</script>
-	
+	<script language="javascript" type="text/javascript" src="/js/snmpcheck.js"></script>
 	
 </head>
 <body>
-<a href='/'>home</a>
+<table width='100%'><tr><td width='70%'> <a href='/'>home</a> </td><td align='right'> <div id='login_as'> </div> </td></tr></table>
 <h3>
 	<TMPL_VAR NAME=TITLE>
 </h3>
@@ -206,7 +174,7 @@ function isNumberInt(inputString) {
 		<td> <TMPL_VAR NAME=SNMPAPRO></td>
 		<td> <TMPL_VAR NAME=SNMPPRO></td>
 		<td> <TMPL_VAR NAME=SNMPLEVEL></td>
-		<td> [ <a href='' onclick="confirm_prompt('<TMPL_VAR NAME=NAME>','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
+		<td> [ <a href='' onclick="confirm_prompt('Are you sure to delete snmp worker definition _<TMPL_VAR NAME=NAME>_','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
 	</tr>
    </TMPL_LOOP>
 </table>
@@ -216,6 +184,11 @@ function isNumberInt(inputString) {
 </TMPL_IF> 
 
 </div>
+<TMPL_VAR NAME=SET_COOKIES>
+<TMPL_VAR NAME=GET_COOKIES>
+<script>
+show_login_as( );
+</script>
 
 </body>
 </html>

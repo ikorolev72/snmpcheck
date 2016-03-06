@@ -1,3 +1,17 @@
 body {
 	font-family: verdana, arial, sans-serif; 
 }
+
+.left_div {
+	width: 50%;
+	height: 100%;
+	float:left;
+}
+
+.right_div {
+	width: 50%;
+	height: 100%;
+	float:right;
+}
+
+

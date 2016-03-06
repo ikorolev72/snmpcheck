@@ -6,6 +6,12 @@ use COMMON_ENV;
 
 $dbh=db_connect();
 
+#$stmt ="drop table session";
+$stmt =" CREATE TABLE IF NOT EXISTS `session` (id integer,   login TEXT,   secret TEXT,   dt TEXT ) ; ";
+do_sql( $stmt );
+
+exit;
+
 $stmt =" CREATE TABLE IF NOT EXISTS `Users` (  id INTEGER PRIMARY KEY AUTOINCREMENT ,     login TEXT,    name TEXT,   password TEXT ) ; ";
 #do_sql( $stmt );
 $pass=sha1_hex( 'root123' );

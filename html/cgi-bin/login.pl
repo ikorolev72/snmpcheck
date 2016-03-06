@@ -23,21 +23,31 @@ $message='';
 $dbh=db_connect() ;
 
 my $show_form=1;
-my $table='users';
+
 
 
 if(  Action() ==0 ) {
-	print "Content-type: text/html\n\n" ;
 	message2 ( "Incorrect login or password" );			
 } else {
-			#my $secret=sha1_hex( time() );
+		my $row=GetRecordByField( $dbh,  'users', 'login', $Param->{login}, );
+		my $secret=sha1_hex( time() );
+		
+		my $cookie_time=4; # set the cookies to 4 hours 
+		my $cookie="<script type='text/javascript'>
+		createCookie('id',		'$row->{id}',$cookie_time);
+		createCookie('login',	'$row->{login}',$cookie_time);
+		createCookie('name',	'$row->{name}',$cookie_time);
+		createCookie('secret',	'$secret',$cookie_time);
+		</script>"; 
 
-			my $cookie1 = CGI::Cookie->new(-name    =>  'login',
-                             -value   =>  [ $row->{login} ],
-                             -expires =>  '+1H',
-                             -domain  =>  $ENV{HTTP_HOST},
-	                    );	
-			print header(-cookie=>[$cookie1]);						
+		$template->param( SET_COOKIES=>$cookie );					
+		my $nrow;
+		$nrow->{login}=$Param->{login};
+		$nrow->{secret}=$secret;
+		$nrow->{dt}=time()+$cookie_time*3600;
+		$nrow->{id}=$row->{id};
+		DeleteRecord( $dbh, $nrow->{id}, 'session' );
+ 		InsertRecord( $dbh, $nrow->{id}, 'session', $nrow );
 	message2 ( "Login successfull" );			
 	$show_form=0;
 }
@@ -49,6 +59,13 @@ $template->param( TITLE=>"Login" );
 
   # print the template output
 $template->param( MESSAGES=> $message );
+
+#my %cookies = CGI::Cookie->fetch;
+#if ( $cookies{'name'} ) {
+#	$template->param( LOGIN_AS=> "You are login as '$cookies{'name'}->value'"  );	
+#}
+
+print "Content-type: text/html\n\n" ;
 print  $template->output;
 
  
@@ -59,7 +76,7 @@ db_disconnect( $dbh );
 sub Action {
 	
 	if( $Param->{save} ) {
-		my $row=GetRecordByField( $dbh,  $table, 'login', $Param->{login}, );
+		my $row=GetRecordByField( $dbh, 'users', 'login', $Param->{login}, );
 		unless( $row ) {	
 			return 0;
 		}

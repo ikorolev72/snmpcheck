@@ -94,16 +94,14 @@ sub update_tasks{
 				if( $nrow->{sdt} == $row->{sdt} ) {
 					next;
 				}
-				if( $row->{sdt}+$timeout < time() ) { failed by timeout
-					$mess="Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
+				if( $row->{sdt} + $timeout < time() ) { #failed by timeout
+					$mess=" $row->{status} Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
 					w2log( $mess );
-					$nrow->{status}=5 ; # failed				
 					$nrow->{mess}=$mess ;
 					$nrow->{sdt}=time() ;
-					# $nrow->{progress}=0 ;				
+					$nrow->{status}=5; # failed				
 				}
-				
-				update_task_status(  $dbh , $nrow );														
+				update_task_status(  $dbh , $nrow );																		
 			} else {
 				my $nrow;
 				if( $row->{sdt}+$timeout < time() ) { failed by timeout
