@@ -63,6 +63,7 @@ sub start_tasks{
 	my $stmt ="SELECT a.*,b.worker from tasks as a, snmpworker as b where a.status=? and a.pdt < ? and a.sname=b.sname; " ;  # select only added(planed) task   
 	my $sth = $dbh->prepare( $stmt );
 	my $dt=time();
+	my $mess='';
 	unless ( $rv = $sth->execute( 1, $dt ) || $rv < 0 ) {
 		message2 ( "Someting wrong with database  : $DBI::errstr" );
 		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
@@ -73,13 +74,14 @@ sub start_tasks{
 		my $json_text=JSON->new->utf8->encode( $row ) ;
 		my $json_file="$Paths->{JSON}/$row->{id}.param.json";
 		unless( WriteFile( $json_file, $json_text ) ){
+				$mess="Cannot start task with id $row->{id}, becouse cannot write file $json_file: $!";
 				$nrow->{status}=5 ; # failed				
 				$nrow->{mess}=$mess ;
 				$nrow->{sdt}=time() ;
 				$nrow->{progress}=0 ;
 				$nrow->{id}=$row->{id} ;
 				update_task_status(  $dbh , $nrow );
-				w2log( "Cannot start task with id $row->{id}, becouse cannot write file $json_file: $!" );
+				w2log( $mess );
 				next;
 		};	
 		# start
@@ -90,6 +92,7 @@ sub start_tasks{
 		
 
 		my $nrow;
+		$mess="Task with id $row->{id} started";
 		$nrow->{status}=2 ; # started
 		$nrow->{mess}=$mess ;
 		$nrow->{sdt}=time() ;

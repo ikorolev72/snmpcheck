@@ -6,6 +6,7 @@ use CGI::Carp qw ( fatalsToBrowser );
 
 
 
+
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
@@ -22,7 +23,8 @@ $dbh=db_connect() ;
 
 
 
-update_status($dbh); 
+#update_status($dbh); 
+update_tasks($dbh);
 
 $template->param( REQUEST_URI => "$ENV{'REQUEST_URI'}" );
 
@@ -125,65 +127,6 @@ print "Content-type: text/html\n\n" ;
 print  $template->output;
 
 db_disconnect( $dbh );
-
-
-
-
-sub update_status {
-	my $dbh=shift;
-	my $timeout=3600; # set timeout for tasks to 1 hour
-	# SELECT * FROM COMPANY WHERE AGE NOT IN ( 25, 27 );
-	my $stmt ="SELECT id, dt from $table where status IN ( 1,2,3 ) order by dt DESC  ; " ;  # select only task started, added or running 
-		# LIMIT $limit OFFSET $page*$limit;																
-	my $sth = $dbh->prepare( $stmt );
-	unless ( $rv = $sth->execute() || $rv < 0 ) {
-		message2 ( "Someting wrong with database  : $DBI::errstr" );
-		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
-		return 0;
-	}
-
-	while (my $row = $sth->fetchrow_hashref) {
-		my $json_out="$Paths->{JSON}/$row->{id}.out.json";
-		unless( -f $json_out ) {
-#			if ( time() - $row->{pdt} > $timeout )  { # task do not start during timeout after planed time
-#				my $nrow;
-#				$nrow->{ dt }=time();
-#				$nrow->{ status }=5; # failed by timeout
-#				$nrow->{ mess }="Task planed start at ". get_date( $row->{pdt} ) ." but do not start during $timeout sec. Failed by timeout";						
-#				$nrow->{ progress }=1;						
-#				update_task_status ( $dbh, $nrow ) ;				
-#				next;
-#			}
-#			if ( time() - $row->{dt} > $timeout )  {  # time of task do not changed during timeout
-#				my $nrow;
-#				$nrow->{ dt }=time();
-#				$nrow->{ status }=5; # failed by timeout
-#				$nrow->{ mess }="Do not get any messages from task during $timeout sec. Failed by timeout";						
-#				$nrow->{ progress }=1;						
-#				update_task_status ( $dbh, $nrow ) ;				
-#				next;
-#			}
-			next;
-		}
-		
-		my $json_text   = ReadFile(  $json_out ); 
-
-		my $nrow = JSON->new->utf8->decode($json_text) ;		
-		$nrow->{ dt }=time();
-		if( $row->{dt} == $nrow->{ dt }   )  {
-				if(  time() - $row->{dt} > $timeout ) {
-					$nrow->{ status }=5; # failed by timeout
-					$nrow->{ mess }="Do not get any messages from task during $timeout sec. Failed by timeout";						
-					$nrow->{ progress }=1;						
-					update_task_status ( $dbh, $nrow ) ;			
-					next;
-				}
-			next;
-		}
-		update_task_status ( $dbh, $nrow ) ;			
-	}		
-	return 1;
-}
 
 
 

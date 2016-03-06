@@ -71,6 +71,57 @@ sub get_workers {
 }
 
 
+
+sub update_tasks{
+	my $dbh=shift;
+	my $timeout=3600;	# set timeout to 1 hour for task. After this time without 
+						# activities ( if not any any changes in ID.out.json files ) task mark as failed
+	my $stmt ="SELECT * from tasks  where status IN ( ? , ? ); " ;  
+	my $sth = $dbh->prepare( $stmt );
+	my $mess='';
+	unless ( $rv = $sth->execute( 2, 3 ) || $rv < 0 ) { # select only started or running tasks
+		message2 ( "Someting wrong with database  : $DBI::errstr" );
+		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
+		return 0;
+	}
+
+	while (my $row = $sth->fetchrow_hashref) {
+		my $json_file="$Paths->{JSON}/$row->{id}.out.json";
+		
+		my $json_text=ReadFile( $json_file ) ;
+			if( $json_text ) {
+				my $nrow = JSON->new->utf8->decode($json_text) ;		
+				if( $nrow->{sdt} == $row->{sdt} ) {
+					next;
+				}
+				if( $row->{sdt}+$timeout < time() ) { failed by timeout
+					$mess="Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
+					w2log( $mess );
+					$nrow->{status}=5 ; # failed				
+					$nrow->{mess}=$mess ;
+					$nrow->{sdt}=time() ;
+					# $nrow->{progress}=0 ;				
+				}
+				
+				update_task_status(  $dbh , $nrow );														
+			} else {
+				my $nrow;
+				if( $row->{sdt}+$timeout < time() ) { failed by timeout
+					$mess="Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
+					w2log( $mess );
+					$nrow->{status}=5 ; # failed				
+					$nrow->{mess}=$mess ;
+					$nrow->{sdt}=time() ;
+					# $nrow->{progress}=0 ;				
+					update_task_status(  $dbh , $nrow );					
+				}			
+			}		
+	}	
+}
+
+
+
+
 sub update_task_status {
 	my $dbh=shift;
 	my $row=shift;
