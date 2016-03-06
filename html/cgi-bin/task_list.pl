@@ -19,11 +19,6 @@ $sname=$Param->{sname};
 
 $dbh=db_connect() ;
 
-
-
-
-
-#update_status($dbh); 
 update_tasks($dbh);
 
 $template->param( REQUEST_URI => "$ENV{'REQUEST_URI'}" );
@@ -117,7 +112,6 @@ if( $Param->{edit} ) {
 	$template->param( TITLE=>" List of tasks " );	
 		
 }
-
 
 
 

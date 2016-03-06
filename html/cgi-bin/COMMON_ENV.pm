@@ -76,7 +76,7 @@ sub update_tasks{
 	my $dbh=shift;
 	my $timeout=3600;	# set timeout to 1 hour for task. After this time without 
 						# activities ( if not any any changes in ID.out.json files ) task mark as failed
-	my $stmt ="SELECT * from tasks  where status IN ( ? , ? ); " ;  
+	my $stmt ="SELECT * from tasks  where status IN (  ?, ? ); " ;  
 	my $sth = $dbh->prepare( $stmt );
 	my $mess='';
 	unless ( $rv = $sth->execute( 2, 3 ) || $rv < 0 ) { # select only started or running tasks
@@ -86,8 +86,7 @@ sub update_tasks{
 	}
 
 	while (my $row = $sth->fetchrow_hashref) {
-		my $json_file="$Paths->{JSON}/$row->{id}.out.json";
-		
+		my $json_file="$Paths->{JSON}/$row->{id}.out.json";		
 		my $json_text=ReadFile( $json_file ) ;
 			if( $json_text ) {
 				my $nrow = JSON->new->utf8->decode($json_text) ;		
@@ -95,10 +94,11 @@ sub update_tasks{
 					next;
 				}
 				if( $row->{sdt} + $timeout < time() ) { #failed by timeout
-					$mess=" $row->{status} Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
+					$mess="Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
 					w2log( $mess );
 					$nrow->{mess}=$mess ;
 					$nrow->{sdt}=time() ;
+					$nrow->{id}=$row->{id} ;
 					$nrow->{status}=5; # failed				
 				}
 				update_task_status(  $dbh , $nrow );																		
@@ -110,6 +110,7 @@ sub update_tasks{
 					$nrow->{status}=5 ; # failed				
 					$nrow->{mess}=$mess ;
 					$nrow->{sdt}=time() ;
+					$nrow->{id}=$row->{id} ;					
 					# $nrow->{progress}=0 ;				
 					update_task_status(  $dbh , $nrow );					
 				}			
@@ -123,7 +124,7 @@ sub update_tasks{
 sub update_task_status {
 	my $dbh=shift;
 	my $row=shift;
-	my $table='tasks';			
+	my $table='tasks';	
 	return( UpdateRecord ( $dbh, $row->{id}, $table, $row ) )  ;	
 }
 

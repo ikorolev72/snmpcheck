@@ -30,7 +30,7 @@ $count_max=9;
 foreach $count ( 0..$count_max )  {
 	if( time() - $timenow  > 15 ) {
 		$timenow=time();
-		$row->{dt}=time();
+		$row->{sdt}=time();
 		$row->{status}=3; # running
 		$row->{id}=$Param->{id};
 		$row->{mess}='Task running. All ok.';
@@ -44,7 +44,7 @@ foreach $count ( 0..$count_max )  {
 	print $count;
 }
 
-$row->{dt}=time();
+$row->{sdt}=time();
 $row->{status}=4; # finished
 $row->{id}=$Param->{id};
 $row->{mess}='Finished successfully';
