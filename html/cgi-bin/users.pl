@@ -17,18 +17,29 @@ foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
-
-$dbh=db_connect() ;
-
 my $show_form=0;
 my $table='users';
 my $record;
+$title="Add / Edit / Delete users";
 
+$template->param( AUTHORISED=>1 );
+unless (  1==require_authorisation( ) ) { # we require authorisation and only root can add,modify or delete users
+	message2( "Only Root can add, modify or delete users" );
+	$template->param( AUTHORISED=>0 );
+	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+	$template->param( TITLE=>$title );
+	$template->param( MESSAGES=> $message );
+
+	print "Content-type: text/html\n\n" ;
+	print  $template->output;
+exit 0;
+}
+
+$dbh=db_connect() ;
 
 unless ( Action() ) {
 	$show_form=1;
 };
-
 
 
 if( $show_form ) {
@@ -72,9 +83,15 @@ if( $show_form ) {
 	$template->param(USERS_LIST_LOOP => \@loop_data);
 }
  
+ 
+db_disconnect( $dbh );
+
+
+
+
 #print "<pre>".Dumper( $ENV{'SCRIPT_NAME'} )."</pre>";
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-$template->param( TITLE=>"Add / Edit / Delete users" );
+$template->param( TITLE=>$title );
 $template->param( MESSAGES=> $message );
 
   # print the template output
@@ -83,7 +100,7 @@ print "Content-type: text/html\n\n" ;
 print  $template->output;
 
  
-db_disconnect( $dbh );
+
 
 ##############################################
 

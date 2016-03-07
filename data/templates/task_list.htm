@@ -13,6 +13,8 @@
 
 
 <h3> 		<TMPL_VAR NAME=TITLE> 	</h3>
+
+<TMPL_IF NAME=AUTHORISED> 
 <TMPL_IF NAME=SHOWFORM> 
 
 	[ <a href='<TMPL_VAR NAME=REQUEST_URI>'>Refresh</a> ]  [ <a href='<TMPL_VAR NAME=ACTION>'>Return to task list</a> ]
@@ -157,6 +159,7 @@
 
 </div>
 
+</TMPL_IF> 
 </TMPL_IF> 
 
 <TMPL_VAR NAME=SET_COOKIES>

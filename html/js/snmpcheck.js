@@ -56,12 +56,21 @@ function cutLongText( field ) {
 //    [do something with x]
 //}
 
+function to_logout( ) {
+	eraseCookie('id');
+	eraseCookie('login');
+	eraseCookie('name');
+	eraseCookie('secret');
+	return true;
+}
 
 function show_login_as( ) {
    var elem, text ;
 	if( text=readCookie( 'name' ) ) {
 		elem = document.getElementById( 'login_as' );
-		elem.innerHTML = 'You are login as '+text;		
+		elem.innerHTML = 'You are login as '+text+' [  <a href="" onclick="to_logout();"> logout </a> ]';		
+	} else {
+		elem = document.getElementById( 'login_as' );
+		elem.innerHTML = '[  <a href="/cgi-bin/login.pl"> login </a> ]';				
 	}
-   
 }

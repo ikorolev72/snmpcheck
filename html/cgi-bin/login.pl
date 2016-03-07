@@ -19,12 +19,13 @@ foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
+$title="Login";
+
+$template->param( AUTHORISED=>1 );
 
 $dbh=db_connect() ;
 
 my $show_form=1;
-
-
 
 if(  Action() ==0 ) {
 	message2 ( "Incorrect login or password" );			
@@ -51,11 +52,13 @@ if(  Action() ==0 ) {
 	message2 ( "Login successfull" );			
 	$show_form=0;
 }
+
+
 	 
 $template->param( SHOWFORM=>$show_form );
 $template->param( LOGIN=>$Param->{login} );
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-$template->param( TITLE=>"Login" );
+$template->param( TITLE=>$title );
 
   # print the template output
 $template->param( MESSAGES=> $message );

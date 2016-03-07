@@ -13,7 +13,7 @@ $sname="ntp_ip_change";
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'ntp_ip_change.htm', die_on_bad_params=>0 );
 $template->param( SNAME=> $sname  );
-$title="iPasolink NTP server IP change";
+
 
 
 $query = new CGI;
@@ -21,6 +21,24 @@ foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
+
+$title="iPasolink NTP server IP change";
+
+$template->param( AUTHORISED=>1 );
+unless (  require_authorisation( 1, 0 ) ) { # we require any authorised user
+	message2( "Only authorised user can add this task" );
+	$template->param( AUTHORISED=>0 );
+	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+	$template->param( TITLE=>$title );
+	$template->param( MESSAGES=> $message );
+
+	print "Content-type: text/html\n\n" ;
+	print  $template->output;
+exit 0;
+}
+
+
+
 
 $dbh=db_connect() ;
 

@@ -21,6 +21,7 @@ foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
+$template->param( AUTHORISED=>1 );
 
 $dbh=db_connect() ;
 

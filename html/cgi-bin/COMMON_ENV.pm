@@ -51,6 +51,28 @@ $Task->{5}='failed';
 $Task->{6}='canceled';
 
 
+sub require_authorisation {
+	my %cookies = CGI::Cookie->fetch;
+	if(  $cookies{id} ) {
+		my $id=$cookies{id}->value;
+		if( $id ) {
+			if( $need_root ) {
+				if( 1==$cookies{id}->value ) {
+					return $id;				
+				} else {
+					return 0;
+				}
+			} else {
+				return $id;
+			}
+			return $id;
+		}
+	}
+	return 0;
+}
+
+
+
 sub get_groups {
 	my $html_dir=$Paths->{GROUPS};
 	my @ls;
@@ -90,16 +112,17 @@ sub update_tasks{
 		my $json_text=ReadFile( $json_file ) ;
 			if( $json_text ) {
 				my $nrow = JSON->new->utf8->decode($json_text) ;		
-				if( $nrow->{sdt} == $row->{sdt} ) {
+				if( $nrow->{sdt} <= $row->{sdt} ) {
+					if( $row->{sdt} + $timeout < time() ) { #failed by timeout
+						$mess="Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
+						w2log( $mess );
+						$nrow->{mess}=$mess ;
+						$nrow->{sdt}=time() ;
+						$nrow->{id}=$row->{id} ;
+						$nrow->{status}=5; # failed				
+						update_task_status(  $dbh , $nrow );																		
+					}
 					next;
-				}
-				if( $row->{sdt} + $timeout < time() ) { #failed by timeout
-					$mess="Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
-					w2log( $mess );
-					$nrow->{mess}=$mess ;
-					$nrow->{sdt}=time() ;
-					$nrow->{id}=$row->{id} ;
-					$nrow->{status}=5; # failed				
 				}
 				update_task_status(  $dbh , $nrow );																		
 			} else {

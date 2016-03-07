@@ -17,7 +17,7 @@ $id=0; # id of new task
 $sname=$Param->{sname};
 $outfile=$sname."_".generate_filename()."_log.csv";
 
-
+$template->param( AUTHORISED=>1 );
 $dbh=db_connect() ;
 
 

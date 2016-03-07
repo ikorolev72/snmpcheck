@@ -16,6 +16,26 @@ foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
+$title="Add / Edit / Delete worker settings";
+
+
+$template->param( AUTHORISED=>1 );
+
+unless (  1==require_authorisation( ) ) { # we require authorisation and only root can add,modify or delete users
+	message2( "Only Root can add, modify or delete worker settings" );
+	$template->param( AUTHORISED=>0 );
+	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+	$template->param( TITLE=>$title );	
+	$template->param( MESSAGES=> $message );
+
+	print "Content-type: text/html\n\n" ;
+	print  $template->output;
+exit 0;
+}
+
+
+
+
 
 $dbh=db_connect() ;
 
@@ -106,7 +126,7 @@ $template->param(WORKER_LIST_LOOP => \@loop_data);
  
 #print "<pre>".Dumper( $ENV{'SCRIPT_NAME'} )."</pre>";
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-$template->param( TITLE=>"Add / Edit / Delete worker settings" );
+$template->param( TITLE=>$title );
 
 
 

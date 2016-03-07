@@ -17,16 +17,32 @@ foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 my $dbh, $stmt, $sth, $rv;
 $message='';
 
+
+$template->param( AUTHORISED=>1 );
+$id=require_authorisation( );
+unless ( $id  ) { # only uthorized user can change password
+	message2( "Only authorised users can change password" );
+	$template->param( AUTHORISED=>0 );
+	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+	$template->param( TITLE=>$title );
+	$template->param( MESSAGES=> $message );
+
+	print "Content-type: text/html\n\n" ;
+	print  $template->output;
+exit 0;
+}
+
 $dbh=db_connect() ;
 
 my $show_form=0;
 my $table='users';
 
+$Param->{id}=$id;
 
 if( 0 == Action() ) {
 	$show_form=1;
-
 }
+
 	 
 if( $show_form ) {
 	$template->param( SHOWFORM=>1 );

@@ -16,6 +16,7 @@ $template = HTML::Template->new(filename => 'task_list.htm', die_on_bad_params=>
 $table='tasks';
 $sname=$Param->{sname};
 
+$template->param( AUTHORISED=>1 );
 
 $dbh=db_connect() ;
 
@@ -24,15 +25,19 @@ update_tasks($dbh);
 $template->param( REQUEST_URI => "$ENV{'REQUEST_URI'}" );
 
 if( $Param->{del} ) {
-	$template->param( REQUEST_URI => "$ENV{'SCRIPT_NAME'}" );
-	my $row=GetRecord( $dbh , $Param->{id}, $table  );
-		if( $row ) {
-			unlink( "$Paths->{JSON}/$row->{id}.\w+\.json" ) ;
-			unlink( "$Paths->{OUTFILE}/$row->{outfile}" ) ;
-			DeleteRecord( $dbh, $Param->{id}, $table  );
-		} else {
-			message2( "Cannot found the record with id: $Param->{id}" ) ;
-		}
+	if (  require_authorisation() ) { # we require authorisation for delete tasks
+		$template->param( REQUEST_URI => "$ENV{'SCRIPT_NAME'}" );
+		my $row=GetRecord( $dbh , $Param->{id}, $table  );
+			if( $row ) {
+				unlink( "$Paths->{JSON}/$row->{id}.\w+\.json" ) ;
+				unlink( "$Paths->{OUTFILE}/$row->{outfile}" ) ;
+				DeleteRecord( $dbh, $Param->{id}, $table  );
+			} else {
+				message2( "Cannot found the record with id: $Param->{id}" ) ;
+			}
+	} else{
+		message2( "Only authorised users can delete tasks" );
+	}
 }
 
 if( $Param->{edit} ) {
