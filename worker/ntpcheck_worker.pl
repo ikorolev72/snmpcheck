@@ -23,18 +23,24 @@ $json_text=ReadFile( $json_file );
 
 $Param =JSON->new->utf8->decode($json_text);
 
+$outfile=$sname."_".generate_filename()."_task_$Param->{id}_log.csv";
+AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", "Unix time now\n");
+
+
+
 my $json_out="$Paths->{JSON}/$Param->{id}.out.json";
 my $row;
 my $timenow=time();
 $count_max=9;
 foreach $count ( 0..$count_max )  {
 	if( time() - $timenow  > 15 ) {
+		AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", time()."\n");
 		$timenow=time();
 		$row->{sdt}=time();
 		$row->{status}=3; # running
 		$row->{id}=$Param->{id};
 		$row->{mess}='Task running. All ok.';
-		$row->{progress}=int( $count*100/$count_max ) ;
+		$row->{progress}=int( $count*100/$count_max ) ;	
 		unless( WriteFile( $json_out, JSON->new->utf8->encode($row) ) ){
 				w2log ("Cannot write file $json_file: $!");
 		}
@@ -49,6 +55,7 @@ $row->{status}=4; # finished
 $row->{id}=$Param->{id};
 $row->{mess}='Finished successfully';
 $row->{progress}=100 ;
+$row->{outfile}=$outfile;
 
 unless( WriteFile( $json_out, JSON->new->utf8->encode($row) ) ){
 	w2log ("Cannot write file $json_file: $!");

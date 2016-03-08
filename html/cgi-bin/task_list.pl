@@ -30,7 +30,7 @@ if( $Param->{del} ) {
 		my $row=GetRecord( $dbh , $Param->{id}, $table  );
 			if( $row ) {
 				unlink( "$Paths->{JSON}/$row->{id}.\w+\.json" ) ;
-				unlink( "$Paths->{OUTFILE}/$row->{outfile}" ) ;
+				unlink( "$Paths->{OUTFILE_DIR}/$row->{outfile}" ) ;
 				DeleteRecord( $dbh, $Param->{id}, $table  );
 			} else {
 				message2( "Cannot found the record with id: $Param->{id}" ) ;
@@ -66,7 +66,7 @@ if( $Param->{edit} ) {
 						$template->param( STATUS_RED=>1 );
 					}
 				$template->param( MESS=>  encode_entities(  $row->{mess} )   ); 
-				$template->param( OUTFILE=>"$Url->{OUTFILE}/$row->{outfile}" ) if ( -f "$Paths->{OUTFILE}/$row->{outfile}" );							
+				$template->param( OUTFILE=>"$Url->{OUTFILE_DIR}/$row->{outfile}" ) if ( -f "$Paths->{OUTFILE_DIR}/$row->{outfile}" );							
 			} else {
 				message2( "Do not found the record with id=$Param->{id}");
 			}
@@ -108,7 +108,7 @@ if( $Param->{edit} ) {
 					$row_data{ STATUS_RED }=1 ;
 				}
 		
-		$row_data{ OUTFILE }="$Url->{OUTFILE}/$row->{outfile}" if ( -f "$Paths->{OUTFILE}/$row->{outfile}" ) ; 
+		$row_data{ OUTFILE }="$Url->{OUTFILE_DIR}/$row->{outfile}" if ( -f "$Paths->{OUTFILE_DIR}/$row->{outfile}" ) ; 
 		$row_data{ MESS }=encode_entities(  $row->{mess} ); 
 
 		push(@loop_data, \%row_data);

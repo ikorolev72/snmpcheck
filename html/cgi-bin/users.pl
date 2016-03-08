@@ -160,6 +160,10 @@ sub Action {
 	}	
 
 	if( $Param->{del} ) {
+			if ( 1==$Param->{id} )  {
+				message2 ( "Cannot delete user Root" );	
+				return 0;
+			}
 			if ( DeleteRecord ( $dbh, $Param->{id}, 'users' ) ) {
 				message2 ( "Record deleted succsesfuly" );
 				return 1;

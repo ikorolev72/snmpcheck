@@ -46,6 +46,9 @@ my $show_form=1;
 my $table='users';
 
 
+$Param->{all_ipasolink}=$Param->{all_ipasolink}?1:0;
+$Param->{subgroup}=$Param->{subgroup}?1:0;
+
 if(  Action() ==0 ) {
 	$show_form=1;
 	$template->param( SHOWFORM=>1 );
@@ -65,6 +68,7 @@ if(  Action() ==0 ) {
 $template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
 $template->param( IP=> $Param->{ip} );
 $template->param( GROUP=> $Param->{group} );
+$template->param( SUBGROUP=> $Param->{subgroup} );
 $template->param( ALL_IPASOLINK=> $Param->{all_ipasolink} );
 
 $template->param( NTP1=> $Param->{ntp1} );

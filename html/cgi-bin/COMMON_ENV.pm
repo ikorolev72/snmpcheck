@@ -35,11 +35,12 @@ $Paths->{GROUPS}="$Paths->{HOME}/data/iplist/groups/";
 $Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
 $Paths->{WORKER_DIR}="$Paths->{HOME}/worker";
 $Paths->{JSON}="$Paths->{HOME}/data/json";
-$Paths->{OUTFILE}="$Paths->{HOME}/html/reports";
+$Paths->{OUTFILE_DIR}="$Paths->{HOME}/html/reports";
 $Paths->{TASK_UPDATE}="$Paths->{HOME}/html/cgi-bin/task_update.pl";
 $Paths->{PID_DIR}="$Paths->{HOME}/data/pid";
+$Paths->{config.ini}="$Paths->{HOME}/data/cfg/config.ini";
 
-$Url->{OUTFILE}='/reports';
+$Url->{OUTFILE_DIR}='/reports';
 
 
 
@@ -55,23 +56,34 @@ sub require_authorisation {
 	my %cookies = CGI::Cookie->fetch;
 	if(  $cookies{id} ) {
 		my $id=$cookies{id}->value;
-		if( $id ) {
-			if( $need_root ) {
-				if( 1==$cookies{id}->value ) {
-					return $id;				
-				} else {
-					return 0;
-				}
-			} else {
-				return $id;
+		if(  $cookies{secret} ) {
+			my $dbh=db_connect() ;
+			my $row=GetRecord( $dbh, $id, 'session' ) ;
+			db_disconnect( $dbh );
+			unless( $row->{secret} eq $cookies{secret}->value ) {
+				return 0;
 			}
-			return $id;
+		} else {
+			return 0;
 		}
+		return $id;
 	}
 	return 0;
 }
 
 
+sub ReadConfig {
+	my $Cfg;
+	if( -f $Paths->{config.ini} ){
+		my $body=ReadFile( 'config.ini' );
+		foreach ( split( /\n/, $body ) ) {
+			chomp;
+			my ( $key, $var )=split( /=/, $_ );
+			$Cfg->{ $key }=$var ;
+		}	
+	}
+	return $Cfg;
+}
 
 sub get_groups {
 	my $html_dir=$Paths->{GROUPS};
@@ -127,7 +139,7 @@ sub update_tasks{
 				update_task_status(  $dbh , $nrow );																		
 			} else {
 				my $nrow;
-				if( $row->{sdt}+$timeout < time() ) { failed by timeout
+				if( $row->{sdt}+$timeout < time() ) { #failed by timeout
 					$mess="Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
 					w2log( $mess );
 					$nrow->{status}=5 ; # failed				
@@ -501,6 +513,14 @@ sub WriteFile {
 	return 1;
 }	
 
+sub AppendFile {
+	my $filename=shift;
+	my $body=shift;
+	unless( open (OUT,">>$filename")) { w2log("Can't open file $filename" ) ;return 0; }
+	print OUT $body;
+	close (OUT);
+	return 1;
+}
 
 
 1;

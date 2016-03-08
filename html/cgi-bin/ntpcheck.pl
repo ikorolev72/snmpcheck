@@ -22,12 +22,16 @@ foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 my $dbh, $stmt, $sth, $rv;
 $message='';
 $template->param( AUTHORISED=>1 );
+$template->param( MS5000=>1 );
+
 
 $dbh=db_connect() ;
 
 my $show_form=1;
 my $table='users';
 
+$Param->{all_ipasolink}=$Param->{all_ipasolink}?1:0;
+$Param->{subgroup}=$Param->{subgroup}?1:0;
 
 if(  Action() ==0 ) {
 	$show_form=1;
@@ -35,6 +39,18 @@ if(  Action() ==0 ) {
 	$template->param( SHOWFORM_TO_TASK_=> 0 );
 	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 	$template->param( TITLE=> $title );
+	$template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
+	$template->param( IP=> $Param->{ip} );
+	$template->param( GROUP=> $Param->{group} );
+	$template->param( SUBGROUP=> $Param->{subgroup} );
+	$template->param( ALL_IPASOLINK=> $Param->{all_ipasolink} );
+	foreach $group ( get_groups() ) {
+		my %row_data;   
+		$row_data{ GROUP }=$group;
+		push(@loop_data, \%row_data);
+	}
+	$template->param(GROUP_LIST_LOOP => \@loop_data);	
+	
 } else {
 	$template->param( SHOWFORM=> 0 );
 	$template->param( SHOWFORM_TO_TASK => 1 );
@@ -42,22 +58,12 @@ if(  Action() ==0 ) {
 	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 	$template->param( ACTION_TASK_ADD=>  "/cgi-bin/task_add.pl" );
 	$template->param( TITLE=>"$title. Ready to add task" );
-
 }
 
 
-$template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
-$template->param( IP=> $Param->{ip} );
-$template->param( GROUP=> $Param->{group} );
-$template->param( ALL_IPASOLINK=> $Param->{all_ipasolink} );
 
 
-foreach $group ( get_groups() ) {
-	my %row_data;   
-	$row_data{ GROUP }=$group;
-	push(@loop_data, \%row_data);
-}
-$template->param(GROUP_LIST_LOOP => \@loop_data);
+
 	 
 
 # print the template output

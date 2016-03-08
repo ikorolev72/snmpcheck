@@ -134,15 +134,14 @@
 						<option value='<TMPL_VAR NAME=GROUP>' ><TMPL_VAR NAME=GROUP></option>
 					</TMPL_LOOP>					
 				</select>
-				</td>
+				<TMPL_IF NAME=MS5000>
+					Include subgroups
+					<input name='subgroup' type='checkbox' <TMPL_IF NAME=SUBGROUP>selected</TMPL_IF> >
+				</TMPL_IF>
+			</td>
 			<tr valign='top'>
 			<td> Generate IP list for all iPasolink</td>
-			<td> 				
-				<select name='all_ipasolink'>	
-					<option value='1' <TMPL_IF NAME=ALL_IPASOLINK> selected </TMPL_IF> >Yes</option>
-					<option value='0' <TMPL_UNLESS NAME=ALL_IPASOLINK> selected </TMPL_UNLESS> >No</option>
-				</select>
-				</td>
+			<td> <input name='all_ipasolink' type='checkbox' <TMPL_IF NAME=ALL_IPASOLINK>selected</TMPL_IF> > </td>
 			<tr valign='top'>
 			<td> Description </td>
 			<td> <input name='desc' type='text' size='50' maxlength='254' value='<TMPL_VAR NAME=DESC>'> </td>
@@ -168,6 +167,7 @@
 	<input name='desc' type='hidden' value='<TMPL_VAR NAME=DESC>'>  
 	<input name='ip' type='hidden' value='<TMPL_VAR NAME=IP>'>  
 	<input name='group' type='hidden' value='<TMPL_VAR NAME=GROUP>'>  
+	<input name='subgroup' type='hidden' value='<TMPL_VAR NAME=SUBGROUP>'>  
 	<input name='all_ipasolink' type='hidden' value='<TMPL_VAR NAME=ALL_IPASOLINK>'>  
 
 	<input name='ntp1' type='hidden' value='<TMPL_VAR NAME=NTP1>'>  
@@ -196,8 +196,15 @@
 			<tr valign='top'>
 			<td> Selected IP </td>
 			<td> 
-					<b>IP:</b><TMPL_VAR NAME=IP>  <TMPL_IF  NAME=GROUP><b>Group:</b><TMPL_VAR NAME=GROUP></TMPL_IF>  <b>IP list for all iPasolink:</b><TMPL_IF  NAME=ALL_IPASOLINK>Yes<TMPL_ELSE>No</TMPL_IF></td>
-
+					<b>IP:</b>'<TMPL_VAR NAME=IP>', 
+					<TMPL_IF  NAME=GROUP>
+						<b>Group:</b>'<TMPL_VAR NAME=GROUP>',
+						<TMPL_IF NAME=MS5000>
+							<b>Include subgroups:</b><TMPL_IF NAME=SUBGROUP>'Yes',<TMPL_ELSE>'No',</TMPL_IF>
+						</TMPL_IF>  
+					</TMPL_IF>  
+					<b>IP list for all iPasolink:</b><TMPL_IF NAME=ALL_IPASOLINK>'Yes'<TMPL_ELSE>'No'</TMPL_IF>
+			</td>
 			<tr valign='top'>
 			<td> Description </td>
 			<td> <TMPL_VAR NAME=DESC> </td>
