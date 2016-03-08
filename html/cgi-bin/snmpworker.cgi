@@ -44,6 +44,7 @@ my $table='snmpworker';
 my $record;
 
 
+$Param->{auth}=$Param->{auth}?1:0;
 unless ( Action() ) {
 	$show_form=1;
 };
@@ -60,16 +61,16 @@ if( $show_form ) {
   if( $Param->{new} ) {
 	$template->param( SNAME=>$Param->{sname} );
 	$template->param( DESC=>$Param->{desc} );
-	$template->param( IP=>$Param->{ip} );
+#	$template->param( IP=>$Param->{ip} );
 	$template->param( AUTH=>$Param->{auth} )  ;
-	$template->param( SNMPUSER=>$Param->{snmpuser} || 'Admin' );
-	$template->param( SNMPAP=>$Param->{snmpap} || 'password01' );
-	$template->param( SNMPPK=>$Param->{snmppk} || 'password01');
-	$template->param( SNMPR=>$Param->{snmpr} || 5);
-	$template->param( SNMPT=>$Param->{snmpt} || 1);
-	$template->param( SNMPAPRO=>$Param->{snmpapro} || 'MD5');
-	$template->param( SNMPPRO=>$Param->{snmppro} || 'DEC' );
-	$template->param( SNMPLEVEL=>$Param->{snmplevel} || 'authPriv' );
+#	$template->param( SNMPUSER=>$Param->{snmpuser} || 'Admin' );
+#	$template->param( SNMPAP=>$Param->{snmpap} || 'password01' );
+#	$template->param( SNMPPK=>$Param->{snmppk} || 'password01');
+#	$template->param( SNMPR=>$Param->{snmpr} || 5);
+#	$template->param( SNMPT=>$Param->{snmpt} || 1);
+#	$template->param( SNMPAPRO=>$Param->{snmpapro} || 'MD5');
+#	$template->param( SNMPPRO=>$Param->{snmppro} || 'DEC' );
+#	$template->param( SNMPLEVEL=>$Param->{snmplevel} || 'authPriv' );
 	$template->param( WORKER=>$Param->{worker}  );
   }
   if( $Param->{edit} ) {
@@ -78,16 +79,16 @@ if( $show_form ) {
 		$template->param( ID=>$row->{id} );
 		$template->param( SNAME=>$row->{sname} );
 		$template->param( DESC=>$row->{desc} );
-		$template->param( IP=>$row->{ip} );
+#		$template->param( IP=>$row->{ip} );
 		$template->param( AUTH=>$row->{auth} );
-		$template->param( SNMPUSER=>$row->{snmpuser} );
-		$template->param( SNMPAP=>$row->{snmpap} );
-		$template->param( SNMPPK=>$row->{snmppk} );
-		$template->param( SNMPR=>$row->{snmpr} );
-		$template->param( SNMPT=>$row->{snmpt} );
-		$template->param( SNMPAPRO=>$row->{snmpapro} );
-		$template->param( SNMPPRO=>$row->{snmppro} );
-		$template->param( SNMPLEVEL=>$row->{snmplevel} );
+#		$template->param( SNMPUSER=>$row->{snmpuser} );
+#		$template->param( SNMPAP=>$row->{snmpap} );
+#		$template->param( SNMPPK=>$row->{snmppk} );
+#		$template->param( SNMPR=>$row->{snmpr} );
+#		$template->param( SNMPT=>$row->{snmpt} );
+#		$template->param( SNMPAPRO=>$row->{snmpapro} );
+#		$template->param( SNMPPRO=>$row->{snmppro} );
+#		$template->param( SNMPLEVEL=>$row->{snmplevel} );
 		$template->param( WORKER=>$row->{worker}  );
 	}
 	else{
@@ -151,16 +152,16 @@ sub Action {
 		
 		$row->{sname}=$Param->{sname} ;
 		$row->{desc}=$Param->{desc} ;
-		$row->{ip}=$Param->{ip} ;
+#		$row->{ip}=$Param->{ip} ;
 		$row->{auth}=$Param->{auth} ;
-		$row->{snmpuser}=$Param->{snmpuser} ;
-		$row->{snmpap}=$Param->{snmpap} ;
-		$row->{snmppk}=$Param->{snmppk} ;
-		$row->{snmpr}=$Param->{snmpr} ;
-		$row->{snmpt}=$Param->{snmpt} ;
-		$row->{snmpapro}=$Param->{snmpapro} ;
-		$row->{snmppro}=$Param->{snmppro} ;
-		$row->{snmplevel}=$Param->{snmplevel} ;
+#		$row->{snmpuser}=$Param->{snmpuser} ;
+#		$row->{snmpap}=$Param->{snmpap} ;
+#		$row->{snmppk}=$Param->{snmppk} ;
+#		$row->{snmpr}=$Param->{snmpr} ;
+#		$row->{snmpt}=$Param->{snmpt} ;
+#		$row->{snmpapro}=$Param->{snmpapro} ;
+#		$row->{snmppro}=$Param->{snmppro} ;
+#		$row->{snmplevel}=$Param->{snmplevel} ;
 		$row->{worker}=$Param->{worker} ;
 		
 		unless( $Param->{id} ) { # if we save the new record 					
@@ -211,36 +212,36 @@ sub check_smnpworker_record {
 	unless( CheckField ( $Param->{ desc } ,'text', "Field 'desc' ") ) {
 			$retval=0 ;
 	}
-	unless( CheckField ( $Param->{ ip } ,'ip', "Field 'ip' ")) {
+#	unless( CheckField ( $Param->{ ip } ,'ip', "Field 'ip' ")) {
+#			$retval=0 ;
+#	}
+	unless( CheckField ( $Param->{ auth } ,'boolean', "Field 'auth' ")) {
 			$retval=0 ;
 	}
-	unless( CheckField ( $Param->{ auth } ,'int', "Field 'auth' ")) {
-			$retval=0 ;
-	}
-	unless( CheckField ( $Param->{ snmpuser } ,'login', "Field 'snmpuser' ")) {
-			$retval=0 ;
-	}
-	unless( CheckField ( $Param->{ snmpap } ,'password', "Field 'snmpap' ")) {
-			$retval=0 ;
-	}
-	unless( CheckField ( $Param->{ snmppk } ,'password', "Field 'snmppk' ") ){
-			$retval=0 ;
-	}
-	unless( CheckField ( $Param->{ snmpr } ,'int', "Field 'snmpr' ") ){
-			$retval=0 ;
-	}
-	unless( CheckField ( $Param->{ snmpt } ,'int', "Field 'snmpt' ")) {
-			$retval=0 ;
-	}
-	unless( CheckField ( $Param->{ snmpapro } ,'text_no_empty', "Field 'snmpapro' ") ){
-			$retval=0 ;
-	}
-	unless( CheckField ( $Param->{ snmppro } ,'text_no_empty', "Field 'snmppro' ") ){
-			$retval=0 ;
-	}
-	unless( CheckField ( $Param->{ snmplevel } ,'text_no_empty', "Field 'snmplevel' ") ){
-			$retval=0 ;
-	}
+#	unless( CheckField ( $Param->{ snmpuser } ,'login', "Field 'snmpuser' ")) {
+#			$retval=0 ;
+#	}
+#	unless( CheckField ( $Param->{ snmpap } ,'password', "Field 'snmpap' ")) {
+#			$retval=0 ;
+#	}
+#	unless( CheckField ( $Param->{ snmppk } ,'password', "Field 'snmppk' ") ){
+#			$retval=0 ;
+#	}
+#	unless( CheckField ( $Param->{ snmpr } ,'int', "Field 'snmpr' ") ){
+#			$retval=0 ;
+#	}
+#	unless( CheckField ( $Param->{ snmpt } ,'int', "Field 'snmpt' ")) {
+#			$retval=0 ;
+#	}
+#	unless( CheckField ( $Param->{ snmpapro } ,'text_no_empty', "Field 'snmpapro' ") ){
+#			$retval=0 ;
+#	}
+#	unless( CheckField ( $Param->{ snmppro } ,'text_no_empty', "Field 'snmppro' ") ){
+#			$retval=0 ;
+#	}
+#	unless( CheckField ( $Param->{ snmplevel } ,'text_no_empty', "Field 'snmplevel' ") ){
+#			$retval=0 ;
+#	}
 	unless( CheckField ( $Param->{ worker } ,'filename', "Field 'worker script' ") ){
 			$retval=0 ;
 	}

@@ -55,9 +55,6 @@
 				</td>
 			
 
-			<tr valign='top'>
-			<td> ip </td>
-			<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
 
 			<tr valign='top'>
 			<td> auth </td>			
@@ -67,61 +64,6 @@
 					<option value='0' <TMPL_UNLESS NAME=AUTH> selected </TMPL_UNLESS> >No</option>
 				</select>
 			
-			<tr valign='top'>
-			<td> snmpuser </td>
-			<td> <input name='snmpuser' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNMPUSER>'> </td>
-
-			<tr valign='top'>
-			<td> snmpap </td>
-			<td> <input name='snmpap' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNMPAP>'> </td>
-
-			<tr valign='top'>
-			<td> snmppk </td>
-			<td> <input name='snmppk' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=SNMPPK>'> </td>
-
-			<tr valign='top'>
-			<td> snmpr </td>
-			<td> <input name='snmpr' type='text' size='3' maxlength='3' value='<TMPL_VAR NAME=SNMPR>'> </td>
-
-			<tr valign='top'>
-			<td> snmpt </td>
-			<td> <input name='snmpt' type='text' size='3' maxlength='3' value='<TMPL_VAR NAME=SNMPT>'> </td>
-
-			<tr valign='top'>
-			<td> snmpapro </td>
-			<td>
-				<select name='snmpapro'>	
-					<TMPL_IF NAME=SNMPAPRO>
-					<option value='<TMPL_VAR NAME=SNMPAPRO>' selected><TMPL_VAR NAME=SNMPAPRO></option>
-					</TMPL_IF>
-					<option value='MD5'>MD5</option>
-					<option value='SHA'>SHA</option>
-				</select>
-				</td>
-			<tr valign='top'>
-			<td> snmppro </td>
-			<td> 
-				<select name='snmppro'>	
-					<TMPL_IF NAME=SNMPPRO>
-					<option value='<TMPL_VAR NAME=SNMPPRO>' selected><TMPL_VAR NAME=SNMPPRO></option>
-					</TMPL_IF>
-					<option value='AES'>AES</option>
-					<option value='DES'>DES</option>
-				</select>
-				</td>
-
-			<tr valign='top'>
-			<td> snmplevel </td>
-			<td> 
-				<select name='snmplevel'>	
-					<TMPL_IF NAME=SNMPLEVEL>
-					<option value='<TMPL_VAR NAME=SNMPLEVEL>' selected><TMPL_VAR NAME=SNMPLEVEL></option>
-					</TMPL_IF>
-					<option value='authPriv'>authPriv</option>
-					<option value='noAuthNoPriv'>noAuthNoPriv</option>
-					<option value='authNoPriv'>authNoPriv</option>
-				</select>
-				</td>
 
 			<tr valign='top'>
             <td>&nbsp;</td>
@@ -140,22 +82,13 @@
 <div  class="left_div">
 <table border=1>
 	<tr>
-		<td colspan=14> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new record </a></td></tr>
+		<td colspan=5> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new record </a></td></tr>
 	</tr>
 	<tr>
 		<td> sname </td>
 		<td> desc </td>
 		<td> worker </td>
-		<td> ip </td>
 		<td> auth </td>
-		<td> snmpuser </td>
-		<td> snmpap </td>
-		<td> snmppk </td>
-		<td> snmpr </td>
-		<td> snmpt </td>
-		<td> snmpapro </td>
-		<td> snmppro </td>
-		<td> snmplevel </td>
 		<td>  </td>
 	</tr>
 
@@ -164,16 +97,7 @@
 		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'><TMPL_VAR NAME=SNAME></a></td>
 		<td> <TMPL_VAR NAME=DESC></td>
 		<td> <TMPL_VAR NAME=WORKER></td>
-		<td> <TMPL_VAR NAME=IP></td>
 		<td> <TMPL_VAR NAME=AUTH></td>
-		<td> <TMPL_VAR NAME=SNMPUSER></td>
-		<td> <TMPL_VAR NAME=SNMPAP></td>
-		<td> <TMPL_VAR NAME=SNMPPK></td>
-		<td> <TMPL_VAR NAME=SNMPR></td>
-		<td> <TMPL_VAR NAME=SNMPT></td>
-		<td> <TMPL_VAR NAME=SNMPAPRO></td>
-		<td> <TMPL_VAR NAME=SNMPPRO></td>
-		<td> <TMPL_VAR NAME=SNMPLEVEL></td>
 		<td> [ <a href='' onclick="confirm_prompt('Are you sure to delete snmp worker definition _<TMPL_VAR NAME=NAME>_','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
 	</tr>
    </TMPL_LOOP>

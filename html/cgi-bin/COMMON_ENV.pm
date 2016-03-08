@@ -355,7 +355,7 @@ sub CheckField {
 	my $retval=1;
 		# Sample of constrains
 		#$constrains->{login}->{max}=50;
-		#$constrains->{login}->{min}=4;
+		#$constrains->{login}->{min}=3;
 		#$constrains->{login}->{no_spaces}=1;
 		#$constrains->{login}->{first_char_letter}=1;
 		#$constrains->{login}->{no_special_chars}=1;
@@ -386,7 +386,7 @@ sub CheckField {
 		
 		
 		$constrains->{login}->{max}=50;
-		$constrains->{login}->{min}=4;
+		$constrains->{login}->{min}=3;
 		$constrains->{login}->{no_spaces}=1;
 		$constrains->{login}->{first_char_letter}=1;
 		$constrains->{login}->{no_special_chars}=1;
