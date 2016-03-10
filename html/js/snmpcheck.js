@@ -71,6 +71,6 @@ function show_login_as( ) {
 		elem.innerHTML = 'You are login as '+text+' [  <a href="" onclick="to_logout();"> logout </a> ]';		
 	} else {
 		elem = document.getElementById( 'login_as' );
-		elem.innerHTML = '[  <a href="/cgi-bin/login.pl"> login </a> ]';				
+		elem.innerHTML = '[  <a href="/cgi-bin/login.cgi"> login </a> ]';				
 	}
 }

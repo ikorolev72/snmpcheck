@@ -22,19 +22,22 @@ unless( -f $json_file ) {
 $json_text=ReadFile( $json_file );
 
 $Param =JSON->new->utf8->decode($json_text);
+$ip_param=JSON->new->utf8->decode($Param->{param});
 
-$outfile=$sname."_".generate_filename()."_task_$Param->{id}_log.csv";
+$outfile=$ip_param->{sname}."_".generate_filename()."_$Param->{id}_log.csv";
 AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", "Unix time now\n");
-
 
 
 my $json_out="$Paths->{JSON}/$Param->{id}.out.json";
 my $row;
 my $timenow=time();
-$count_max=9;
+
+my @IPs=get_ip_list( $ip_param );
+$count_max=$#IPs;
+
 foreach $count ( 0..$count_max )  {
 	if( time() - $timenow  > 15 ) {
-		AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", time()."\n");
+		AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", $IPs[$count]."\n");
 		$timenow=time();
 		$row->{sdt}=time();
 		$row->{status}=3; # running
@@ -63,7 +66,38 @@ unless( WriteFile( $json_out, JSON->new->utf8->encode($row) ) ){
 
 exit 0;
  
-  
+
+
+sub get_ip_list {
+	my $ip_param=shift;
+	my $Cfg=ReadConfig();
+	my @IPs=();
+	#print Dumper( $Cfg );
+	#print Dumper( $ip_param );
+
+	if( $Cfg->{iplistdb} eq 'ms5000' ) {
+		# not yet realised
+	} else {
+		# stadalone configuration
+		if( $ip_param->{ip} ) {		
+			return ( $ip_param->{ip} ) ;
+		}
+		if( $ip_param->{group} ) {
+			if( -f "$Paths->{GROUPS}/$ip_param->{group}" ) {							
+				@IPs=split( /\s/, ReadFile( "$Paths->{GROUPS}/$ip_param->{group}" ) );
+				return @IPs;
+			}
+		}
+		if( $ip_param->{all_ipasolink} ) {
+			if( -f $Paths->{global.ipasolink} ) {
+				@IPs=split( /\s/, ReadFile( $Paths->{global.ipasolink} ));
+				return @IPs;				
+			}
+		}
+	}
+	return undef;
+}
+ 
   
 sub show_help {
 print STDOUT "Usage: $0  --json='JSON_FILE' [ --help ]

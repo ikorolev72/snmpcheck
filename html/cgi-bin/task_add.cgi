@@ -24,7 +24,7 @@ $dbh=db_connect() ;
 if(  Action() ==0 ) {
 	message2( "Cannot add new task" );	
 } else {
-	message2( "Task '$Param->{desc}' added. Please, check it in <a href='/cgi-bin/task_list.pl'> Task list </a>" ) ;
+	message2( "Task '$Param->{desc}' added. Please, check it in <a href='/cgi-bin/task_list.cgi'> Task list </a>" ) ;
 
 
 }

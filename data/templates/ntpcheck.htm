@@ -33,6 +33,13 @@
 			<tr valign='top'>
 			<td> NE IP </td>
 			<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
+
+			<TMPL_IF NAME=MS5000>
+				<tr valign='top'>
+				<td> NE status </td>
+				<td> In operation <input TYPE="checkbox" NAME="inop" VALUE="inop" checked> Under construction <input TYPE="checkbox" NAME="ucon" VALUE="ucon" checked> Unmanaged <input TYPE="checkbox" NAME="umng" VALUE="umng">			
+			</TMPL_IF>
+
 			<tr valign='top'>
 			<td> Select group </td>
 			<td>			

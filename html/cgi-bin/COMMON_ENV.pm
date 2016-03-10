@@ -32,13 +32,12 @@ $Paths->{LOG}="$Paths->{HOME}/data/log/snmpcheck.log";
 $Paths->{WORKER_LOG}="$Paths->{HOME}/data/log/worker.log";  # after all tests it can be set to /dev/null 
 #$Paths->{WORKER_LOG}="/dev/null";
 $Paths->{GROUPS}="$Paths->{HOME}/data/iplist/groups/";
-$Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
 $Paths->{WORKER_DIR}="$Paths->{HOME}/worker";
 $Paths->{JSON}="$Paths->{HOME}/data/json";
 $Paths->{OUTFILE_DIR}="$Paths->{HOME}/html/reports";
-$Paths->{TASK_UPDATE}="$Paths->{HOME}/html/cgi-bin/task_update.pl";
 $Paths->{PID_DIR}="$Paths->{HOME}/data/pid";
 $Paths->{config.ini}="$Paths->{HOME}/data/cfg/config.ini";
+$Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
 
 $Url->{OUTFILE_DIR}='/reports';
 
@@ -75,7 +74,7 @@ sub require_authorisation {
 sub ReadConfig {
 	my $Cfg;
 	if( -f $Paths->{config.ini} ){
-		my $body=ReadFile( 'config.ini' );
+		my $body=ReadFile( $Paths->{config.ini}  );
 		foreach ( split( /\n/, $body ) ) {
 			chomp;
 			my ( $key, $var )=split( /=/, $_ );
@@ -89,7 +88,7 @@ sub get_groups {
 	my $html_dir=$Paths->{GROUPS};
 	my @ls;
 	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
-		@ls = reverse sort grep { -f "$html_dir/$_" } readdir(DIR);
+		@ls = reverse sort grep { /\.ipasolink$/ &&   -f "$html_dir/$_" } readdir(DIR);
 	closedir DIR;
 	return @ls;
 }
