@@ -123,25 +123,51 @@
   
   
 			<tr valign='top'>
-			<td> NE IP </td>
-			<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
-			<tr valign='top'>
-			<td> Select group </td>
-			<td>			
+			<TMPL_IF NAME=MS5000>
+				<tr valign='top'>
+				<td> NE IP </td>
+				<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
+			
+				<tr valign='top'>
+				<td> NE status </td>
+				<td> In operation <input TYPE="checkbox" NAME="inop" VALUE="inop" checked> Under construction <input TYPE="checkbox" NAME="ucon" VALUE="ucon" checked> Unmanaged <input TYPE="checkbox" NAME="umng" VALUE="umng">			
+				<tr valign='top'>
+				<td> Select group </td>
+				<td>			
 				<select name='group'>	
 					<option value='' ></option>
 					<TMPL_LOOP NAME=GROUP_LIST_LOOP>				
-						<option value='<TMPL_VAR NAME=GROUP>' ><TMPL_VAR NAME=GROUP></option>
+						<option value='<TMPL_VAR NAME=GROUP>' > <TMPL_VAR NAME=GROUP_NAME> </option>
 					</TMPL_LOOP>					
 				</select>
-				<TMPL_IF NAME=MS5000>
 					Include subgroups
 					<input name='subgroup' type='checkbox' <TMPL_IF NAME=SUBGROUP>selected</TMPL_IF> >
-				</TMPL_IF>
-			</td>
-			<tr valign='top'>
-			<td> Generate IP list for all iPasolink</td>
-			<td> <input name='all_ipasolink' type='checkbox' <TMPL_IF NAME=ALL_IPASOLINK>selected</TMPL_IF> > </td>
+				</td>
+				<tr valign='top'>
+				<td> Generate IP list for all iPasolink</td>
+				<td> <input name='all_ipasolink' type='checkbox' <TMPL_IF NAME=ALL_IPASOLINK>selected</TMPL_IF> > </td>
+				
+			<TMPL_ELSE> 
+				<tr valign='top'>
+				<td> NE IP </td>
+				<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
+
+				<tr valign='top'>
+				<td> Select group </td>
+				<td>			
+					<select name='group'>	
+						<option value='' ></option>
+						<TMPL_LOOP NAME=GROUP_LIST_LOOP>				
+							<option value='<TMPL_VAR NAME=GROUP>' > <TMPL_VAR NAME=GROUP_NAME> </option>
+						</TMPL_LOOP>					
+					</select>
+				</td>
+
+				<tr valign='top'>
+				<td> Generate IP list for all iPasolink</td>
+				<td> <input name='all_ipasolink' type='checkbox' <TMPL_IF NAME=ALL_IPASOLINK>selected</TMPL_IF> > </td>
+
+			</TMPL_IF>
 			<tr valign='top'>
 			<td> Description </td>
 			<td> <input name='desc' type='text' size='50' maxlength='254' value='<TMPL_VAR NAME=DESC>'> </td>
@@ -169,6 +195,9 @@
 	<input name='group' type='hidden' value='<TMPL_VAR NAME=GROUP>'>  
 	<input name='subgroup' type='hidden' value='<TMPL_VAR NAME=SUBGROUP>'>  
 	<input name='all_ipasolink' type='hidden' value='<TMPL_VAR NAME=ALL_IPASOLINK>'>  
+	<input name='inop' type='hidden' value='<TMPL_VAR NAME=INOP>'>  
+	<input name='ucon' type='hidden' value='<TMPL_VAR NAME=UCON>'>  
+	<input name='umng' type='hidden' value='<TMPL_VAR NAME=UMNG>'>  	
 
 	<input name='ntp1' type='hidden' value='<TMPL_VAR NAME=NTP1>'>  
 	<input name='ntp2' type='hidden' value='<TMPL_VAR NAME=NTP2>'>  
@@ -193,18 +222,44 @@
 				<b>NTP3:</b> '<TMPL_VAR NAME=NTP3>' <b>Pool time:</b>'<TMPL_VAR NAME=NTP3_POOL>'<br>
 				<b>NTP4:</b> '<TMPL_VAR NAME=NTP4>' <b>Pool time:</b>'<TMPL_VAR NAME=NTP4_POOL>'<br>
 
+		<TMPL_IF NAME=MS5000>
 			<tr valign='top'>
 			<td> Selected IP </td>
 			<td> 
-					<b>IP:</b>'<TMPL_VAR NAME=IP>', 
-					<TMPL_IF  NAME=GROUP>
-						<b>Group:</b>'<TMPL_VAR NAME=GROUP>',
-						<TMPL_IF NAME=MS5000>
-							<b>Include subgroups:</b><TMPL_IF NAME=SUBGROUP>'Yes',<TMPL_ELSE>'No',</TMPL_IF>
-						</TMPL_IF>  
+					<TMPL_IF  NAME=IP>
+						<b>IP:</b>'<TMPL_VAR NAME=IP>' 
+					<TMPL_ELSE>  					
+						<TMPL_IF  NAME=GROUP>
+							<b>Group:</b>'<TMPL_VAR NAME=GROUP>',
+							<b>Include subgroups:</b><TMPL_IF NAME=SUBGROUP>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>In operation:</b><TMPL_IF NAME=INOP>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>Under construction:</b><TMPL_IF NAME=UCON>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>Unmanaged:</b><TMPL_IF NAME=UMNG>'Yes'<TMPL_ELSE>'No'</TMPL_IF> 
+						</TMPL_IF>  						
+						<TMPL_IF  NAME=ALL_IPASOLINK>
+							<b>IP list for all iPasolink:</b><TMPL_IF NAME=ALL_IPASOLINK>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>In operation:</b><TMPL_IF NAME=INOP>'Yes'<TMPL_ELSE>'No'</TMPL_IF>, 
+							<b>Under construction:</b><TMPL_IF NAME=UCON>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>Unmanaged:</b><TMPL_IF NAME=UMNG>'Yes'<TMPL_ELSE>'No'</TMPL_IF> 
+						</TMPL_IF>  						
 					</TMPL_IF>  
-					<b>IP list for all iPasolink:</b><TMPL_IF NAME=ALL_IPASOLINK>'Yes'<TMPL_ELSE>'No'</TMPL_IF>
 			</td>
+		<TMPL_ELSE>  
+			<tr valign='top'>
+			<td> Selected IP </td>
+			<td> 
+					<TMPL_IF  NAME=IP>
+						<b>IP:</b>'<TMPL_VAR NAME=IP>' 
+					<TMPL_ELSE>  					
+						<TMPL_IF  NAME=GROUP>
+							<b>Group:</b>'<TMPL_VAR NAME=GROUP>',
+						</TMPL_IF>  						
+						<TMPL_IF  NAME=ALL_IPASOLINK>
+							<b>IP list for all iPasolink:</b><TMPL_IF NAME=ALL_IPASOLINK>'Yes'<TMPL_ELSE>'No'</TMPL_IF>
+						</TMPL_IF>  						
+					</TMPL_IF>  
+			</td>
+		</TMPL_IF>  
 			<tr valign='top'>
 			<td> Description </td>
 			<td> <TMPL_VAR NAME=DESC> </td>

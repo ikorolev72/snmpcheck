@@ -40,7 +40,7 @@ $Paths->{config.ini}="$Paths->{HOME}/data/cfg/config.ini";
 $Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
 
 $Url->{OUTFILE_DIR}='/reports';
-
+$Url->{ACTION_TASK_ADD}="/cgi-bin/task_add.cgi" ;
 
 
 $Task->{1}='added';
@@ -49,6 +49,87 @@ $Task->{3}='running';
 $Task->{4}='finished';
 $Task->{5}='failed';
 $Task->{6}='canceled';
+
+
+
+
+
+
+
+sub get_ip_list {
+	my $ip_param=shift;
+	my $Cfg=ReadConfig();
+	my @IPs=();
+	#print Dumper( $Cfg );
+	#print Dumper( $ip_param );
+	if( $ip_param->{ip} ) {	
+		return ( $ip_param->{ip} ) ;
+	}
+	if( $Cfg->{iplistdb} eq 'ms5000' ) {
+		# The next variables used for remote access to pgsql, but need the password
+		#$Cfg->{ms5000flag}='-h';
+		#$Cfg->{ms5000ip}='172.29.97.158';
+		my $ms5000flag='';
+		my $ms5000ip='';
+
+		my $code='';
+		my $result_of_exec='';
+		my $statusfilter='';
+		my @Flags;
+		if( $ip_param->{inop} || $ip_param->{ucon} || $ip_param->{umng} ) {
+		    push( @Flags, "'inop'" ) if( $ip_param->{inop} );
+		    push( @Flags, "'ucon'" ) if( $ip_param->{ucon} );
+    		push( @Flags, "'umng'" ) if( $ip_param->{umng} );
+    		$statusfilter="and servicetype in ( " . join(',', @Flags ). " )" ;
+		}
+
+		if( $ip_param->{group} ) {
+			if( $ip_param->{subgroup} ) {
+				$code="psql  $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select summary_symbol_location_id from summary_symbol where summary_symbol_id <> -1;\"";
+				$result_of_exec=qx( $code );
+				my @Grid=split( /\n/, $result_of_exec ) ;
+				my $mask=$ip_param->{group};
+				$mask=~s/0/\./g;
+				my $grid_join =join( ',', map{ "'$_'"} grep { /^$mask$/ } @Grid );
+			} else {
+				$grid_join="'$group'";
+			} 
+			$code="psql $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select neprimaryaddress from managed_element where locationid in ( $grid_join ) and netype like 'iPASOLINK%' $statusfilter;\"";
+			$result_of_exec=qx( $code );
+			@IPs=split( /\s/, $result_of_exec );
+			return @IPs;
+		}
+
+		if( $ip_param->{all_ipasolink} ) {
+			$code="psql $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select neprimaryaddress from managed_element where netype like 'iPASOLINK%' $statusfilter ;\"";
+			$result_of_exec=qx( $code );
+			@IPs=split( /\s/, $result_of_exec );
+			return @IPs;	
+		}
+		
+	} else {
+		# stadalone configuration
+		# stadalone configuration
+		# stadalone configuration
+		# stadalone configuration
+		# stadalone configuration
+		if( $ip_param->{group} ) {
+			if( -f "$Paths->{GROUPS}/$ip_param->{group}" ) {							
+				@IPs=split( /\s/, ReadFile( "$Paths->{GROUPS}/$ip_param->{group}" ) );
+				return @IPs;
+			}
+		}
+		if( $ip_param->{all_ipasolink} ) {
+			if( -f $Paths->{global.ipasolink} ) {
+				@IPs=split( /\s/, ReadFile( $Paths->{global.ipasolink} ));
+				return @IPs;				
+			}
+		}
+	}
+	return @IPs;
+}
+
+
 
 
 sub require_authorisation {
@@ -85,12 +166,34 @@ sub ReadConfig {
 }
 
 sub get_groups {
-	my $html_dir=$Paths->{GROUPS};
-	my @ls;
-	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
-		@ls = reverse sort grep { /\.ipasolink$/ &&   -f "$html_dir/$_" } readdir(DIR);
-	closedir DIR;
-	return @ls;
+	my $ms5000=shift;
+	my $ls;
+	if( 'ms5000' ne $ms5000 ) {
+		my $html_dir=$Paths->{GROUPS};
+
+		opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
+			foreach( reverse sort grep { /\.ipasolink$/ &&   -f "$html_dir/$_" } readdir(DIR) ) {
+				$ls->{ $_ }=$_;
+			}
+		closedir DIR;
+		return $ls;
+	}
+
+	my $code="psql $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select a.summary_symbol_location_id, symbol_name from summary_symbol as a, symbol as b where a.summary_symbol_id = b.symbol_id and b.symbol_id <> -1;\"";
+	my $result_of_exec=qx( $code );
+	# temporary
+$result_of_exec="
+0.0.0|root
+1.0.0|Europe
+1.2.0|Hungary
+1.2.3|Budapest
+4.0.0|Another
+";
+	foreach $str ( split( /\s/, $result_of_exec ) ) {
+		my ($grp, $dname)=split( /\|/, $str );
+		$ls->{$grp}=$dname;	
+	}
+	return $ls;
 }
 
 

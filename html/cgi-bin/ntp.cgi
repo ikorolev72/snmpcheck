@@ -9,10 +9,11 @@ use CGI::Carp qw ( fatalsToBrowser );
 
 
 
-$sname="ntp_ip_change";
+$sname="ntp";
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
-$template = HTML::Template->new(filename => 'ntp_ip_change.htm', die_on_bad_params=>0 );
+$template = HTML::Template->new(filename => 'ntp.htm', die_on_bad_params=>0 );
 $template->param( SNAME=> $sname  );
+$title="iPasolink NTP server IP change";
 
 
 
@@ -22,32 +23,40 @@ foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 my $dbh, $stmt, $sth, $rv;
 $message='';
 
-$title="iPasolink NTP server IP change";
 
-$template->param( AUTHORISED=>1 );
-unless (  require_authorisation( 1, 0 ) ) { # we require any authorised user
-	message2( "Only authorised user can add this task" );
-	$template->param( AUTHORISED=>0 );
-	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-	$template->param( TITLE=>$title );
-	$template->param( MESSAGES=> $message );
-
-	print "Content-type: text/html\n\n" ;
-	print  $template->output;
-exit 0;
+my $Cfg=ReadConfig();
+if( $Cfg->{iplistdb} eq 'ms5000' ) {
+	$template->param( MS5000=>1 );
 }
 
+$template->param( AUTHORISED=>1 );
+if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authentication} ) ) {
+	unless (  require_authorisation()  ) { # we require any authorised user
+		message2( "Only authorised user can add this task" );
+		$template->param( AUTHORISED=>0 );
+		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( TITLE=>$title );
+		$template->param( MESSAGES=> $message );
+
+		print "Content-type: text/html\n\n" ;
+		print  $template->output;
+	exit 0;
+ }
+}
 
 
 
 $dbh=db_connect() ;
 
 my $show_form=1;
-my $table='users';
-
 
 $Param->{all_ipasolink}=$Param->{all_ipasolink}?1:0;
 $Param->{subgroup}=$Param->{subgroup}?1:0;
+$Param->{inop}=$Param->{inop}?1:0;
+$Param->{ucon}=$Param->{ucon}?1:0;
+$Param->{umng}=$Param->{umng}?1:0;
+
+
 
 if(  Action() ==0 ) {
 	$show_form=1;
@@ -60,17 +69,27 @@ if(  Action() ==0 ) {
 	$template->param( SHOWFORM_TO_TASK => 1 );
 	$template->param( LOGIN=>$Param->{login} );
 	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-	$template->param( ACTION_TASK_ADD=>  "/cgi-bin/task_add.cgi" );
+	$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD} );
 	$template->param( TITLE=>"$title. Ready to add task" );
 }
-
+	my $grp=get_groups(  $Cfg->{iplistdb} );
+	foreach $group ( sort keys( $grp ) ) {
+		my %row_data;   
+		$row_data{ GROUP }=$group;
+		$row_data{ GROUP_NAME }=$grp->{$group};		
+		push(@loop_data, \%row_data);
+	}
+	$template->param(GROUP_LIST_LOOP => \@loop_data);	
 
 $template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
 $template->param( IP=> $Param->{ip} );
 $template->param( GROUP=> $Param->{group} );
 $template->param( SUBGROUP=> $Param->{subgroup} );
 $template->param( ALL_IPASOLINK=> $Param->{all_ipasolink} );
-
+$template->param( INOP=> $Param->{inop} );
+$template->param( UCON=> $Param->{ucon} );
+$template->param( UMNG=> $Param->{umng} );
+	
 $template->param( NTP1=> $Param->{ntp1} );
 $template->param( NTP2=> $Param->{ntp2} );
 $template->param( NTP3=> $Param->{ntp3} );
@@ -81,15 +100,6 @@ $template->param( NTP3_POOL=> $Param->{ntp3_poll} );
 $template->param( NTP4_POOL=> $Param->{ntp4_poll} );
 
 
-
-
-foreach $group ( get_groups() ) {
-	my %row_data;   
-	$row_data{ GROUP }=$group;
-	push(@loop_data, \%row_data);
-}
-$template->param(GROUP_LIST_LOOP => \@loop_data);
-	 
 
 # print the template output
 $template->param( MESSAGES=> $message );

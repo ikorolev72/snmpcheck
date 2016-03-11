@@ -15,7 +15,6 @@ $template = HTML::Template->new(filename => 'task_add.htm', die_on_bad_params=>0
 $table='tasks';
 $id=0; # id of new task
 $sname=$Param->{sname};
-$outfile=$sname."_".generate_filename()."_log.csv";
 
 $template->param( AUTHORISED=>1 );
 $dbh=db_connect() ;
@@ -56,7 +55,6 @@ sub Action {
 		$row->{dt}=time() ;
 		$row->{param}=JSON->new->utf8->encode($Param); 
 		$row->{status}=1 ; # added
-		$row->{outfile}=$outfile ;
 		$row->{mess}='' ;
 		
 				
@@ -91,10 +89,6 @@ sub check_record {
 				message2( "Not found worker with name $Param->{sname}" );			
 				$retval=0 ;
 		}		
-	}
-
-	unless( CheckField ( $outfile ,'filename', "Fields 'outfile' $outfile ") ){
-		$retval=0 ;
 	}
 	return $retval;
 }

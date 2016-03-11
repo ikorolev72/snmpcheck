@@ -79,7 +79,7 @@ sub get_ip_list {
 		# not yet realised
 	} else {
 		# stadalone configuration
-		if( $ip_param->{ip} ) {		
+		if( $ip_param->{ip} ) {	
 			return ( $ip_param->{ip} ) ;
 		}
 		if( $ip_param->{group} ) {
