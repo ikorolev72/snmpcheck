@@ -2,9 +2,8 @@
 # korolev-ia [at] yandex.ru
 
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/cgi-bin/html'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 
-use DBI;
 #use strict;
 #use warnings;
 use HTML::Template;
@@ -21,26 +20,33 @@ use HTML::Entities;
 
 
 
+$Url->{OUTFILE_DIR}='../reports';
+$Url->{ACTION_TASK_ADD}="task_add.cgi" ;
+$Url->{ACTION_TASK_LIST}="task_list.cgi";
+
 
 $Paths->{HOME}='C:/GIT/snmpcheck/';
 if( -d '/opt/snmpcheck' ) { 
 	$Paths->{HOME}='/opt/snmpcheck/';
 }	
+if( -d '/home/nems/client_persist/htdocs/bulktool3' ) { 
+	$Paths->{HOME}='/home/nems/client_persist/htdocs/bulktool3';
+}
+	
 $Paths->{TEMPLATE}="$Paths->{HOME}/data/templates";
 $Paths->{DB}="$Paths->{HOME}/data/db";
 $Paths->{LOG}="$Paths->{HOME}/data/log/snmpcheck.log";
-$Paths->{WORKER_LOG}="$Paths->{HOME}/data/log/worker.log";  # after all tests it can be set to /dev/null 
+$Paths->{WORKER_LOG}="$Paths->{HOME}/data/log/worker";  # after all tests it can be set to /dev/null 
 #$Paths->{WORKER_LOG}="/dev/null";
 $Paths->{GROUPS}="$Paths->{HOME}/data/iplist/groups/";
 $Paths->{WORKER_DIR}="$Paths->{HOME}/worker";
+$Paths->{CGISCRIPT_DIR}="$Paths->{HOME}/html/cgi-bin";
 $Paths->{JSON}="$Paths->{HOME}/data/json";
 $Paths->{OUTFILE_DIR}="$Paths->{HOME}/html/reports";
 $Paths->{PID_DIR}="$Paths->{HOME}/data/pid";
 $Paths->{config.ini}="$Paths->{HOME}/data/cfg/config.ini";
 $Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
 
-$Url->{OUTFILE_DIR}='/reports';
-$Url->{ACTION_TASK_ADD}="/cgi-bin/task_add.cgi" ;
 
 
 $Task->{1}='added';
@@ -92,9 +98,10 @@ sub get_ip_list {
 				$mask=~s/0/\./g;
 				my $grid_join =join( ',', map{ "'$_'"} grep { /^$mask$/ } @Grid );
 			} else {
-				$grid_join="'$group'";
+				$grid_join="'$ip_param->{group}'";
 			} 
 			$code="psql $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select neprimaryaddress from managed_element where locationid in ( $grid_join ) and netype like 'iPASOLINK%' $statusfilter;\"";
+			#w2log( $code );
 			$result_of_exec=qx( $code );
 			@IPs=split( /\s/, $result_of_exec );
 			return @IPs;
@@ -182,13 +189,13 @@ sub get_groups {
 	my $code="psql $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select a.summary_symbol_location_id, symbol_name from summary_symbol as a, symbol as b where a.summary_symbol_id = b.symbol_id and b.symbol_id <> -1;\"";
 	my $result_of_exec=qx( $code );
 	# temporary
-$result_of_exec="
-0.0.0|root
-1.0.0|Europe
-1.2.0|Hungary
-1.2.3|Budapest
-4.0.0|Another
-";
+#$result_of_exec="
+#0.0.0|root
+#1.0.0|Europe
+#1.2.0|Hungary
+#1.2.3|Budapest
+#4.0.0|Another
+#";
 	foreach $str ( split( /\s/, $result_of_exec ) ) {
 		my ($grp, $dname)=split( /\|/, $str );
 		$ls->{$grp}=$dname;	
@@ -199,6 +206,16 @@ $result_of_exec="
 
 sub get_workers {
 	my $html_dir=$Paths->{WORKER_DIR};
+	my @ls;
+	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
+		@ls = reverse sort grep { -f "$html_dir/$_" } readdir(DIR);
+	closedir DIR;
+	return @ls;
+}
+
+
+sub get_cgiscripts {
+	my $html_dir=$Paths->{CGISCRIPT_DIR};
 	my @ls;
 	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
 		@ls = reverse sort grep { -f "$html_dir/$_" } readdir(DIR);
@@ -222,11 +239,11 @@ sub update_tasks{
 	}
 
 	while (my $row = $sth->fetchrow_hashref) {
-		my $json_file="$Paths->{JSON}/$row->{id}.out.json";		
+		my $json_file="$Paths->{JSON}/$row->{id}.out.json";	
 		my $json_text=ReadFile( $json_file ) ;
 			if( $json_text ) {
 				my $nrow = JSON->new->utf8->decode($json_text) ;		
-				if( $nrow->{sdt} <= $row->{sdt} ) {
+				if( ($nrow->{sdt} le $row->{sdt}) and ( $nrow->{status} == $row->{status} ) ) {
 					if( $row->{sdt} + $timeout < time() ) { #failed by timeout
 						$mess="Task $row->{id} failed by timeout reason. Do not get any status update json messages during $timeout sec.";
 						w2log( $mess );

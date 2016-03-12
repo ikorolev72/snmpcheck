@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 use COMMON_ENV;
 
 use Getopt::Long;
@@ -23,21 +23,28 @@ $json_text=ReadFile( $json_file );
 
 $Param =JSON->new->utf8->decode($json_text);
 $ip_param=JSON->new->utf8->decode($Param->{param});
+my $Cfg=ReadConfig();
+
 
 $outfile=$ip_param->{sname}."_".generate_filename()."_$Param->{id}_log.csv";
-AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", "Unix time now\n");
-
 
 my $json_out="$Paths->{JSON}/$Param->{id}.out.json";
 my $row;
 my $timenow=time();
 
 my @IPs=get_ip_list( $ip_param );
-$count_max=$#IPs;
+$count_max=$#IPs || 1 ;
+my $count=0;
 
-foreach $count ( 0..$count_max )  {
-	if( time() - $timenow  > 15 ) {
-		AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", $IPs[$count]."\n");
+
+######### header of worker output table 
+WriteFile( "$Paths->{OUTFILE_DIR}/$outfile", "NE name,NE IP,Status,NTP server status,NTP server,Reference server,Stratum,t,When,Poll,Reach,Delay,Offset,Jitter\n" ) ;
+
+foreach $IP( @IPs ) {
+#######################################
+########## we say to task manager thats task runing
+	if( time() - $timenow  > 15 || 0==$count ) {
+		sleep 1;
 		$timenow=time();
 		$row->{sdt}=time();
 		$row->{status}=3; # running
@@ -48,10 +55,72 @@ foreach $count ( 0..$count_max )  {
 				w2log ("Cannot write file $json_file: $!");
 		}
 	}
-	sleep 10;
-	$|=1;
-	print $count;
+	$count++;
+
+#######################################
+
+
+#######################################
+########### worker code
+	my $code, $result_of_exec, $ne_name, $ntpstat;
+	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.11.1 2>/dev/null" ;
+	#w2log( $code);
+	$result_of_exec=qx( $code );
+	next unless( $result_of_exec );
+	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.3.1 2>/dev/null | cut -d '\"' -f 2 " ;
+	$ne_name=qx( $code ) ;
+	chomp ( $ne_name );
+	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.6.1.1.1.3.1 2>/dev/null | cut -d '\"' -f 2-1000 | tail -2 | head -1 ";	
+	$ntpstat= qx( $code ) ;
+	chomp ( $ntpstat );
+	
+	
+	my $ntps='NOT CONFIGURED';
+	my $ntpok=0;
+	my $ntpentry=0;
+	my $ntpstatus='';
+
+	if( $ntpstat =~ /^./ ) {
+		$ntpstatus='Configured';
+		$ntpentry=1;
+	}
+
+	if( $ntpstat =~ /^\+/ ) {
+		$ntpstatus='Candidate';
+		$ntpentry=1;
+		$ntpok=1;
+	}
+	if( $ntpstat =~ /^\*/ ) {
+		$ntpstatus='Selected';
+		$ntpentry=1;
+		$ntpok=1;
+	}
+	$ntpstat=~s/^[\+\*]//g;
+
+	
+	my ( $ntpserver, $ntpserverref, $stratum, $t, $when, $poll, $reach, $delay, $offset, $jitter )= split( /\s/, $ntpstat );
+
+
+	if ( $ntpentry == 0  ) {
+		AppendFile( $outfile, "$ne_name,$IP,NOT CONFIGURED") ;
+	} else {
+		if ( $ntpok == 0 ) {
+			$ntps='NOT WORKING';
+		} else {
+			$ntps='WORKING';
+		}
+	}
+
+	AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", "$ne_name,$IP,$ntps,$ntpstatus,$ntpserver,$ntpserverref,$stratum,$t,$when,$poll,$reach,$delay,$offset,$jitter\n" ) ;
+
+########### end of worker code
+#######################################
+
 }
+
+
+#######################################
+########## we say to task manager thats task finished
 
 $row->{sdt}=time();
 $row->{status}=4; # finished
@@ -63,40 +132,12 @@ $row->{outfile}=$outfile;
 unless( WriteFile( $json_out, JSON->new->utf8->encode($row) ) ){
 	w2log ("Cannot write file $json_file: $!");
 }
+#######################################
 
 exit 0;
  
 
 
-sub get_ip_list {
-	my $ip_param=shift;
-	my $Cfg=ReadConfig();
-	my @IPs=();
-	#print Dumper( $Cfg );
-	#print Dumper( $ip_param );
-
-	if( $Cfg->{iplistdb} eq 'ms5000' ) {
-		# not yet realised
-	} else {
-		# stadalone configuration
-		if( $ip_param->{ip} ) {	
-			return ( $ip_param->{ip} ) ;
-		}
-		if( $ip_param->{group} ) {
-			if( -f "$Paths->{GROUPS}/$ip_param->{group}" ) {							
-				@IPs=split( /\s/, ReadFile( "$Paths->{GROUPS}/$ip_param->{group}" ) );
-				return @IPs;
-			}
-		}
-		if( $ip_param->{all_ipasolink} ) {
-			if( -f $Paths->{global.ipasolink} ) {
-				@IPs=split( /\s/, ReadFile( $Paths->{global.ipasolink} ));
-				return @IPs;				
-			}
-		}
-	}
-	return undef;
-}
  
   
 sub show_help {

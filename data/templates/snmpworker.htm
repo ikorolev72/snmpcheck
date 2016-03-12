@@ -3,13 +3,12 @@
 	<title>
 		<TMPL_VAR NAME=TITLE>
 	</title>
-	<META http-equiv=Content-Type content='text/html; charset=iso-8859-1;'>
-	<LINK href='/main.css' type=text/css rel=stylesheet>
-	<script language="javascript" type="text/javascript" src="/js/snmpcheck.js"></script>
-	
+	<LINK href='../main.css' type=text/css rel=stylesheet>
+	<script language="javascript" type="text/javascript" src="../js/snmpcheck.js"></script>
+
 </head>
 <body>
-<table width='100%'><tr><td width='70%'> <a href='/'>home</a> </td><td align='right'> <div id='login_as'> </div> </td></tr></table>
+<div id='login_as'> </div>
 <h3>
 	<TMPL_VAR NAME=TITLE>
 </h3>
@@ -41,6 +40,20 @@
 			<td> <input name='desc' type='text' size='20' maxlength='200' value='<TMPL_VAR NAME=DESC>'> </td>
 
 			<tr valign='top'>
+			<td> CGI script</td>
+			<td>
+			
+				<select name='cgiscript'>	
+					<TMPL_IF NAME=CGISCRIPT>
+					<option value='<TMPL_VAR NAME=CGISCRIPT>' selected><TMPL_VAR NAME=CGISCRIPT></option>
+					</TMPL_IF>
+					<TMPL_LOOP NAME=CGISCRIPT_LIST_LOOP>				
+						<option value='<TMPL_VAR NAME=LOOP_CGISCRIPT>' ><TMPL_VAR NAME=LOOP_CGISCRIPT></option>
+					</TMPL_LOOP>					
+				</select>
+				</td>
+
+				<tr valign='top'>
 			<td> worker script</td>
 			<td>
 			
@@ -53,17 +66,6 @@
 					</TMPL_LOOP>					
 				</select>
 				</td>
-			
-
-
-			<tr valign='top'>
-			<td> auth </td>			
-			<td> 
-				<select name='auth'>	
-					<option value='1' <TMPL_IF NAME=AUTH> selected </TMPL_IF> >Yes</option>
-					<option value='0' <TMPL_UNLESS NAME=AUTH> selected </TMPL_UNLESS> >No</option>
-				</select>
-			
 
 			<tr valign='top'>
             <td>&nbsp;</td>
@@ -87,8 +89,8 @@
 	<tr>
 		<td> sname </td>
 		<td> desc </td>
+		<td> cgiscript </td>
 		<td> worker </td>
-		<td> auth </td>
 		<td>  </td>
 	</tr>
 
@@ -96,8 +98,8 @@
 	<tr>
 		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'><TMPL_VAR NAME=SNAME></a></td>
 		<td> <TMPL_VAR NAME=DESC></td>
+		<td> <TMPL_VAR NAME=CGISCRIPT></td>
 		<td> <TMPL_VAR NAME=WORKER></td>
-		<td> <TMPL_VAR NAME=AUTH></td>
 		<td> [ <a href='' onclick="confirm_prompt('Are you sure to delete snmp worker definition _<TMPL_VAR NAME=NAME>_','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
 	</tr>
    </TMPL_LOOP>

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 use COMMON_ENV;
 use File::Basename;
 use Getopt::Long;
@@ -85,7 +85,8 @@ sub start_tasks{
 				next;
 		};	
 		# start
-		my $cmd="$Paths->{WORKER_DIR}/$row->{worker} --json=$json_file >> $Paths->{WORKER_LOG} 2>&1 &" ;
+		my $mylog=( $Paths->{WORKER_LOG} eq '/dev/null' )?'/dev/null':"$Paths->{WORKER_LOG}.$row->{id}.log";
+		my $cmd="$Paths->{WORKER_DIR}/$row->{worker} --json=$json_file >> $mylog 2>&1 &" ;
 		w2log ( "Start the worker : $cmd " );
 		# we don't check the status of task, we only start the cmd
 		system( "$cmd" ) ;

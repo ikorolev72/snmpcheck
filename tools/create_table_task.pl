@@ -14,8 +14,8 @@ $dbh=db_connect();
 #$stmt = "insert into sequ( id ) values ( 0 );" ;
 #do_sql( $stmt );
 
-$stmt = "drop table IF EXISTS tasks ;" ;
-do_sql( $stmt );
+#$stmt = "drop table IF EXISTS tasks ;" ;
+#do_sql( $stmt );
 
 $stmt =" CREATE TABLE IF NOT EXISTS tasks (
 	id 		INTEGER,
@@ -33,8 +33,23 @@ $stmt =" CREATE TABLE IF NOT EXISTS tasks (
 );  ";
 
 
+#do_sql( $stmt );
+#exit;
+
+$stmt = "drop table IF EXISTS snmpworker ;" ;
+do_sql( $stmt );
+
+$stmt =" CREATE TABLE IF NOT EXISTS snmpworker (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	sname  		TEXT,
+	desc  		TEXT,
+	worker		text,	
+	cgiscript	text	
+);  ";
+
 do_sql( $stmt );
 exit;
+
 
 
 $stmt =" insert into  snmpworker (    

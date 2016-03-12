@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
@@ -23,7 +23,7 @@ $dbh=db_connect() ;
 if(  Action() ==0 ) {
 	message2( "Cannot add new task" );	
 } else {
-	message2( "Task '$Param->{desc}' added. Please, check it in <a href='/cgi-bin/task_list.cgi'> Task list </a>" ) ;
+	message2( "Task '$Param->{desc}' added. Please, check it in <a href='$Url->{ACTION_TASK_LIST}'> Task list </a>" ) ;
 
 
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
@@ -9,6 +9,8 @@ use CGI::Carp qw ( fatalsToBrowser );
 
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
+print "Content-type: text/html\n\n" ;
+
 
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'task_list.htm', die_on_bad_params=>0 );
@@ -97,6 +99,7 @@ if( $Param->{edit} ) {
 		$row_data{ DT }=get_date( $row->{dt} ); 
 		$row_data{ SDT }=get_date( $row->{sdt} ); 
 		$row_data{ STATUS }=$Task->{ $row->{status} }  ; 
+		$row_data{ WORKER }=$Task->{ $row->{worker} }  ; 
 		$row_data{ PROGRESS }= "$row->{progress} %"  ; 
 				if( 4==$row->{status} ) {
 					$row_data{ STATUS_GREEN }=1 ;
@@ -122,7 +125,6 @@ if( $Param->{edit} ) {
 
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
 $template->param( MESSAGES=> $message );
-print "Content-type: text/html\n\n" ;
 print  $template->output;
 
 db_disconnect( $dbh );

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin'; } 
+BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
@@ -61,17 +61,8 @@ if( $show_form ) {
   if( $Param->{new} ) {
 	$template->param( SNAME=>$Param->{sname} );
 	$template->param( DESC=>$Param->{desc} );
-#	$template->param( IP=>$Param->{ip} );
-	$template->param( AUTH=>$Param->{auth} )  ;
-#	$template->param( SNMPUSER=>$Param->{snmpuser} || 'Admin' );
-#	$template->param( SNMPAP=>$Param->{snmpap} || 'password01' );
-#	$template->param( SNMPPK=>$Param->{snmppk} || 'password01');
-#	$template->param( SNMPR=>$Param->{snmpr} || 5);
-#	$template->param( SNMPT=>$Param->{snmpt} || 1);
-#	$template->param( SNMPAPRO=>$Param->{snmpapro} || 'MD5');
-#	$template->param( SNMPPRO=>$Param->{snmppro} || 'DEC' );
-#	$template->param( SNMPLEVEL=>$Param->{snmplevel} || 'authPriv' );
 	$template->param( WORKER=>$Param->{worker}  );
+	$template->param( CGISCRIPT=>$Param->{cgiscript}  );
   }
   if( $Param->{edit} ) {
 	my $row=GetRecord ( $dbh, $Param->{id}, $table );
@@ -79,17 +70,8 @@ if( $show_form ) {
 		$template->param( ID=>$row->{id} );
 		$template->param( SNAME=>$row->{sname} );
 		$template->param( DESC=>$row->{desc} );
-#		$template->param( IP=>$row->{ip} );
-		$template->param( AUTH=>$row->{auth} );
-#		$template->param( SNMPUSER=>$row->{snmpuser} );
-#		$template->param( SNMPAP=>$row->{snmpap} );
-#		$template->param( SNMPPK=>$row->{snmppk} );
-#		$template->param( SNMPR=>$row->{snmpr} );
-#		$template->param( SNMPT=>$row->{snmpt} );
-#		$template->param( SNMPAPRO=>$row->{snmpapro} );
-#		$template->param( SNMPPRO=>$row->{snmppro} );
-#		$template->param( SNMPLEVEL=>$row->{snmplevel} );
 		$template->param( WORKER=>$row->{worker}  );
+		$template->param( CGISCRIPT=>$row->{cgiscript}  );
 	}
 	else{
 		message2 ( " Cannot to get record from table $table with id = $Param->{id}" );
@@ -124,6 +106,16 @@ foreach $w ( get_workers() ) {
 $template->param(WORKER_LIST_LOOP => \@loop_data);
 
 
+foreach $w ( get_cgiscripts() ) {
+	my %row_data;   
+	$row_data{ LOOP_CGISCRIPT }=$w;
+	push(@loop_data, \%row_data);
+}
+$template->param(CGISCRIPT_LIST_LOOP => \@loop_data);
+
+
+
+
  
 #print "<pre>".Dumper( $ENV{'SCRIPT_NAME'} )."</pre>";
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
@@ -152,17 +144,8 @@ sub Action {
 		
 		$row->{sname}=$Param->{sname} ;
 		$row->{desc}=$Param->{desc} ;
-#		$row->{ip}=$Param->{ip} ;
-		$row->{auth}=$Param->{auth} ;
-#		$row->{snmpuser}=$Param->{snmpuser} ;
-#		$row->{snmpap}=$Param->{snmpap} ;
-#		$row->{snmppk}=$Param->{snmppk} ;
-#		$row->{snmpr}=$Param->{snmpr} ;
-#		$row->{snmpt}=$Param->{snmpt} ;
-#		$row->{snmpapro}=$Param->{snmpapro} ;
-#		$row->{snmppro}=$Param->{snmppro} ;
-#		$row->{snmplevel}=$Param->{snmplevel} ;
 		$row->{worker}=$Param->{worker} ;
+		$row->{cgiscript}=$Param->{cgiscript} ;
 		
 		unless( $Param->{id} ) { # if we save the new record 					
 			if ( InsertRecord ( $dbh, $Param->{id},  $table, $row ) ) {
@@ -212,37 +195,10 @@ sub check_smnpworker_record {
 	unless( CheckField ( $Param->{ desc } ,'text', "Field 'desc' ") ) {
 			$retval=0 ;
 	}
-#	unless( CheckField ( $Param->{ ip } ,'ip', "Field 'ip' ")) {
-#			$retval=0 ;
-#	}
-	unless( CheckField ( $Param->{ auth } ,'boolean', "Field 'auth' ")) {
+	unless( CheckField ( $Param->{ worker } ,'filename', "Field 'worker script' ") ){
 			$retval=0 ;
 	}
-#	unless( CheckField ( $Param->{ snmpuser } ,'login', "Field 'snmpuser' ")) {
-#			$retval=0 ;
-#	}
-#	unless( CheckField ( $Param->{ snmpap } ,'password', "Field 'snmpap' ")) {
-#			$retval=0 ;
-#	}
-#	unless( CheckField ( $Param->{ snmppk } ,'password', "Field 'snmppk' ") ){
-#			$retval=0 ;
-#	}
-#	unless( CheckField ( $Param->{ snmpr } ,'int', "Field 'snmpr' ") ){
-#			$retval=0 ;
-#	}
-#	unless( CheckField ( $Param->{ snmpt } ,'int', "Field 'snmpt' ")) {
-#			$retval=0 ;
-#	}
-#	unless( CheckField ( $Param->{ snmpapro } ,'text_no_empty', "Field 'snmpapro' ") ){
-#			$retval=0 ;
-#	}
-#	unless( CheckField ( $Param->{ snmppro } ,'text_no_empty', "Field 'snmppro' ") ){
-#			$retval=0 ;
-#	}
-#	unless( CheckField ( $Param->{ snmplevel } ,'text_no_empty', "Field 'snmplevel' ") ){
-#			$retval=0 ;
-#	}
-	unless( CheckField ( $Param->{ worker } ,'filename', "Field 'worker script' ") ){
+	unless( CheckField ( $Param->{ cgiscript } ,'filename', "Field 'CGI script' ") ){
 			$retval=0 ;
 	}
 	return $retval;

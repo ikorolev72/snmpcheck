@@ -65,12 +65,17 @@ function to_logout( ) {
 }
 
 function show_login_as( ) {
-   var elem, text ;
-	if( text=readCookie( 'name' ) ) {
-		elem = document.getElementById( 'login_as' );
-		elem.innerHTML = 'You are login as '+text+' [  <a href="" onclick="to_logout();"> logout </a> ]';		
-	} else {
-		elem = document.getElementById( 'login_as' );
-		elem.innerHTML = '[  <a href="/cgi-bin/login.cgi"> login </a> ]';				
-	}
+   var elem, text , elem_home;
+	elem_home = document.getElementById( 'div_home' );
+
+	elem = document.getElementById( 'login_as' );
+
+	//var mypath=window.location.pathname;
+	//var f=mypath.search( /bulktool3/ );
+	//if ( f == -1 )  {
+		if( text=readCookie( 'name' ) ) {
+			elem.innerHTML = '<table width="100%"><tr><td width="70%"> <a href="../index.html">home</a> </td><td align="right"> You are login as '+text+' [  <a href="" onclick="to_logout();"> logout </a> ]</td></tr></table> ';	
+		} else {
+			elem.innerHTML = '<table width="100%"><tr><td width="70%"> <a href="../index.html">home</a> </td><td align="right"> [  <a href="login.cgi"> login </a> ]</td></tr></table> ';									
+		}
 }

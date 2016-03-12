@@ -1,26 +1,49 @@
 <html>
+<head>
+	<title>
+		SNMP checker
+	</title>
+	<LINK href='main.css' type=text/css rel=stylesheet>
+
+</head>
+
 <h2>SNMP checker</h2>
-<ul>
-	<li>
-		<a href='/cgi-bin/users.cgi'> Add / edit / remove users </a> 
-	</li>
-	<li>
-		<a href='/cgi-bin/login.cgi'> Login page </a> 
-	</li>
-	<li>
-		<a href='/cgi-bin/password.cgi?edit=1'> Change password page </a> 
-	</li>
-	<li>
-		<a href='/cgi-bin/snmpworker.cgi'> Add / edit / remove workers </a> 
-	</li>
-	<li>
-		<a href='/cgi-bin/ntpcheck.cgi'> Add ntpcheck task </a> 
-	</li>
-	<li>
-		<a href='/cgi-bin/ntp.cgi'> Add 'iPasolink NTP server IP change' task </a> 
-	</li>
-	<li>
-		<a href='/cgi-bin/task_list.cgi'> Task list </a> 
-	</li>
-</ul>
-</html>
+<table border=1>
+	<tr valign=top>
+		<td>
+			<ul>
+				<li>
+					<a href='./cgi-bin/login.cgi'> Login page </a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/password.cgi?edit=1'> Change password page </a> 
+				</li>
+			</ul>
+		</td>
+		<td>
+			<ul>
+				<li>
+					<a href='./cgi-bin/users.cgi'> Add / edit / remove users </a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/snmpworker.cgi'> Add / edit / remove workers </a> 
+							</li>
+			</ul>
+		</td>
+		<td>
+			<ul>
+				<li>
+					<a href='./cgi-bin/ntpcheck.cgi'> Add ntpcheck task </a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/ntp.cgi'> Add 'iPasolink NTP server IP change' task </a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/task_list.cgi'> Task list </a> 
+				</li>
+			</ul>
+		</td>
+	</tr>
+</table>	
+
+<hr>
