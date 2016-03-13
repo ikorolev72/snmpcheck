@@ -2,6 +2,7 @@
 
 BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 use COMMON_ENV;
+use File::Basename;
 
 use Getopt::Long;
 
@@ -26,7 +27,7 @@ $ip_param=JSON->new->utf8->decode($Param->{param});
 my $Cfg=ReadConfig();
 
 
-$outfile=$ip_param->{sname}."_".generate_filename()."_$Param->{id}_log.csv";
+$outfile="$Paths->{OUTFILE_DIR}/$ip_param->{sname}_".generate_filename()."_$Param->{id}_log.csv";
 
 my $json_out="$Paths->{JSON}/$Param->{id}.out.json";
 my $row;
@@ -35,10 +36,13 @@ my $timenow=time();
 my @IPs=get_ip_list( $ip_param );
 $count_max=$#IPs || 1 ;
 my $count=0;
+my $error=0;
 
 
 ######### header of worker output table 
-WriteFile( "$Paths->{OUTFILE_DIR}/$outfile", "NE name,NE IP,Status,NTP server status,NTP server,Reference server,Stratum,t,When,Poll,Reach,Delay,Offset,Jitter\n" ) ;
+WriteFile( $outfile, "NE name,NE IP,Status,NTP server status,NTP server,Reference server,Stratum,t,When,Poll,Reach,Delay,Offset,Jitter\n" ) ;
+######### header of worker output table 
+
 
 foreach $IP( @IPs ) {
 #######################################
@@ -66,7 +70,12 @@ foreach $IP( @IPs ) {
 	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.11.1 2>/dev/null" ;
 	#w2log( $code);
 	$result_of_exec=qx( $code );
-	next unless( $result_of_exec );
+	unless( $result_of_exec ) {
+		AppendFile( $outfile, ",$IP,FATAL\n" );
+		$error++;		
+		next;
+	} 
+	
 	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.3.1 2>/dev/null | cut -d '\"' -f 2 " ;
 	$ne_name=qx( $code ) ;
 	chomp ( $ne_name );
@@ -110,13 +119,21 @@ foreach $IP( @IPs ) {
 			$ntps='WORKING';
 		}
 	}
-
-	AppendFile( "$Paths->{OUTFILE_DIR}/$outfile", "$ne_name,$IP,$ntps,$ntpstatus,$ntpserver,$ntpserverref,$stratum,$t,$when,$poll,$reach,$delay,$offset,$jitter\n" ) ;
+	if ( $ntpok == 0 ) {
+		$error++;
+	}
+	AppendFile( $outfile, "$ne_name,$IP,$ntps,$ntpstatus,$ntpserver,$ntpserverref,$stratum,$t,$when,$poll,$reach,$delay,$offset,$jitter\n" ) ;
 
 ########### end of worker code
 #######################################
-
 }
+
+######### bottom of worker output table 
+AppendFile( $outfile, "End of the report\n");
+######### bottom of worker output table 
+
+
+
 
 
 #######################################
@@ -125,9 +142,13 @@ foreach $IP( @IPs ) {
 $row->{sdt}=time();
 $row->{status}=4; # finished
 $row->{id}=$Param->{id};
-$row->{mess}='Finished successfully';
 $row->{progress}=100 ;
-$row->{outfile}=$outfile;
+$row->{outfile}=basename( $outfile );
+$row->{mess}='Finished successfully';
+if( $error ) {
+	$row->{mess}='Finished with errors.';
+} 
+
 
 unless( WriteFile( $json_out, JSON->new->utf8->encode($row) ) ){
 	w2log ("Cannot write file $json_file: $!");

@@ -90,19 +90,14 @@ sub get_ip_list {
 		}
 
 		if( $ip_param->{group} ) {
+			my $mask=$ip_param->{group};
 			if( $ip_param->{subgroup} ) {
-				$code="psql  $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select summary_symbol_location_id from summary_symbol where summary_symbol_id <> -1;\"";
-				$result_of_exec=qx( $code );
-				my @Grid=split( /\n/, $result_of_exec ) ;
-				my $mask=$ip_param->{group};
-				$mask=~s/0/\./g;
-				my $grid_join =join( ',', map{ "'$_'"} grep { /^$mask$/ } @Grid );
-			} else {
-				$grid_join="'$ip_param->{group}'";
+				$mask=~s/0/_/g;
 			} 
-			$code="psql $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select neprimaryaddress from managed_element where locationid in ( $grid_join ) and netype like 'iPASOLINK%' $statusfilter;\"";
-			#w2log( $code );
+			$code="psql $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select a.neprimaryaddress from managed_element as a, summary_symbol as b where b.summary_symbol_location_id like '$mask' and b.summary_symbol_location_id=a.locationid and a.netype like 'iPASOLINK%' and b.summary_symbol_id <> -1 	$statusfilter;\"";			
+			w2log( Dumper( $code ) ); 	
 			$result_of_exec=qx( $code );
+			w2log( Dumper( $result_of_exec ) ); 	
 			@IPs=split( /\s/, $result_of_exec );
 			return @IPs;
 		}
