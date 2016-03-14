@@ -78,7 +78,7 @@ foreach $IP( @IPs ) {
 	$code="snmpset -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r 2 -t 5 -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.3.4.1.1.3.1 i 1 2>/dev/null | cut -d ' ' -f 2";	
 	$result_of_exec=qx( $code );
 	chomp( $result_of_exec );
-	if( $result_of_exec eq '1' ) {
+	if( 1 == $result_of_exec ) {
 		AppendFile( $outfile, "$ne_name,$IP,NTP service stop,,COMPLETED\n" );
 	} else {
 		AppendFile( $outfile, "$ne_name,$IP,NTP service stop,,ERROR\n" );
@@ -91,10 +91,11 @@ foreach $IP( @IPs ) {
 	$result1=qx( $code );
 	chomp( $result1 );
 	$code="snmpset -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.3.4.2.1.5.1 i $ip_param->{ntp1_poll} 2>/dev/null | cut -d ' ' -f 2";
+	#w2log( $code );
 	$pollres1=qx( $code );
 	chomp( $pollres1 );
-	if( ($result1 eq $ip_param->{ntp1})  && ($pollres1 eq  $ip_param->{ntp1_poll}) ) {
-		AppendFile( $outfile, "$ne_name,$IP,ntp server1 address is set to '$ip_param->{ntp1}',ntp server1 polling period is set to '$ip_param->{ntp1_poll}',COMPLETED'\n" );
+	if( ($result1 == $ip_param->{ntp1})  && ($pollres1 ==  $ip_param->{ntp1_poll}) ) {
+		AppendFile( $outfile, "$ne_name,$IP,ntp server1 address is set to '$ip_param->{ntp1}',ntp server1 polling period is set to '$ip_param->{ntp1_poll}',COMPLETED\n" );
 	} else {
 		AppendFile( $outfile, "$ne_name,$IP,ntp server1 address or polling period set,,ERROR\n" );
 		$error++;
@@ -107,8 +108,8 @@ foreach $IP( @IPs ) {
 	$code="snmpset -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.3.4.2.1.5.2 i $ip_param->{ntp2_poll} 2>/dev/null | cut -d ' ' -f 2";
 	$pollres2=qx( $code );
 	chomp( $pollres2 );
-	if( ($result2 eq $ip_param->{ntp2})  && ($pollres2 eq  $ip_param->{ntp2_poll}) ) {
-		AppendFile( $outfile, "$ne_name,$IP,ntp server2 address is set to '$ip_param->{ntp2}',ntp server1 polling period is set to '$ip_param->{ntp2_poll}',COMPLETED'\n" );
+	if( ($result2 == $ip_param->{ntp2})  && ($pollres2 ==  $ip_param->{ntp2_poll}) ) {
+		AppendFile( $outfile, "$ne_name,$IP,ntp server2 address is set to '$ip_param->{ntp2}',ntp server1 polling period is set to '$ip_param->{ntp2_poll}',COMPLETED\n" );
 	} else {
 		AppendFile( $outfile, "$ne_name,$IP,ntp server2 address or polling period set,,ERROR\n" );
 		$error++;
@@ -121,8 +122,8 @@ foreach $IP( @IPs ) {
 	$code="snmpset -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.3.4.2.1.5.3 i $ip_param->{ntp3_poll} 2>/dev/null | cut -d ' ' -f 2";
 	$pollres3=qx( $code );
 	chomp( $pollres3 );
-	if( ($result3 eq $ip_param->{ntp3})  && ($pollres3 eq  $ip_param->{ntp3_poll}) ) {
-		AppendFile( $outfile, "$ne_name,$IP,ntp server3 address is set to '$ip_param->{ntp3}',ntp server1 polling period is set to '$ip_param->{ntp3_poll}',COMPLETED'\n" );
+	if( ($result3 == $ip_param->{ntp3})  && ($pollres3 ==  $ip_param->{ntp3_poll}) ) {
+		AppendFile( $outfile, "$ne_name,$IP,ntp server3 address is set to '$ip_param->{ntp3}',ntp server1 polling period is set to '$ip_param->{ntp3_poll}',COMPLETED\n" );
 	} else {
 		AppendFile( $outfile, "$ne_name,$IP,ntp server3 address or polling period set,,ERROR\n" );
 		$error++;
@@ -134,8 +135,8 @@ foreach $IP( @IPs ) {
 	$code="snmpset -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.3.4.2.1.5.4 i $ip_param->{ntp4_poll} 2>/dev/null | cut -d ' ' -f 2";
 	$pollres4=qx( $code );
 	chomp( $pollres4 );
-	if( ($result4 eq $ip_param->{ntp4})  && ($pollres4 eq  $ip_param->{ntp4_poll}) ) {
-		AppendFile( $outfile, "$ne_name,$IP,ntp server4 address is set to '$ip_param->{ntp4}',ntp server1 polling period is set to '$ip_param->{ntp4_poll}',COMPLETED'\n" );
+	if( ($result4 == $ip_param->{ntp4})  && ($pollres4 ==  $ip_param->{ntp4_poll}) ) {
+		AppendFile( $outfile, "$ne_name,$IP,ntp server4 address is set to '$ip_param->{ntp4}',ntp server1 polling period is set to '$ip_param->{ntp4_poll}',COMPLETED\n" );
 	} else {
 		AppendFile( $outfile, "$ne_name,$IP,ntp server4 address or polling period set,,ERROR\n" );
 		$error++;

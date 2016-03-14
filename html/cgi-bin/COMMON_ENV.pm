@@ -300,9 +300,10 @@ sub db_disconnect {
 
 sub get_date {
 	my $time=shift() || time();
+	my $format=shift || "%s-%.2i-%.2i %.2i:%.2i:%.2i";
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime($time);
 	$year+=1900;$mon++;
-    return sprintf( "%s-%.2i-%.2i %.2i:%.2i:%.2i",$year,$mon,$mday,$hour,$min,$sec);
+    return sprintf( $format,$year,$mon,$mday,$hour,$min,$sec);
 }	
 
 sub generate_filename {

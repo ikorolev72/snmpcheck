@@ -29,99 +29,7 @@
   <input name='new' type='hidden' value='<TMPL_VAR NAME=NEW>' >
   <input name='edit' type='hidden' value='<TMPL_VAR NAME=EDIT>' >
   <table border='1' cellspacing='0' cellpadding='2'>
-  
-			<tr valign='top'>
-			<td> NTP server1 IP address </td>    
-			<td> <INPUT TYPE="text" NAME="ntp1" required SIZE=20> </td>
-			<tr valign='top'>
-			<td> NTP server1 polling time </td>    
-			<td>  
-				<select id = "ntp1_poll" NAME="ntp1_poll" SIZE=1>
-				<option value = "6">1 [min] 4 [sec] (64 [sec])</option>
-				<option value = "7">2 [min] 8 [sec] (128 [sec])</option>
-				<option selected value = "8">4 [min] 16 [sec] (256 [sec])</option>
-				<option value = "9">8 [min] 32 [sec] (512 [sec])</option>
-				<option value = "10">17 [min] 4 [sec] (1024 [sec])</option>
-				<option value = "11">34 [min] 8 [sec] (2048 [sec])</option>
-				<option value = "12">1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
-				<option value = "13">2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
-				<option value = "14">4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
-				<option value = "15">9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
-				<option value = "16">18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
-				<option value = "17">36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
-				</select>
-			</td>
 
-			<tr valign='top'>
-			<td> NTP server2 IP address </td>    
-			<td> <INPUT TYPE="text" NAME="ntp2" SIZE=20 maxlength='20'> </td>
-			<tr valign='top'>
-			<td> NTP server2 polling time </td>    
-			<td>  
-				<select id = "ntp2_poll" NAME="ntp2_poll" SIZE=1>
-				<option value = "6">1 [min] 4 [sec] (64 [sec])</option>
-				<option value = "7">2 [min] 8 [sec] (128 [sec])</option>
-				<option selected value = "8">4 [min] 16 [sec] (256 [sec])</option>
-				<option value = "9">8 [min] 32 [sec] (512 [sec])</option>
-				<option value = "10">17 [min] 4 [sec] (1024 [sec])</option>
-				<option value = "11">34 [min] 8 [sec] (2048 [sec])</option>
-				<option value = "12">1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
-				<option value = "13">2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
-				<option value = "14">4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
-				<option value = "15">9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
-				<option value = "16">18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
-				<option value = "17">36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
-				</select>
-			</td>
-
-
-			<tr valign='top'>
-			<td> NTP server3 IP address </td>    
-			<td> <INPUT TYPE="text" NAME="ntp3" SIZE=20 maxlength='20'> </td>
-			<tr valign='top'>
-			<td> NTP server3 polling time </td>    
-			<td>  
-				<select id = "ntp3_poll" NAME="ntp3_poll" SIZE=1>
-				<option value = "6">1 [min] 4 [sec] (64 [sec])</option>
-				<option value = "7">2 [min] 8 [sec] (128 [sec])</option>
-				<option selected value = "8">4 [min] 16 [sec] (256 [sec])</option>
-				<option value = "9">8 [min] 32 [sec] (512 [sec])</option>
-				<option value = "10">17 [min] 4 [sec] (1024 [sec])</option>
-				<option value = "11">34 [min] 8 [sec] (2048 [sec])</option>
-				<option value = "12">1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
-				<option value = "13">2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
-				<option value = "14">4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
-				<option value = "15">9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
-				<option value = "16">18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
-				<option value = "17">36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
-				</select>
-			</td>
-			
-  
-			<tr valign='top'>
-			<td> NTP server4 IP address </td>    
-			<td> <INPUT TYPE="text" NAME="ntp4" SIZE=20 maxlength='20'> </td>
-			<tr valign='top'>
-			<td> NTP server4 polling time </td>    
-			<td>  
-				<select id = "ntp4_poll" NAME="ntp4_poll" SIZE=1>
-				<option value = "6">1 [min] 4 [sec] (64 [sec])</option>
-				<option value = "7">2 [min] 8 [sec] (128 [sec])</option>
-				<option selected value = "8">4 [min] 16 [sec] (256 [sec])</option>
-				<option value = "9">8 [min] 32 [sec] (512 [sec])</option>
-				<option value = "10">17 [min] 4 [sec] (1024 [sec])</option>
-				<option value = "11">34 [min] 8 [sec] (2048 [sec])</option>
-				<option value = "12">1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
-				<option value = "13">2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
-				<option value = "14">4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
-				<option value = "15">9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
-				<option value = "16">18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
-				<option value = "17">36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
-				</select>
-			</td>
-  
-  
-			<tr valign='top'>
 			<TMPL_IF NAME=MS5000>
 				<tr valign='top'>
 				<td> NE IP </td>
@@ -196,31 +104,12 @@
 	<input name='all_ipasolink' type='hidden' value='<TMPL_VAR NAME=ALL_IPASOLINK>'>  
 	<input name='inop' type='hidden' value='<TMPL_VAR NAME=INOP>'>  
 	<input name='ucon' type='hidden' value='<TMPL_VAR NAME=UCON>'>  
-	<input name='umng' type='hidden' value='<TMPL_VAR NAME=UMNG>'>  	
-
-	<input name='ntp1' type='hidden' value='<TMPL_VAR NAME=NTP1>'>  
-	<input name='ntp2' type='hidden' value='<TMPL_VAR NAME=NTP2>'>  
-	<input name='ntp3' type='hidden' value='<TMPL_VAR NAME=NTP3>'>  
-	<input name='ntp4' type='hidden' value='<TMPL_VAR NAME=NTP4>'>  
-
-	<input name='ntp1_poll' type='hidden' value='<TMPL_VAR NAME=NTP1_POLL>'>  
-	<input name='ntp2_poll' type='hidden' value='<TMPL_VAR NAME=NTP2_POLL>'>  
-	<input name='ntp3_poll' type='hidden' value='<TMPL_VAR NAME=NTP3_POLL>'>  
-	<input name='ntp4_poll' type='hidden' value='<TMPL_VAR NAME=NTP4_POLL>'>  
-	
+	<input name='umng' type='hidden' value='<TMPL_VAR NAME=UMNG>'>  
 	
   <table border='1' cellspacing='0' cellpadding='2'>
 			<tr valign='top'>
 			<td> Add task for worker </td>
 			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
-			<tr valign='top'>
-			<td> NTP servers and poll time </td>
-			<td> 
-				<b>NTP1:</b> '<TMPL_VAR NAME=NTP1>' <b>Poll time:</b>'<TMPL_VAR NAME=NTP1_POLL>'<br>
-				<b>NTP2:</b> '<TMPL_VAR NAME=NTP2>' <b>Poll time:</b>'<TMPL_VAR NAME=NTP2_POLL>'<br>
-				<b>NTP3:</b> '<TMPL_VAR NAME=NTP3>' <b>Poll time:</b>'<TMPL_VAR NAME=NTP3_POLL>'<br>
-				<b>NTP4:</b> '<TMPL_VAR NAME=NTP4>' <b>Poll time:</b>'<TMPL_VAR NAME=NTP4_POLL>'<br>
-
 		<TMPL_IF NAME=MS5000>
 			<tr valign='top'>
 			<td> Selected IP </td>
@@ -259,6 +148,7 @@
 					</TMPL_IF>  
 			</td>
 		</TMPL_IF>  
+
 			<tr valign='top'>
 			<td> Description </td>
 			<td> <TMPL_VAR NAME=DESC> </td>

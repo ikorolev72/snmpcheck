@@ -13,7 +13,7 @@ $sname="ntpcheck";
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'ntpcheck.htm', die_on_bad_params=>0 );
 $template->param( SNAME=> $sname  );
-$title="NTP status check tool";
+$title="iPasolink NTP status check tool";
 
 
 $query = new CGI;
