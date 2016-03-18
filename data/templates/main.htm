@@ -25,6 +25,7 @@
 <TMPL_ELSE>
 
 <div  class="left_div">
+<!--
 <table border=1>
 	<tr>
 		<td> Tool </td>
@@ -38,6 +39,12 @@
 	</tr>
    </TMPL_LOOP>
 </table>
+-->
+<ul>
+   <TMPL_LOOP NAME=TOOL_LIST_LOOP>
+		<li> <a href='<TMPL_VAR NAME=TOOL_URL>' target=_blank> <TMPL_VAR NAME=TOOL_DESC> </a> </li>
+   </TMPL_LOOP>
+</ul>
 
 
 </div>
