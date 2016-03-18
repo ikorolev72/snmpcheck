@@ -1,5 +1,14 @@
 #!/usr/bin/perl
-print "Content-type: text/html\n\n";
+# korolev-ia [at] yandex.ru
+# version 1.0 2016.03.18
+use lib "C:\GIT\snmpcheck\lib" ;
+use lib "/opt/snmpcheck/lib" ;
+use lib "../lib" ;
+use lib "../../lib" ;
+
+print "Content-type: text/html
+
+" ;
 
 print "<html><table>\n";
 foreach( sort keys(%ENV) ) {

@@ -1,10 +1,14 @@
 #!/usr/bin/perl
+# korolev-ia [at] yandex.ru
+# version 1.0 2016.03.18
+use lib "/home/nems/client_persist/htdocs/bulktool3/lib" ;
+use lib "C:\GIT\snmpcheck\lib" ;
+use lib "/opt/snmpcheck/lib" ;
+use lib "../lib" ;
+use lib "../../lib" ;
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 use COMMON_ENV;
 use File::Basename;
-use Time::Piece;
-use POSIX;
 
 use Getopt::Long;
 
@@ -42,6 +46,10 @@ my $error=0;
 
 
 ######### header of worker output table 
+my @AA=qw( 
+#REPLACE_ME
+) ;
+my $export_param=join( ' ', map{ "$_='$ip_param->{$_}' " } @AA )  ;
 WriteFile( $outfile, "NE name,IP,Server time,NE time,year difference,month difference,day difference,hour difference,minute difference,second difference,accuracy,NTP1 polling,NTP2 polling,Multicast polling\n" ) ;
 ######### header of worker output table 
 
@@ -68,72 +76,23 @@ foreach $IP( @IPs ) {
 
 #######################################
 ########### worker code
-	my $code, $result_of_exec, $ne_name, $tzstat;
-	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.11.1 2>/dev/null" ;
-	#w2log( $code);
-	$result_of_exec=qx( $code );
-	unless( $result_of_exec ) {
-		AppendFile( $outfile, ",$IP,,,,,,,,,INACCESSIBLE\n" );
-		$error++;		
-		next;
-	} 
-	
-	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r $Cfg->{snmpr} -t $Cfg->{snmpt} -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.3.1 2>/dev/null | cut -d '\"' -f 2 " ;
-	$ne_name=qx( $code ) ;
-	chomp ( $ne_name );
-	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r 2 -t 5 -Ov $IP 1.3.6.1.4.1.119.2.3.69.5.1.3.1.1.3.1 2>/dev/null | cut -b 13-100";	
-	# 07 E0 03 0E 0B 0B 09 00 2B 01 00
-	#perl -e 'foreach $i ( qw( 07E0 03 0E 0B 0B 09 00 2B 01 00 )) { printf "%.2d", hex($i);} '
-	#2016031411110900430100
-	$result_of_exec=qx( $code );
-	unless( $result_of_exec ) {
-		AppendFile( $outfile, "$ne_name,$IP,FATAL\n" );
-		$error++;		
-		next;
-	} 
-	chomp ( $result_of_exec );
-	my @DT=split( /\s/, $result_of_exec );	
-	my $device_time=sprintf( "%s-%.2i-%.2i %.2i:%.2i:%.2i", map { hex() }  "$DT[0]$DT[1]", $DT[2], $DT[3], $DT[4], $DT[5], $DT[6] ) ;
-	my $timezone=( $DT[8] eq '2B' )?'+':'-';
-	$timezone.=sprintf( "%.2i%.2i", map { hex() }  $DT[9], $DT[10] );
-	
-	
-	
-	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime();
-	$year+=1900;$mon++;
-	
-	my $stimezone=strftime("%z", localtime());
-    my $server_time=get_date( );
 
-	
-	my $clock;
-	if( abs( Time::Piece->strptime($server_time,  "%Y-%m-%d %T") - Time::Piece->strptime($device_time, "%Y-%m-%d %T") )>1 ) {
-		$clock='NOK';
-	} else {
-		$clock='OK';
-	}
-	my $dyear,$dmonth,$dday,$dhour,$dmin,$dsec;
-	$dyear=hex("$DT[0]$DT[1]")-$year;
-	$dmonth=hex($DT[2])-$mon;
-	$dday=hex($DT[3])-$mday;
-	$dhour=hex($DT[4])-$hour;
-	$dmin=hex($DT[5])-$min;
-	$dsec=hex($DT[6])-$sec;
+my $code, $result_of_exec;
+my $body_sh=dirname($0)."/body/".basename($0)."_body.sh";
+if( -f $body_sh  && -x $body_sh ) {
+	$code="$body_sh $Paths->{config.ini} $IP $outfile $export_param >/dev/null 2>&1 ";
+	$result_of_exec=system( $code );
+} else {
+	w2log( "Cannot to start worker body file $body_sh" );
+	last;
+}
+if( 1==$result_of_exec ) {
+	$error++;
+}
+if( 2==$result_of_exec ) {
+	w2log( "Incorrect parameters with script: $code" );
+}
 
-	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r 2 -t 5 -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.3.4.2.1.5.1 2>/dev/null | cut -d ' ' -f 2 ";
-	my $srv1interval=qx( $code );
-	chomp( $srv1interval );
-	
-	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r 2 -t 5 -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.3.4.2.1.5.2 2>/dev/null | cut -d ' ' -f 2";
-	my $srv2interval=qx( $code );
-	chomp( $srv2interval );
-
-	$code="snmpget -v 3 -a $Cfg->{snmpapro} -u $Cfg->{snmpuser} -A $Cfg->{snmpap} -x $Cfg->{snmppro} -X $Cfg->{snmppk} -l $Cfg->{snmplevel} -r 2 -t 5 -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.3.4.1.1.8.1 2>/dev/null | cut -d ' ' -f 2";
-	my $multicastinterval=qx( $code );
-	chomp( $multicastinterval );
-	
-	
-	AppendFile( $outfile, "$ne_name,$IP,$server_time TZ:$stimezone,$device_time TZ:$timezone,$dyear,$dmonth,$dday,$dhour,$dmin,$dsec,$clock,$srv1interval,$srv2interval,$multicastinterval\n" ) ;
 
 ########### end of worker code
 #######################################

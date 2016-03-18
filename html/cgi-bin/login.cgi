@@ -1,8 +1,16 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
+# version 1.0 2016.03.18
+use lib "C:\GIT\snmpcheck\lib" ;
+use lib "/opt/snmpcheck/lib" ;
+use lib "../lib" ;
+use lib "../../lib" ;
+
+print "Content-type: text/html
+
+" ;
 
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
 use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
@@ -15,7 +23,6 @@ $template = HTML::Template->new(filename => 'login.htm', die_on_bad_params=>0 );
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
-#print "Content-type: text/html\n\n" ;
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
@@ -68,7 +75,6 @@ $template->param( MESSAGES=> $message );
 #	$template->param( LOGIN_AS=> "You are login as '$cookies{'name'}->value'"  );	
 #}
 
-print "Content-type: text/html\n\n" ;
 print  $template->output;
 
  

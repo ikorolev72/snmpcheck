@@ -1,7 +1,15 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
+# version 1.0 2016.03.18
+use lib "C:\GIT\snmpcheck\lib" ;
+use lib "/opt/snmpcheck/lib" ;
+use lib "../lib" ;
+use lib "../../lib" ;
 
-BEGIN{ unshift @INC, '$ENV{SITE_ROOT}/cgi-bin' ,'C:\GIT\snmpcheck\html\cgi-bin', '/opt/snmpcheck/html/cgi-bin','/home/nems/client_persist/htdocs/bulktool3/html/cgi-bin', '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/' , '/home/nems/client_persist/htdocs/bulktool3/lib/lib/perl5/x86_64-linux-thread-multi/'; } 
+print "Content-type: text/html
+
+" ;
+
 use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
@@ -27,7 +35,6 @@ unless ( $id  ) { # only uthorized user can change password
 	$template->param( TITLE=>$title );
 	$template->param( MESSAGES=> $message );
 
-	print "Content-type: text/html\n\n" ;
 	print  $template->output;
 exit 0;
 }
@@ -65,7 +72,6 @@ $template->param( TITLE=>"Change password" );
 
   # print the template output
 $template->param( MESSAGES=> $message );
-print "Content-type: text/html\n\n" ;
 print  $template->output;
 
  
