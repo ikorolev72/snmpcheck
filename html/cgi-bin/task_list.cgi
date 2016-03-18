@@ -33,6 +33,7 @@ if( $Param->{del} ) {
 			if( $row ) {
 				unlink( "$Paths->{JSON}/$row->{id}.\w+\.json" ) ;
 				unlink( "$Paths->{OUTFILE_DIR}/$row->{outfile}" ) ;
+				unlink( "$Paths->{WORKER_DIR}.$row->{id}.lod" ) ;
 				DeleteRecord( $dbh, $Param->{id}, $table  );
 			} else {
 				message2( "Cannot found the record with id: $Param->{id}" ) ;

@@ -4,10 +4,15 @@
 		SNMP checker
 	</title>
 	<LINK href='main.css' type=text/css rel=stylesheet>
+	<script language="javascript" type="text/javascript" src="./js/snmpcheck.js"></script>
+	
 
 </head>
+<body>
+<div id='login_as'> </div>
 
 <h2>SNMP checker</h2>
+
 <table border=1>
 	<tr valign=top>
 		<td>
@@ -45,7 +50,55 @@
 					<a href='./cgi-bin/clkread.cgi'> Add 'Syncronization (clock) report tool' task </a> 
 				</li>
 				<li>
+					<a href='./cgi-bin/qosequipmentread.cgi'>Add 'QoS equipment mode parameters report tool' task</a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/qosportread.cgi'>Add 'QoS port mode parametersreport tool' task</a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/qosegressread.cgi'>Add 'QoS egrees port parameters report tool' task</a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/dcnreport.cgi'>Add 'iPasolink DCN report tool' task</a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/lldpreport.cgi'>Add 'iPasolink LLDP (autodiscovery) report tool' task</a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/bridgereport.cgi'>Add 'iPasolink bridge setting report tool' task</a> 
+				</li>				
+				<li>
+					<a href='./cgi-bin/megreport.cgi'>Add 'iPasolink MEG report tool' task</a> 
+				</li>				
+				<li>
+					<a href='./cgi-bin/mepreport.cgi'>Add 'iPasolink MEP report tool' task</a> 
+				</li>				
+				<li>
+					<a href='./cgi-bin/e1portread.cgi'>Add 'iPasolink E1 port report tool' task</a> 
+				</li>				
+				<li>
+					<a href='./cgi-bin/dxcread.cgi'>Add 'iPasolink DXC report tool' task</a> 
+				</li>				
+				<li>
+					<a href='./cgi-bin/servicereport.cgi'>Add 'iPasolink service report tool' task</a> 
+				</li>				
+				<li>
+					<hr>				
+				</li>				
+				<li>
 					<a href='./cgi-bin/ntp.cgi'> Add 'iPasolink NTP server IP change' task </a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/tzauth.cgi'> Add 'iPasolink time/timezone set tool' task </a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/mtuset.cgi'> Add 'iPasolink MTU set tool' task </a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/vlancreate.cgi'> Add 'iPasolink VLAN rename/create tool' task </a> 
+				</li>
+				<li>
+					<a href='./cgi-bin/vlandel.cgi'> Add 'iPasolink VLAN delete tool' task </a> 
 				</li>
 				<li>
 					<a href='./cgi-bin/task_list.cgi'> Task list </a> 
@@ -56,3 +109,8 @@
 </table>	
 
 <hr>
+<script>
+show_login_as_main_page( );
+</script>
+</body>
+</html>

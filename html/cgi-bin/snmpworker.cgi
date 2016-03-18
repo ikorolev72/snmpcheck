@@ -86,7 +86,7 @@ if( $show_form ) {
 		message2 ( "Someting wrong with database  : $DBI::errstr" );
 		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
 	}
-
+	my @loop_data=();
 	while (my $row = $sth->fetchrow_hashref) {
 		my %row_data;   
 		foreach( keys( %{$row}) ) {
@@ -98,6 +98,7 @@ if( $show_form ) {
 	$template->param(USERS_LIST_LOOP => \@loop_data);
 }
 
+my @loop_data=();
 foreach $w ( get_workers() ) {
 	my %row_data;   
 	$row_data{ LOOP_WORKER }=$w;
@@ -106,6 +107,7 @@ foreach $w ( get_workers() ) {
 $template->param(WORKER_LIST_LOOP => \@loop_data);
 
 
+@loop_data=();
 foreach $w ( get_cgiscripts() ) {
 	my %row_data;   
 	$row_data{ LOOP_CGISCRIPT }=$w;
@@ -113,6 +115,14 @@ foreach $w ( get_cgiscripts() ) {
 }
 $template->param(CGISCRIPT_LIST_LOOP => \@loop_data);
 
+@loop_data=();
+my $Cfg=ReadConfig();
+foreach $w ( sort( split(/,/, $Cfg->{approved_application_for_no_authentication}), split(/,/,$Cfg->{approved_application_for_authentication}) ) ) {
+	my %row_data;   
+	$row_data{ LOOP_SNAME }=$w;
+	push(@loop_data, \%row_data);
+}
+$template->param(SNAME_LIST_LOOP => \@loop_data);
 
 
 

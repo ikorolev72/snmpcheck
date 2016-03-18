@@ -1,0 +1,209 @@
+<html>
+<head>
+	<title>
+		<TMPL_VAR NAME=TITLE>
+	</title>
+	<LINK href='../main.css' type=text/css rel=stylesheet>
+	<script language="javascript" type="text/javascript" src="../js/snmpcheck.js"></script>
+
+</head>
+<body>
+<div id='login_as'> </div>
+<h3>
+	<TMPL_VAR NAME=TITLE>
+</h3>
+
+<font color=red> <h4> <TMPL_VAR NAME=MESSAGES> </h4> </font>
+
+<hr>
+
+<div  class="parent">
+<TMPL_IF NAME=AUTHORISED> 
+<div  class="left_div">
+
+<TMPL_IF NAME=SHOWFORM> 
+
+
+<form action='<TMPL_VAR NAME=ACTION>' method='post' enctype='multipart/form-data' name='form1'>
+  <input name='id' type='hidden' value='<TMPL_VAR NAME=ID>' >
+  <input name='new' type='hidden' value='<TMPL_VAR NAME=NEW>' >
+  <input name='edit' type='hidden' value='<TMPL_VAR NAME=EDIT>' >
+  <table border='1' cellspacing='0' cellpadding='2'>
+
+
+				<tr valign="top">
+				<td> Please check this checkbox if you want to see port assignment also  </td>
+				<td> <input TYPE="checkbox" NAME="portassignment" VALUE="on"></td>
+				<tr valign="top">
+				<td> start VLAN ID:  </td>
+				<td> <INPUT TYPE="number" min="1" max="4094" NAME="vlanidstart" SIZE=3></td>
+				<tr valign="top">
+				<td> stop VLAN ID:   </td>
+				<td> <INPUT TYPE="number" min="1" max="4094" NAME="vlanidstop" SIZE=3></td>
+				<tr valign="top">
+				<td> All VLAN </td>
+				<td> <input TYPE="checkbox" NAME="allvlan" checked></td>
+
+
+
+			<TMPL_IF NAME=MS5000>
+				<tr valign='top'>
+				<td> NE IP </td>
+				<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
+			
+				<tr valign='top'>
+				<td> NE status </td>
+				<td> In operation <input TYPE="checkbox" NAME="inop" VALUE="inop" checked> Under construction <input TYPE="checkbox" NAME="ucon" VALUE="ucon" checked> Unmanaged <input TYPE="checkbox" NAME="umng" VALUE="umng">			
+				<tr valign='top'>
+				<td> Select group </td>
+				<td>			
+				<select name='group'>	
+					<option value='' ></option>
+					<TMPL_LOOP NAME=GROUP_LIST_LOOP>				
+						<option value='<TMPL_VAR NAME=GROUP>' > <TMPL_VAR NAME=GROUP_NAME> </option>
+					</TMPL_LOOP>					
+				</select>
+					Include subgroups
+					<input name='subgroup' type='checkbox' <TMPL_IF NAME=SUBGROUP>selected</TMPL_IF> >
+				</td>
+				<tr valign='top'>
+				<td> Generate IP list for all iPasolink</td>
+				<td> <input name='all_ipasolink' type='checkbox' <TMPL_IF NAME=ALL_IPASOLINK>selected</TMPL_IF> > </td>
+				
+			<TMPL_ELSE> 
+				<tr valign='top'>
+				<td> NE IP </td>
+				<td> <input name='ip' type='text' size='20' maxlength='20' value='<TMPL_VAR NAME=IP>'> </td>
+
+				<tr valign='top'>
+				<td> Select group </td>
+				<td>			
+					<select name='group'>	
+						<option value='' ></option>
+						<TMPL_LOOP NAME=GROUP_LIST_LOOP>				
+							<option value='<TMPL_VAR NAME=GROUP>' > <TMPL_VAR NAME=GROUP_NAME> </option>
+						</TMPL_LOOP>					
+					</select>
+				</td>
+
+				<tr valign='top'>
+				<td> Generate IP list for all iPasolink</td>
+				<td> <input name='all_ipasolink' type='checkbox' <TMPL_IF NAME=ALL_IPASOLINK>selected</TMPL_IF> > </td>
+
+			</TMPL_IF>
+			<tr valign='top'>
+			<td> Description </td>
+			<td> <input name='desc' type='text' size='50' maxlength='254' value='<TMPL_VAR NAME=DESC>'> </td>
+				
+			<tr valign='top'>
+            <td>&nbsp;</td>
+            <td><input name='save' type='submit' id='save' value='Save'></td>
+          </tr>
+		  
+  </table>
+        <br>
+
+</form>
+
+
+</TMPL_IF> 
+
+<TMPL_IF NAME=SHOWFORM_TO_TASK> 
+
+
+<form action='<TMPL_VAR NAME=ACTION_TASK_ADD>' method='post' enctype='multipart/form-data' name='form1'>
+	<input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>' >
+	<input name='desc' type='hidden' value='<TMPL_VAR NAME=DESC>'>  
+	<input name='ip' type='hidden' value='<TMPL_VAR NAME=IP>'>  
+	<input name='group' type='hidden' value='<TMPL_VAR NAME=GROUP>'>  
+	<input name='subgroup' type='hidden' value='<TMPL_VAR NAME=SUBGROUP>'>  
+	<input name='all_ipasolink' type='hidden' value='<TMPL_VAR NAME=ALL_IPASOLINK>'>  
+	<input name='inop' type='hidden' value='<TMPL_VAR NAME=INOP>'>  
+	<input name='ucon' type='hidden' value='<TMPL_VAR NAME=UCON>'>  
+	<input name='umng' type='hidden' value='<TMPL_VAR NAME=UMNG>'>  
+
+<input name='portassignment' type='hidden' value='<TMPL_VAR NAME=PORTASSIGNMENT>' >
+<input name='vlanidstart' type='hidden' value='<TMPL_VAR NAME=VLANIDSTART>' >
+<input name='vlanidstop' type='hidden' value='<TMPL_VAR NAME=VLANIDSTOP>' >
+<input name='allvlan' type='hidden' value='<TMPL_VAR NAME=ALLVLAN>' >
+  
+	
+  <table border='1' cellspacing='0' cellpadding='2'>
+			<tr valign='top'>
+			<td> Add task for worker </td>
+			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
+
+			<tr valign='top'> <td> port assignment </td> <td> <TMPL_VAR NAME=PORTASSIGNMENT> </td>
+			<tr valign='top'> <td> vlan start </td> <td> <TMPL_VAR NAME=VLANIDSTART> </td>
+			<tr valign='top'> <td> vlan stop </td> <td> <TMPL_VAR NAME=VLANIDSTOP> </td>
+			<tr valign='top'> <td> all vlan </td> <td> <TMPL_VAR NAME=ALLVLAN> </td>
+
+
+		<TMPL_IF NAME=MS5000>
+			<tr valign='top'>
+			<td> Selected IP </td>
+			<td> 
+					<TMPL_IF  NAME=IP>
+						<b>IP:</b>'<TMPL_VAR NAME=IP>' 
+					<TMPL_ELSE>  					
+						<TMPL_IF  NAME=GROUP>
+							<b>Group:</b>'<TMPL_VAR NAME=GROUP>',
+							<b>Include subgroups:</b><TMPL_IF NAME=SUBGROUP>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>In operation:</b><TMPL_IF NAME=INOP>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>Under construction:</b><TMPL_IF NAME=UCON>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>Unmanaged:</b><TMPL_IF NAME=UMNG>'Yes'<TMPL_ELSE>'No'</TMPL_IF> 
+						</TMPL_IF>  						
+						<TMPL_IF  NAME=ALL_IPASOLINK>
+							<b>IP list for all iPasolink:</b><TMPL_IF NAME=ALL_IPASOLINK>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>In operation:</b><TMPL_IF NAME=INOP>'Yes'<TMPL_ELSE>'No'</TMPL_IF>, 
+							<b>Under construction:</b><TMPL_IF NAME=UCON>'Yes'<TMPL_ELSE>'No'</TMPL_IF>,
+							<b>Unmanaged:</b><TMPL_IF NAME=UMNG>'Yes'<TMPL_ELSE>'No'</TMPL_IF> 
+						</TMPL_IF>  						
+					</TMPL_IF>  
+			</td>
+		<TMPL_ELSE>  
+			<tr valign='top'>
+			<td> Selected IP </td>
+			<td> 
+					<TMPL_IF  NAME=IP>
+						<b>IP:</b>'<TMPL_VAR NAME=IP>' 
+					<TMPL_ELSE>  					
+						<TMPL_IF  NAME=GROUP>
+							<b>Group:</b>'<TMPL_VAR NAME=GROUP>',
+						</TMPL_IF>  						
+						<TMPL_IF  NAME=ALL_IPASOLINK>
+							<b>IP list for all iPasolink:</b><TMPL_IF NAME=ALL_IPASOLINK>'Yes'<TMPL_ELSE>'No'</TMPL_IF>
+						</TMPL_IF>  						
+					</TMPL_IF>  
+			</td>
+		</TMPL_IF>  
+
+			<tr valign='top'>
+			<td> Description </td>
+			<td> <TMPL_VAR NAME=DESC> </td>
+			<tr valign='top'>
+            <td>&nbsp;</td>
+            <td>&nbsp;[ <a href="" onclick="confirm_prompt( 'Cancel process task add','/'); return false;">Cancel</a> ] &nbsp; <input name='save' type='submit' id='save' value='Submit task'></td>
+          </tr>
+		  
+  </table>
+        <br>
+
+</form>
+
+
+
+</TMPL_IF> 
+
+
+</div>
+</TMPL_IF> 
+</div>
+<TMPL_VAR NAME=SET_COOKIES>
+<TMPL_VAR NAME=GET_COOKIES>
+<script>
+show_login_as( );
+</script>
+
+</body>
+</html>

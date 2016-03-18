@@ -30,15 +30,28 @@
   <input name='edit' type='hidden' value='<TMPL_VAR NAME=EDIT>' >
   <table border='1' cellspacing='0' cellpadding='2'>
 
-
+<!--
 			<tr valign='top'>
 			<td> name </td>
 			<td> <input name='sname' type='text' size='20' maxlength='20' required  value='<TMPL_VAR NAME=SNAME>'> </td>
+-->
+			<tr valign='top'>
+			<td> name </td>
+			<td> 
+				<select name='sname'>	
+					<TMPL_IF NAME=SNAME>
+					<option value='<TMPL_VAR NAME=SNAME>' selected><TMPL_VAR NAME=SNAME></option>
+					</TMPL_IF>
+					<TMPL_LOOP NAME=SNAME_LIST_LOOP>				
+						<option value='<TMPL_VAR NAME=LOOP_SNAME>' ><TMPL_VAR NAME=LOOP_SNAME></option>
+					</TMPL_LOOP>					
+				</select>
+				</td>
 
 			<tr valign='top'>
 			<td> desc </td>
 			<td> <input name='desc' type='text' size='20' maxlength='200' value='<TMPL_VAR NAME=DESC>'> </td>
-
+			
 			<tr valign='top'>
 			<td> CGI script</td>
 			<td>
@@ -53,7 +66,7 @@
 				</select>
 				</td>
 
-				<tr valign='top'>
+			<tr valign='top'>
 			<td> worker script</td>
 			<td>
 			

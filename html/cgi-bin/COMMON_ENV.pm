@@ -43,7 +43,9 @@ $Paths->{WORKER_DIR}="$Paths->{HOME}/worker";
 $Paths->{CGISCRIPT_DIR}="$Paths->{HOME}/html/cgi-bin";
 $Paths->{JSON}="$Paths->{HOME}/data/json";
 $Paths->{OUTFILE_DIR}="$Paths->{HOME}/html/reports";
-$Paths->{PID_DIR}="$Paths->{HOME}/data/pid";
+$Paths->{PID_DIR}="$Paths->{HOME}/data/tmp";
+$Paths->{TMP_DIR}="$Paths->{HOME}/data/tmp";
+
 $Paths->{config.ini}="$Paths->{HOME}/data/cfg/config.ini";
 $Paths->{global.ipasolink}="$Paths->{HOME}/data/iplist/global.ipasolink";
 
@@ -171,10 +173,10 @@ sub get_groups {
 	my $ms5000=shift;
 	my $ls;
 	if( 'ms5000' ne $ms5000 ) {
-		my $html_dir=$Paths->{GROUPS};
+		my $dir=$Paths->{GROUPS};
 
-		opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
-			foreach( reverse sort grep { /\.ipasolink$/ &&   -f "$html_dir/$_" } readdir(DIR) ) {
+		opendir(DIR, $dir) || w2log( "can't opendir $dir: $!" );
+			foreach( reverse sort grep { /\.ipasolink$/ &&   -f "$dir/$_" } readdir(DIR) ) {
 				$ls->{ $_ }=$_;
 			}
 		closedir DIR;
@@ -183,14 +185,7 @@ sub get_groups {
 
 	my $code="psql $ms5000flag $ms5000ip -U nems -p 55001 CMDB -A -t -q -c \"select a.summary_symbol_location_id, symbol_name from summary_symbol as a, symbol as b where a.summary_symbol_id = b.symbol_id and b.symbol_id <> -1;\"";
 	my $result_of_exec=qx( $code );
-	# temporary
-#$result_of_exec="
-#0.0.0|root
-#1.0.0|Europe
-#1.2.0|Hungary
-#1.2.3|Budapest
-#4.0.0|Another
-#";
+
 	foreach $str ( split( /\s/, $result_of_exec ) ) {
 		my ($grp, $dname)=split( /\|/, $str );
 		$ls->{$grp}=$dname;	
@@ -200,20 +195,20 @@ sub get_groups {
 
 
 sub get_workers {
-	my $html_dir=$Paths->{WORKER_DIR};
+	my $dir=$Paths->{WORKER_DIR};
 	my @ls;
-	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
-		@ls = reverse sort grep { -f "$html_dir/$_" } readdir(DIR);
+	opendir(DIR, $dir) || w2log( "can't opendir $dir: $!" );
+		@ls = reverse sort grep { /\.pl$/ && -f "$dir/$_" } readdir(DIR);
 	closedir DIR;
 	return @ls;
 }
 
 
 sub get_cgiscripts {
-	my $html_dir=$Paths->{CGISCRIPT_DIR};
+	my $dir=$Paths->{CGISCRIPT_DIR};
 	my @ls;
-	opendir(DIR, $html_dir) || w2log( "can't opendir $html_dir: $!" );
-		@ls = reverse sort grep { -f "$html_dir/$_" } readdir(DIR);
+	opendir(DIR, $dir) || w2log( "can't opendir $dir: $!" );
+		@ls = reverse sort grep { /\.cgi$/ &&  -f "$dir/$_" } readdir(DIR);
 	closedir DIR;
 	return @ls;
 }
@@ -528,6 +523,11 @@ sub CheckField {
 		$constrains->{boolean}->{max}=1;
 		$constrains->{boolean}->{min}=0;
 
+		$constrains->{boolean_true}->{boolean}=1;
+		$constrains->{boolean_true}->{true}=1;
+		$constrains->{boolean_true}->{max}=1;
+		$constrains->{boolean_true}->{min}=1;
+
 		
 		
 	unless( $constrains->{$type} ) {
@@ -540,6 +540,12 @@ sub CheckField {
 		if( $key eq 'boolean' ) {
 			unless( $f=~/^[0|1]*$/ ) {
 				message2( "$prefix must be 1 or 0" );
+				$retval=0;
+			}
+		}
+		if( $key eq 'true' ) {
+			unless( $f ) {
+				message2( "$prefix must be true" );
 				$retval=0;
 			}
 		}
