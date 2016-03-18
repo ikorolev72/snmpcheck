@@ -21,94 +21,87 @@
 
 
 <table border=1>
-	<tr valign=top>
-		<td>
-			<ul>
-				<li>
-					<a href='./cgi-bin/login.cgi'> Login page </a> 
-				</li>
-				<li>
-					<a href='./cgi-bin/password.cgi?edit=1'> Change password page </a> 
-				</li>
-				<li>
-					<a href='./cgi-bin/users.cgi'> Add / edit / remove users </a> 
-				</li>
-				
-			</ul>
-		</td>
-		<td>
-			<ul>
-   				<li>
-					<a href='./cgi-bin/task_list.cgi'> Task list </a> 
-				</li>
-				<li>
-					<a href='./cgi-bin/snmpworker.cgi'> Add / edit / remove workers </a> 
-				</li>
-			</ul>
-		</td>
-		<td>
-			<ul>
-			
+	
+<tr valign=top> 
+ <td> <b>Administrative tools</b> </td> 
+ <td> <b>Bulk tools	</b> </td> 
+ <td> <b>Reporting tools </b></td> 
+ </tr>
 
-		<li> <a href='./cgi-bin/ntp.cgi' target=_blank> iPasolink NTP server IP change </a> </li>
-		<li> <a href='./cgi-bin/tzauth.cgi' target=_blank> iPasolink time/timezone set tool </a> </li>
 
-		<li> <a href='./cgi-bin/vlandel.cgi' target=_blank> iPasolink VLAN delete tool </a> </li>
-		<li> <a href='./cgi-bin/vlancreate.cgi' target=_blank> iPasolink VLAN rename/create tool </a> </li>
-		<li> <a href='./cgi-bin/mtuset.cgi' target=_blank> iPasolink MTU set tool </a> </li>
-		<li> <hr> </li>
+<tr valign=top> <td> <a href='./cgi-bin/login.cgi'> Login page </a> </td> 
+ <td> <a href='./cgi-bin/ntp.cgi' target=_blank> iPasolink NTP server IP change </a> </td> 
+ <td> <a href='./cgi-bin/ntpcheck.cgi' target=_blank> NTP check status </a> </td> 
+ </tr>
+<tr valign=top> <td> <a href='./cgi-bin/password.cgi?edit=1'> Change password page </a> </td> 
+ <td> <a href='./cgi-bin/tzauth.cgi' target=_blank> iPasolink time/timezone set tool </a> </td> 
+ <td> <a href='./cgi-bin/tzcheck.cgi' target=_blank> 	iPasolink time/timezone check tool </a> </td> 
+ </tr>
+<tr valign=top> <td> <a href='./cgi-bin/users.cgi'> Add / edit / remove users </a> </td> 
+ <td> <a href='./cgi-bin/qosegress.cgi' target=_blank> iPasolink QoS egress port set tool </a> </td> 
+ <td> <a href='./cgi-bin/tempcheck.cgi' target=_blank> iPasolink temperature check tool </a> </td> 
+ </tr>
+<tr valign=top> <td> <a href='./cgi-bin/listofne.cgi' target=_blank> List of NEs </a> </td> 
+ <td> <a href='./cgi-bin/qosequip.cgi' target=_blank> iPasolink QoS set tool (equipment mode) </a> </td> 
+ <td> <a href='./cgi-bin/ethread.cgi' target=_blank> iPasolink Ethernet interfaces report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> <a href='./cgi-bin/snmpworker.cgi'> Add / edit / remove workers </a> </td> 
+ <td> <a href='./cgi-bin/qosport.cgi' target=_blank> iPasolink QoS set tool  (port mode) </a> </td> 
+ <td> <a href='./cgi-bin/vlanread.cgi' target=_blank> iPasolink VLAN report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> <a href='./cgi-bin/task_list.cgi'> Task list </a> </td> 
+ <td> <a href='./cgi-bin/vlandel.cgi' target=_blank> iPasolink VLAN delete tool </a> </td> 
+ <td> <a href='./cgi-bin/erpread.cgi' target=_blank> iPasolink ERP report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> <a href='./cgi-bin/vlancreate.cgi' target=_blank> iPasolink VLAN rename/create tool </a> </td> 
+ <td> <a href='./cgi-bin/clkread.cgi' target=_blank> Syncronization (clock) report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> <a href='./cgi-bin/mtuset.cgi' target=_blank> iPasolink MTU set tool </a> </td> 
+ <td> <a href='./cgi-bin/qosequipmentread.cgi' target=_blank> QoS equipment mode parameters report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/qosegressread.cgi' target=_blank> QoS egrees port parameters report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/qosportread.cgi' target=_blank> QoS port mode parametersreport tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/dcnreport.cgi' target=_blank> iPasolink DCN report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/lldpreport.cgi' target=_blank> iPasolink LLDP (autodiscovery) report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/bridgereport.cgi' target=_blank> iPasolink bridge setting report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/megreport.cgi' target=_blank> iPasolink MEG report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/mepreport.cgi' target=_blank> iPasolink MEP report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/e1portread.cgi' target=_blank> iPasolink E1 port report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/dxcread.cgi' target=_blank> iPasolink DXC report tool </a> </td> 
+ </tr>
+<tr valign=top> <td> </td> 
+ <td> </td> 
+ <td> <a href='./cgi-bin/servicereport.cgi' target=_blank> iPasolink service report tool </a> </td> 
+ </tr>
 
-		<li> <a href='./cgi-bin/qosegress.cgi' target=_blank> iPasolink QoS egress port set tool </a> </li> 
-		<li> <a href='./cgi-bin/qosequip.cgi' target=_blank> iPasolink QoS set tool (equipment mode) </a> </li>
-		<li> <a href='./cgi-bin/qosport.cgi' target=_blank> iPasolink QoS set tool  (port mode) </a> </li>
-		<li> <!-- <a href='./cgi-bin/qosvlan.cgi' target=_blank> --> iPasolink QoS set tool  (VLAN) <!-- </a> --> </li>
-		<li> <hr> </li>
-
-		
-		<li> <a href='./cgi-bin/bridgereport.cgi' target=_blank> iPasolink bridge setting report tool </a> </li>
-
-		<li> <a href='./cgi-bin/clkread.cgi' target=_blank> Syncronization (clock) report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/dcnreport.cgi' target=_blank> iPasolink DCN report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/dxcread.cgi' target=_blank> iPasolink DXC report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/e1portread.cgi' target=_blank> iPasolink E1 port report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/erpread.cgi' target=_blank> iPasolink ERP report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/ethread.cgi' target=_blank> iPasolink Ethernet interfaces report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/listofne.cgi' target=_blank> List of NEs </a> </li>
-   
-		<li> <a href='./cgi-bin/lldpreport.cgi' target=_blank> iPasolink LLDP (autodiscovery) report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/megreport.cgi' target=_blank> iPasolink MEG report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/mepreport.cgi' target=_blank> iPasolink MEP report tool </a> </li>
-   
-   
-   
-		<li> <a href='./cgi-bin/ntpcheck.cgi' target=_blank> NTP check status </a> </li>
-   
-   
-		<li> <a href='./cgi-bin/qosequipmentread.cgi' target=_blank> QoS equipment mode parameters report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/qosegressread.cgi' target=_blank> QoS egrees port parameters report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/qosportread.cgi' target=_blank> QoS port mode parametersreport tool </a> </li>
-   
-		<li> <a href='./cgi-bin/servicereport.cgi' target=_blank> iPasolink service report tool </a> </li>
-   
-		<li> <a href='./cgi-bin/tempcheck.cgi' target=_blank> iPasolink temperature check tool </a> </li>
-   
-   
-		<li> <a href='./cgi-bin/tzcheck.cgi' target=_blank> 	iPasolink time/timezone check tool </a> </li>
-      
-		<li> <a href='./cgi-bin/vlanread.cgi' target=_blank> iPasolink VLAN report tool </a> </li>
-			</ul>
-		</td>
-	</tr>
 </table>	
 
 <hr>
