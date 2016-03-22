@@ -13,43 +13,49 @@ print "Content-type: text/html
 use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
-
-
-
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
 
 
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
-$template = HTML::Template->new(filename => 'task_list.htm', die_on_bad_params=>0 );
+$template = HTML::Template->new(filename => 'logdownload.htm', die_on_bad_params=>0 );
 
 $table='tasks';
 $sname=$Param->{sname};
 
+my $dbh, $stmt, $sth, $rv;
+$message='';
+
+my $Cfg=ReadConfig();
+if( $Cfg->{iplistdb} eq 'ms5000' ) {
+	$template->param( MS5000=>1 );
+}
+
 $template->param( AUTHORISED=>1 );
+if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authentication} ) ) {
+	unless (  require_authorisation()  ) { # we require any authorised user
+		message2( "Only authorised user can add this task" );
+		$template->param( AUTHORISED=>0 );
+		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( TITLE=>$title );
+		$template->param( MESSAGES=> $message );
+
+		print  $template->output;
+	exit 0;
+ }
+}
+
 
 $dbh=db_connect() ;
 
-update_tasks($dbh);
+#update_tasks($dbh);
 
 $template->param( REQUEST_URI => "$ENV{'REQUEST_URI'}" );
 
-if( $Param->{del} ) {
-	if (  require_authorisation() ) { # we require authorisation for delete tasks
-		$template->param( REQUEST_URI => "$ENV{'SCRIPT_NAME'}" );
-		my $row=GetRecord( $dbh , $Param->{id}, $table  );
-			if( $row ) {
-				unlink( "$Paths->{JSON}/$row->{id}.\w+\.json" ) ;
-				unlink( "$Paths->{OUTFILE_DIR}/$row->{outfile}" ) ;
-				unlink( "$Paths->{WORKER_DIR}.$row->{id}.lod" ) ;
-				DeleteRecord( $dbh, $Param->{id}, $table  );
-			} else {
-				message2( "Cannot found the record with id: $Param->{id}" ) ;
-			}
-	} else{
-		message2( "Only authorised users can delete tasks" );
-	}
-}
+$Param->{page}=1 if( !$Param->{page} || !$Param->{page}=~/^\d+$/  ); # start from first page
+$Param->{lines_per_page}=25 if( !$Param->{lines_per_page} || !$Param->{lines_per_page}=~/^\d+$/ ) ;
+$Param->{filter_sname}='' if( !$Param->{filter_sname} || !$Param->{lines_per_page}=~/^\w+$/ ) ;
+
 
 if( $Param->{edit} ) {
 		# if we will show full page of one task
@@ -67,7 +73,7 @@ if( $Param->{edit} ) {
 				$template->param( SDT=> get_date( $row->{sdt} ) ); 
 				$template->param( STATUS=> $Task->{ $row->{status} } ); 
 				$template->param( PROGRESS=> "$row->{progress} %"  ); 
-					if( 2==$row->{status} || 4==$row->{status}  ) {
+					if( 4==$row->{status} ) {
 						$template->param( STATUS_GREEN=>1 );
 					}
 					if( 3==$row->{status} ) {
@@ -90,15 +96,26 @@ if( $Param->{edit} ) {
 		# if we will show the list of tasks	
 		
 	$template->param( SHOWFORM=>0 );
-
-	# show list of workers
-	$stmt ="SELECT * from $table order by dt DESC; " ; # LIMIT $limit OFFSET $page*$limit;
+	my $Where;
+	$Where->{ status }=4; # only finished tasks
+	$Where->{ sname }=$Param->{filter_sname} if( $Param->{filter_sname} );	
+	my @F=();
+	my @V=();	
+	foreach( keys %{ $Where }) {
+		push ( @F, " $_ = ? " );
+		push ( @V , $Where->{$_} );
+	}	
+		
+	my $stmt ="SELECT * FROM  $table where " . join( ' and ',  @F )." order by dt DESC LIMIT ? OFFSET ? ;";	
+	
+	#$stmt ="SELECT * from $table where status = ? order by dt DESC LIMIT ? OFFSET ? ; " ; # LIMIT $limit OFFSET $page*$limit;
 	$sth = $dbh->prepare( $stmt );
-	unless ( $rv = $sth->execute() || $rv < 0 ) {
+	unless ( $rv = $sth->execute( @V, $Param->{lines_per_page}, $Param->{lines_per_page}*($Param->{page}-1) ) || $rv < 0 ) {
 		message2 ( "Someting wrong with database  : $DBI::errstr" );
 		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
 	}
 
+	my @loop_data=();
 	while (my $row = $sth->fetchrow_hashref) {
 		my %row_data;   		
 		$row_data{ ID }=$row->{id} ; 
@@ -130,6 +147,38 @@ if( $Param->{edit} ) {
 		
 }
 
+$template->param( FILTER_SNAME=> $Param->{filter_sname}  ); 
+$template->param( PAGE=> $Param->{page} ); 
+$template->param( LINES_PER_PAGE=> $Param->{lines_per_page} ); 
+
+@loop_data=();
+#my $Cfg=ReadConfig();
+foreach $w ( sort( split(/,/, $Cfg->{approved_application_for_no_authentication}), split(/,/,$Cfg->{approved_application_for_authentication}) ) ) {
+	my %row_data;   
+	$row_data{ LOOP_SNAME }=$w;
+	push(@loop_data, \%row_data);
+}
+$template->param(SNAME_LIST_LOOP => \@loop_data);
+
+
+my $Where;
+$Where->{ status }=4; # only finished tasks
+$Where->{ sname }=$Param->{filter_sname} if( $Param->{filter_sname} );
+
+my $count=GetCountRecords( $dbh, $table, $Where );
+#my $pages=$count/$Param->{lines_per_page};
+
+my @loop_data=();
+foreach $i ( 1..( $count/$Param->{lines_per_page} ) ) {
+		my %row_data;   		
+		if( $i==$Param->{page} ) {
+			$row_data{ PAGE_SELECTED_BGCOLOR}=1 ;
+		}
+		$row_data{ PAGE }=$i ; 
+		$row_data{ PAGE_PARAM }="?page=$i&filter_sname=$Param->{filter_sname}&lines_per_page=$Param->{lines_per_page}" ; 
+		push(@loop_data, \%row_data);	
+}
+$template->param(PAGER_LOOP => \@loop_data);
 
 
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
@@ -141,4 +190,30 @@ db_disconnect( $dbh );
 
 
 
+sub GetCountRecords {
+	my $dbh=shift;
+	my $table=shift;
+	my $Where=shift;
+
+	my @F=();
+	my @V=();	
+
+	foreach( keys %{ $Where }) {
+		push ( @F, " $_ = ? " );
+		push (@V , $Where->{$_} );
+	}	
+		
+	my $stmt ="SELECT COUNT(*) as count FROM  $table where " . join( ' and ',  @F )." ;";
+	my $sth = $dbh->prepare( $stmt );
+	my $rv;
+	unless ( $rv = $sth->execute( @V ) || $rv < 0 ) {
+		message2 ( "Someting wrong with database  : $DBI::errstr" );
+		w2log ( "Sql( $stmt ) Someting wrong with database  : $DBI::errstr" );
+		return 0;
+	}
+	#my $r=$sth->fetchrow_hashref;
+	#	message2( "<pre>".Dumper($r)."</pre>");
+
+	return ( $sth->fetchrow_hashref->{count} );		   
+}
 

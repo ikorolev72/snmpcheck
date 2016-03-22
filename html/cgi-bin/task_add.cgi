@@ -32,9 +32,8 @@ $dbh=db_connect() ;
 if(  Action() ==0 ) {
 	message2( "Cannot add new task" );	
 } else {
-	message2( "Task '$Param->{desc}' added. Please, check it in <a href='$Url->{ACTION_TASK_LIST}'> Task list </a>" ) ;
-
-
+	message2( "Task '$Param->{desc}' added. Please, check it in <a href='$Url->{ACTION_TASK_LIST}?id=$id&edit=1'> Task list </a>" ) ;
+	$template->param( REDIRECT=> "<meta http-equiv='refresh' content='2;url=$Url->{ACTION_TASK_LIST}?id=$id&edit=1'>"  );
 }
 
 $template->param( MESSAGES=> $message );
