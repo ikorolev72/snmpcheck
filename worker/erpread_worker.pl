@@ -50,7 +50,7 @@ my @AA=qw(
 erpidstart erpidstop allerp erpoff
 ) ;
 my $export_param=join( ' ', map{ "$_='$ip_param->{$_}' " } @AA )  ;
-WriteFile( $outfile, "NE name,NE IP,Result,Slot,Port,Portname,MTU,Admin status,Oper status,Type,Admin speed,Oper speed,Admin duplex,Oper duplex,Admin mdi/mdi-x,Oper mdi/mdi-x,Admin flowcontrol,Oper flowcontrol,SyncE config,Monitor port, Monitor direction\n" ) ;
+WriteFile( $outfile, "NE name,NE IP,ERP general mode,ring ID,ring name,version,upper ring number,ring type,port0,port1,RPL owner,RPL port,revertive,WTR timer[min],guard timer[ms],control VLAN,port0 MEP,port1 MEP,MAC address,R-APS MEG level,R-APS priority,assigned VLAN list,Result\n" ) ;
 ######### header of worker output table 
 
 

@@ -39,13 +39,8 @@ Specified VLAN will be renamed according given VLAN name
 				<td> VLAN ID </td>
 				<td> <INPUT TYPE="number" min="1" max="4094" NAME="vlanid" required SIZE=3> </td>
 				<tr valign='top'>
-				<td> Action with VLAN</td>
-				<td> 
-				<select name='createvlan'>
-					<option value=''> Rename existing VLAN</option>
-					<option value='on'> Create new VLAN</option>
-				</select>
-				</td>
+				<td> Create VLAN (if the VLAN does not exists and you want to create it check checkbox)  </td>
+				<td> <input TYPE="checkbox" NAME="createvlan"></td>
 
 			<TMPL_IF NAME=MS5000>
 				<tr valign='top'>

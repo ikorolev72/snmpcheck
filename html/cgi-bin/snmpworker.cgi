@@ -132,7 +132,7 @@ foreach $w ( sort( split(/,/, $Cfg->{approved_application_for_no_authentication}
 $template->param(SNAME_LIST_LOOP => \@loop_data);
 
 
-
+	
  
 #print "<pre>".Dumper( $ENV{'SCRIPT_NAME'} )."</pre>";
 $template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );

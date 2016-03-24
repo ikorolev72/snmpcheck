@@ -194,7 +194,7 @@
 		<table align=center>
 			<tr>
 				<TMPL_LOOP NAME=PAGER_LOOP>		
-					<td <TMPL_IF NAME=PAGE_SELECTED_BGCOLOR> bgcolor='#CEF6CE' </TMPL_IF> >&nbsp; <a href='<TMPL_VAR NAME=ACTION><TMPL_VAR NAME=PAGE_PARAM>'> <TMPL_VAR NAME=PAGE> </a> &nbsp;</td>			
+					<td <TMPL_IF NAME=PAGE_SELECTED_BGCOLOR> bgcolor='#CEF6CE' </TMPL_IF> >&nbsp; <a href='<TMPL_VAR NAME=ACTION><TMPL_VAR NAME=PAGE_PARAM>'><TMPL_VAR NAME=PAGE></a> &nbsp;</td>			
 				</TMPL_LOOP>
 			</tr>
 		</table>

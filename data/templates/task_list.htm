@@ -5,7 +5,9 @@
 	</title>
 	<LINK href='../main.css' type=text/css rel=stylesheet>
 	<script language="javascript" type="text/javascript" src="../js/snmpcheck.js"></script>
-
+	<TMPL_IF NAME=REFRESH_PAGE>
+		<meta http-equiv="refresh" content="30" >
+	</TMPL_IF>
 </head>
 <body>
 <div id='login_as'> </div>

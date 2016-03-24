@@ -22,6 +22,7 @@ $template = HTML::Template->new(filename => 'logdownload.htm', die_on_bad_params
 
 $table='tasks';
 $sname=$Param->{sname};
+$title="Log download";
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
@@ -63,7 +64,7 @@ if( $Param->{edit} ) {
 		if( $Param->{id} ){
 			my $row=GetRecord( $dbh , $Param->{id}, $table  );
 			if( $row ) {
-				$template->param( TITLE=>"Show the task $row->{id} :".encode_entities( $row->{desc} ) );	
+				$template->param( TITLE=>"$title. Show the task $row->{id} :".encode_entities( $row->{desc} ) );	
 				$template->param( ID=>$row->{id} ); 
 				$template->param( SNAME=>$row->{sname} ); 
 				$template->param( DESC=> encode_entities( $row->{desc} )); 
@@ -143,7 +144,7 @@ if( $Param->{edit} ) {
 		push(@loop_data, \%row_data);
 	}
 	$template->param(TASKS_LIST_LOOP => \@loop_data);
-	$template->param( TITLE=>" List of tasks " );	
+	$template->param( TITLE=> $title );	
 		
 }
 
@@ -169,7 +170,7 @@ my $count=GetCountRecords( $dbh, $table, $Where );
 #my $pages=$count/$Param->{lines_per_page};
 
 my @loop_data=();
-foreach $i ( 1..( $count/$Param->{lines_per_page} ) ) {
+foreach $i ( 1..( $count/$Param->{lines_per_page}+1 ) ) {
 		my %row_data;   		
 		if( $i==$Param->{page} ) {
 			$row_data{ PAGE_SELECTED_BGCOLOR}=1 ;

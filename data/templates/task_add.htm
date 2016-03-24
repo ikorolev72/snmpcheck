@@ -5,7 +5,9 @@
 	</title>
 	<LINK href='../main.css' type=text/css rel=stylesheet>
 	<script language="javascript" type="text/javascript" src="../js/snmpcheck.js"></script>
-	<TMPL_VAR NAME=REDIRECT>
+	<TMPL_IF NAME=REDIRECT_TO>
+		<meta http-equiv='refresh' content='2;url=<TMPL_VAR NAME=REDIRECT_TO>'>
+	</TMPL_IF> 
 
 </head>
 <body>

@@ -27,12 +27,16 @@ $table='tasks';
 $sname=$Param->{sname};
 
 $template->param( AUTHORISED=>1 );
+$template->param( REFRESH_PAGE => 0 );
+
 
 $dbh=db_connect() ;
 
 update_tasks($dbh);
 
-$template->param( REQUEST_URI => "$ENV{'REQUEST_URI'}" );
+my $request_uri=$ENV{'REQUEST_URI'};
+$request_uri=~s/del=1/del=0/g;
+$template->param( REQUEST_URI => $request_uri );
 
 if( $Param->{del} ) {
 	if (  require_authorisation() ) { # we require authorisation for delete tasks
@@ -53,6 +57,7 @@ if( $Param->{del} ) {
 
 if( $Param->{edit} ) {
 		# if we will show full page of one task
+		
 		$template->param( SHOWFORM=>1 );
 		if( $Param->{id} ){
 			my $row=GetRecord( $dbh , $Param->{id}, $table  );
@@ -76,8 +81,12 @@ if( $Param->{edit} ) {
 					if( 5==$row->{status} || 6==$row->{status} ) {
 						$template->param( STATUS_RED=>1 );
 					}
-				$template->param( MESS=>  encode_entities(  $row->{mess} )   ); 
-				$template->param( OUTFILE=>"$Url->{OUTFILE_DIR}/$row->{outfile}" ) if ( -f "$Paths->{OUTFILE_DIR}/$row->{outfile}" );							
+				$template->param( MESS=>  encode_entities(  $row->{mess} )   ); 				
+				$template->param( OUTFILE=>"$Url->{OUTFILE_DIR}/$row->{outfile}" ) if ( -f "$Paths->{OUTFILE_DIR}/$row->{outfile}" );
+				
+				if(  4!=$row->{status}  ) { # do not refresh page if status if finished
+					$template->param( REFRESH_PAGE => 1 );
+				}
 			} else {
 				message2( "Do not found the record with id=$Param->{id}");
 			}
@@ -90,6 +99,7 @@ if( $Param->{edit} ) {
 		# if we will show the list of tasks	
 		
 	$template->param( SHOWFORM=>0 );
+	$template->param( REFRESH_PAGE => 1 );
 
 	# show list of workers
 	$stmt ="SELECT * from $table order by dt DESC; " ; # LIMIT $limit OFFSET $page*$limit;
