@@ -111,7 +111,45 @@
 
 <div  class="left_div">
 
+<form action='<TMPL_VAR NAME=ACTION>' method='get' name='form1'>
+	<table border=1> 
+		<tr>
+			<td> Select type of tasks </td>
+			<td> Records per page </td>
+		</tr>			
+		<tr>
+			<td>
+				<select name=filter_sname>
+					<TMPL_IF NAME=FILTER_SNAME>
+						<option  selected  value=<TMPL_VAR NAME=FILTER_SNAME>><TMPL_VAR NAME=FILTER_SNAME></option>
+						<option  value=''> All </option>
+					<TMPL_ELSE> 							
+						<option  selected value=''> All </option>
+					</TMPL_IF>
 
+					<TMPL_LOOP NAME=SNAME_LIST_LOOP>
+						<option  value=<TMPL_VAR NAME=LOOP_SNAME>><TMPL_VAR NAME=LOOP_SNAME></option>						
+					</TMPL_LOOP>
+				</select>
+			</td>
+            <td>
+				<select name=lines_per_page>
+					<TMPL_IF NAME=LINES_PER_PAGE>
+					<option  selected  value=<TMPL_VAR NAME=LINES_PER_PAGE>><TMPL_VAR NAME=LINES_PER_PAGE></option>
+					<TMPL_ELSE>					
+					<option  selected value=25>25</option>
+					</TMPL_IF> 
+					<option value=25>25</option>
+					<option value=50>50</option>
+					<option value=100>100</option>
+					<option value=200>200</option>
+				</select>
+			
+			</td>
+            <td><input name='save' type='submit' id='save' value='Submit filter'></td>
+		</tr>
+</table>
+</form>
 
 
 <table border=1>
@@ -157,6 +195,16 @@
 	</tr>
    </TMPL_LOOP>
 </table>
+
+<br>
+		<table align=center>
+			<tr>
+				<TMPL_LOOP NAME=PAGER_LOOP>		
+					<td <TMPL_IF NAME=PAGE_SELECTED_BGCOLOR> bgcolor='#CEF6CE' </TMPL_IF> >&nbsp; <a href='<TMPL_VAR NAME=ACTION><TMPL_VAR NAME=PAGE_PARAM>'><TMPL_VAR NAME=PAGE></a> &nbsp;</td>			
+				</TMPL_LOOP>
+			</tr>
+		</table>
+
 
 </div>
 

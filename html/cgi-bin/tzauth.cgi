@@ -124,7 +124,7 @@ sub check_record {
 	my $retval=1;
 	
 	
-	unless( CheckField ( $Param->{tzmanualallow} ,'boolean_true', "Field 'ONLY timezone set' " )) {
+	unless( CheckField ( $Param->{tzmanualallow} ,'boolean', "Field 'ONLY timezone set' " )) {
 			$retval=0;
 	} 
 	unless( CheckField ( $Param->{tzmanual} ,'text_no_empty', "Field 'Timezone selection' " )) {

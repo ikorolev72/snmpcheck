@@ -190,31 +190,3 @@ db_disconnect( $dbh );
 
 
 
-
-sub GetCountRecords {
-	my $dbh=shift;
-	my $table=shift;
-	my $Where=shift;
-
-	my @F=();
-	my @V=();	
-
-	foreach( keys %{ $Where }) {
-		push ( @F, " $_ = ? " );
-		push (@V , $Where->{$_} );
-	}	
-		
-	my $stmt ="SELECT COUNT(*) as count FROM  $table where " . join( ' and ',  @F )." ;";
-	my $sth = $dbh->prepare( $stmt );
-	my $rv;
-	unless ( $rv = $sth->execute( @V ) || $rv < 0 ) {
-		message2 ( "Someting wrong with database  : $DBI::errstr" );
-		w2log ( "Sql( $stmt ) Someting wrong with database  : $DBI::errstr" );
-		return 0;
-	}
-	#my $r=$sth->fetchrow_hashref;
-	#	message2( "<pre>".Dumper($r)."</pre>");
-
-	return ( $sth->fetchrow_hashref->{count} );		   
-}
-

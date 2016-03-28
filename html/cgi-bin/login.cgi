@@ -35,7 +35,12 @@ $dbh=db_connect() ;
 my $show_form=1;
 
 if(  Action() ==0 ) {
-	message2 ( "Incorrect login or password" );			
+	if( $Param->{login} ) {
+		message2 ( "Incorrect login or password" );			
+		my $str="Unsuccessful login with  name '$Param->{login}' from :";
+		map{ $str.=" $_ = $ENV{$_}; " } qw( REMOTE_HOST REMOTE_ADDR REMOTE_PORT HTTP_USER_AGENT ) ;		
+		w2log( $str );
+	}	
 } else {
 		my $row=GetRecordByField( $dbh,  'users', 'login', $Param->{login}, );
 		my $secret=sha1_hex( time() );
@@ -56,7 +61,10 @@ if(  Action() ==0 ) {
 		$nrow->{id}=$row->{id};
 		DeleteRecord( $dbh, $nrow->{id}, 'session' );
  		InsertRecord( $dbh, $nrow->{id}, 'session', $nrow );
-	message2 ( "Login successfull" );			
+		my $str="Successful login with  name '$Param->{login}' from :";
+		map{ $str.=" $_ = $ENV{$_}; " } qw( REMOTE_HOST REMOTE_ADDR REMOTE_PORT HTTP_USER_AGENT ) ;		
+		w2log( $str );
+	message2 ( "Login successfull" );
 	$show_form=0;
 }
 

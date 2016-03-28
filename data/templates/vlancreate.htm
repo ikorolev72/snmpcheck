@@ -28,16 +28,16 @@
   <input name='id' type='hidden' value='<TMPL_VAR NAME=ID>' >
   <input name='new' type='hidden' value='<TMPL_VAR NAME=NEW>' >
   <input name='edit' type='hidden' value='<TMPL_VAR NAME=EDIT>' >
+
+  <b>Specified VLAN will be renamed according given VLAN name</b><br><br>
+
   <table border='1' cellspacing='0' cellpadding='2'>
-
-
-Specified VLAN will be renamed according given VLAN name
-				<tr valign='top'>
-				<td> VLAN name </td>
-				<td> <INPUT TYPE="text" NAME="vlanname" SIZE=32> </td>
 				<tr valign='top'>
 				<td> VLAN ID </td>
 				<td> <INPUT TYPE="number" min="1" max="4094" NAME="vlanid" required SIZE=3> </td>
+				<tr valign='top'>
+				<td> VLAN name </td>
+				<td> <INPUT TYPE="text" NAME="vlanname" SIZE=32> </td>
 				<tr valign='top'>
 				<td> Create VLAN (if the VLAN does not exists and you want to create it check checkbox)  </td>
 				<td> <input TYPE="checkbox" NAME="createvlan"></td>
@@ -129,6 +129,18 @@ Specified VLAN will be renamed according given VLAN name
 			<tr valign='top'>
 			<td> Add task for worker </td>
 			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
+			</tr>
+
+
+
+			<tr valign='top'>
+			<td> VLAN </td>
+			<td> 
+				<b>VLAN Name:</b><TMPL_VAR NAME=VLANNAME><br>
+				<b>VLAN ID:</b><TMPL_VAR NAME=VLANID><br>
+				<b>Create new VLAN if not existing:</b><TMPL_IF NAME=CREATEVLAN> Yes <TMPL_ELSE> No </TMPL_IF>
+			</td>	
+			</tr>
 		<TMPL_IF NAME=MS5000>
 			<tr valign='top'>
 			<td> Selected IP </td>

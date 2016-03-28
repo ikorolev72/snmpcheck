@@ -25,21 +25,14 @@
 <TMPL_ELSE>
 
 <div  class="left_div">
-<!--
-<table border=1>
-	<tr>
-		<td> Tool </td>
-		<td> Run </td>
-	</tr>
 
-   <TMPL_LOOP NAME=TOOL_LIST_LOOP>
-	<tr>
-		<td> <TMPL_VAR NAME=TOOL_DESC></td>
-		<td> <a href='<TMPL_VAR NAME=TOOL_URL>' target=_blank> Run task</a> </td>
-	</tr>
-   </TMPL_LOOP>
-</table>
--->
+<ul>
+	<li> <a href='users.cgi' target=_blank> Add / edit / delete users </a> </li>
+	<li> <a href='snmpworker.cgi' target=_blank> Add / edit / delete workers </a> </li>
+	<li> <a href='task_list.cgi' target=_blank> Tasks list </a> </li>
+	<li> <a href='logdownload.cgi' target=_blank> Download logs list </a> </li>
+</ul>
+
 <ul>
    <TMPL_LOOP NAME=TOOL_LIST_LOOP>
 		<li> <a href='<TMPL_VAR NAME=TOOL_URL>' target=_blank> <TMPL_VAR NAME=TOOL_DESC> </a> </li>

@@ -147,11 +147,19 @@
 			<tr valign='top'>
 			<td> Add task for worker </td>
 			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
+		<TMPL_IF NAME=TZMANUALALLOW>
 			<tr valign='top'>
 			<td> Set timezone </td>
 			<td> 
-				<b>New timezone:</b> '<TMPL_VAR NAME=TZMANUAL>'
+				Current time of NE will be kept. Only timezone will be changed. <b>New timezone:</b> '<TMPL_VAR NAME=TZMANUAL>'
 			</td>
+		<TMPL_ELSE>  					
+			<tr valign='top'>
+			<td> Set time / timezone </td>
+			<td> 
+				Takes the time and timezone of the server and updates both on the device(s)
+			</td>
+		</TMPL_IF>
 		<TMPL_IF NAME=MS5000>
 			<tr valign='top'>
 			<td> Selected IP </td>

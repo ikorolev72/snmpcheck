@@ -14,9 +14,10 @@ use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
 
-
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
+$login=$query->cookie('login');
+
 
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'task_add.htm', die_on_bad_params=>0 );
@@ -26,6 +27,20 @@ $id=0; # id of new task
 $sname=$Param->{sname};
 
 $template->param( AUTHORISED=>1 );
+if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authentication} ) ) {
+	unless (  require_authorisation()  ) { # we require any authorised user
+		message2( "Only authorised user can add this task" );
+		$template->param( AUTHORISED=>0 );
+		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( TITLE=>$title );
+		$template->param( MESSAGES=> $message );
+
+		print  $template->output;
+	exit 0;
+ }
+}
+
+
 $dbh=db_connect() ;
 
 
@@ -35,6 +50,7 @@ if(  Action() ==0 ) {
 	message2( "Task '$Param->{desc}' added. Please, check it in <a href='$Url->{ACTION_TASK_LIST}?id=$id&edit=1'> Task list </a>" ) ;
 	$template->param( REDIRECT_TO=> "$Url->{ACTION_TASK_LIST}?id=$id&edit=1"  );
 #	$template->param( REDIRECT=> "<meta http-equiv='refresh' content='2;url=$Url->{ACTION_TASK_LIST}?id=$id&edit=1'>"  );
+	w2log( "User '$login' add task '$Param->{desc}' for worker '$sname'. Parameters: ".JSON->new->utf8->encode($Param) );
 }
 
 $template->param( MESSAGES=> $message );
@@ -57,7 +73,7 @@ sub Action {
 		$row->{id}=GetNextSequence( $dbh ) ;
 		$row->{sname}=$Param->{sname} ;
 		$row->{desc}=$Param->{desc} ;
-		$row->{user}='' ; # USER !!!!
+		$row->{user}=$login ;
 		$row->{sdt}=time() ;
 		$row->{pdt}=time() ; # planed time of starting task. there can be inserted future time
 		$row->{dt}=time() ;

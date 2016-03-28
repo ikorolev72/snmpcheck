@@ -38,6 +38,13 @@ my $request_uri=$ENV{'REQUEST_URI'};
 $request_uri=~s/del=1/del=0/g;
 $template->param( REQUEST_URI => $request_uri );
 
+$Param->{page}=1 if( !$Param->{page} || !$Param->{page}=~/^\d+$/  ); # start from first page
+$Param->{lines_per_page}=25 if( !$Param->{lines_per_page} || !$Param->{lines_per_page}=~/^\d+$/ ) ;
+$Param->{filter_sname}='' if( !$Param->{filter_sname} || !$Param->{lines_per_page}=~/^\w+$/ ) ;
+
+
+
+
 if( $Param->{del} ) {
 	if (  require_authorisation() ) { # we require authorisation for delete tasks
 		$template->param( REQUEST_URI => "$ENV{'SCRIPT_NAME'}" );
@@ -101,13 +108,33 @@ if( $Param->{edit} ) {
 	$template->param( SHOWFORM=>0 );
 	$template->param( REFRESH_PAGE => 1 );
 
-	# show list of workers
-	$stmt ="SELECT * from $table order by dt DESC; " ; # LIMIT $limit OFFSET $page*$limit;
-	$sth = $dbh->prepare( $stmt );
-	unless ( $rv = $sth->execute() || $rv < 0 ) {
-		message2 ( "Someting wrong with database  : $DBI::errstr" );
-		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
+	my $Where;
+	$Where->{ sname }=$Param->{filter_sname} if( $Param->{filter_sname} );	
+	
+	my @F=();
+	my @V=();	
+	foreach( keys %{ $Where }) {
+		push ( @F, " $_ = ? " );
+		push ( @V , $Where->{$_} );
 	}
+	my $stmt ="";
+
+	if( $#F > -1 ) {
+		$stmt ="SELECT * FROM  $table where " . join( ' and ',  @F )." order by dt DESC LIMIT ? OFFSET ? ;";		
+		$sth = $dbh->prepare( $stmt );
+		unless ( $rv = $sth->execute( @V, $Param->{lines_per_page}, $Param->{lines_per_page}*($Param->{page}-1) ) || $rv < 0 ) {
+			message2 ( "Someting wrong with database  : $DBI::errstr" );
+			w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
+		}
+	} else {
+		$stmt ="SELECT * FROM  $table order by dt DESC LIMIT ? OFFSET ? ;";		
+		$sth = $dbh->prepare( $stmt );
+		unless ( $rv = $sth->execute( $Param->{lines_per_page}, $Param->{lines_per_page}*($Param->{page}-1) ) || $rv < 0 ) {
+			message2 ( "Someting wrong with database  : $DBI::errstr" );
+			w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
+		}
+	}
+	
 
 	while (my $row = $sth->fetchrow_hashref) {
 		my %row_data;   		
@@ -139,6 +166,42 @@ if( $Param->{edit} ) {
 	$template->param( TITLE=>" List of tasks " );	
 		
 }
+
+
+
+$template->param( FILTER_SNAME=> $Param->{filter_sname}  ); 
+$template->param( PAGE=> $Param->{page} ); 
+$template->param( LINES_PER_PAGE=> $Param->{lines_per_page} ); 
+
+@loop_data=();
+my $Cfg=ReadConfig();
+foreach $w ( sort( split(/,/, $Cfg->{approved_application_for_no_authentication}), split(/,/,$Cfg->{approved_application_for_authentication}) ) ) {
+	my %row_data;   
+	$row_data{ LOOP_SNAME }=$w;
+	push(@loop_data, \%row_data);
+}
+$template->param(SNAME_LIST_LOOP => \@loop_data);
+
+
+my $Where;
+$Where->{ sname }=$Param->{filter_sname} if( $Param->{filter_sname} );
+
+
+
+my $count=GetCountRecords( $dbh, $table, $Where );
+#my $pages=$count/$Param->{lines_per_page};
+
+my @loop_data=();
+foreach $i ( 1..( $count/$Param->{lines_per_page}+1 ) ) {
+		my %row_data;   		
+		if( $i==$Param->{page} ) {
+			$row_data{ PAGE_SELECTED_BGCOLOR }=1 ;
+		}
+		$row_data{ PAGE }=$i ; 
+		$row_data{ PAGE_PARAM }="?page=$i&filter_sname=$Param->{filter_sname}&lines_per_page=$Param->{lines_per_page}" ; 
+		push(@loop_data, \%row_data);	
+}
+$template->param(PAGER_LOOP => \@loop_data);
 
 
 

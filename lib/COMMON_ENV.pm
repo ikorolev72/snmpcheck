@@ -459,6 +459,48 @@ sub GetNextSequence {
 
 
 
+
+sub GetCountRecords {
+	my $dbh=shift;
+	my $table=shift;
+	my $Where=shift;
+
+	my @F=();
+	my @V=();	
+
+	foreach( keys %{ $Where }) {
+		push ( @F, " $_ = ? " );
+		push ( @V , $Where->{$_} );
+	}	
+	my $stmt ="";
+	my $sth;
+	my $rv;
+	if( $#F > -1 ) {
+		$stmt ="SELECT COUNT(*) as count FROM  $table where " . join( ' and ',  @F )." ;";
+		$sth = $dbh->prepare( $stmt );
+		unless ( $rv = $sth->execute( @V ) || $rv < 0 ) {
+			message2 ( "Someting wrong with database  : $DBI::errstr" );
+			w2log ( "Sql( $stmt ) Someting wrong with database  : $DBI::errstr" );
+			return 0;
+		}
+	} else {
+		$stmt ="SELECT COUNT(*) as count FROM  $table ;";
+		$sth = $dbh->prepare( $stmt );
+		unless ( $rv = $sth->execute() || $rv < 0 ) {
+			message2 ( "Someting wrong with database  : $DBI::errstr" );
+			w2log ( "Sql( $stmt ) Someting wrong with database  : $DBI::errstr" );
+			return 0;
+		}
+	}
+	#my $r=$sth->fetchrow_hashref;
+	#	message2( "<pre>".Dumper($r)."</pre>");
+
+	return ( $sth->fetchrow_hashref->{count} );		   
+}
+
+
+
+
 sub CheckField {
 	my $f=shift;
 	my $type=shift;

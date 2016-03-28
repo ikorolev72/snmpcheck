@@ -29,8 +29,6 @@ $title="Main administration page";
 
 $template->param( AUTHORISED=>1 );
 
-
-
 $dbh=db_connect() ;
 
 my $show_form=0;
