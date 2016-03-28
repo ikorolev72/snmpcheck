@@ -8,7 +8,7 @@ Project for checking snmp and get the results in csv
 
 ##  The Latest Version
 
-	version 1.4 2016.03.07
+	version 1.5 2016.03.24
 	
 ### There are realised:
 - add/edit/remove user form/table
@@ -21,11 +21,9 @@ Project for checking snmp and get the results in csv
 - two dummy workers
 - command line tool 'task starter', 'task updater' 
 - authorisation. Login-logout, check on pages if required.
-
-### What not yet ready:
-do not used 
-- do not test real workers
-- do not collect ip yet ( from pgsql, only from existing group ) 
+- real workers tested
+- test collection IPs from pgsql
+- logging of user actions
 
 
 ### What technology used:
