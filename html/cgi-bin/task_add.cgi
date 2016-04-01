@@ -47,7 +47,7 @@ $dbh=db_connect() ;
 if(  Action() ==0 ) {
 	message2( "Cannot add new task" );	
 } else {
-	message2( "Task '$Param->{desc}' added. Please, check it in <a href='$Url->{ACTION_TASK_LIST}?id=$id&edit=1'> Task list </a>" ) ;
+	message2( "<font color=green>Task '$Param->{desc}' added. Please, check it in <a href='$Url->{ACTION_TASK_LIST}?id=$id&edit=1'> Task list </a></font>" ) ;
 	$template->param( REDIRECT_TO=> "$Url->{ACTION_TASK_LIST}?id=$id&edit=1"  );
 #	$template->param( REDIRECT=> "<meta http-equiv='refresh' content='2;url=$Url->{ACTION_TASK_LIST}?id=$id&edit=1'>"  );
 	w2log( "User '$login' add task '$Param->{desc}' for worker '$sname'. Parameters: ".JSON->new->utf8->encode($Param) );
@@ -83,7 +83,7 @@ sub Action {
 		
 				
 		if ( InsertRecord ( $dbh, $row->{id},  $table, $row ) ) {
-			message2 ( "Record inserted succsesfuly" );
+			message2 ( "<font color=green>Record inserted succsesfuly</font>" );
 			$id=$row->{id};
 			return 1;
 		} else {

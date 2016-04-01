@@ -147,7 +147,7 @@ if( $Param->{edit} ) {
 		$row_data{ STATUS }=$Task->{ $row->{status} }  ; 
 		$row_data{ WORKER }=$Task->{ $row->{worker} }  ; 
 		$row_data{ PROGRESS }= "$row->{progress} %"  ; 
-				if( 4==$row->{status} ) {
+				if( 2==$row->{status} || 4==$row->{status} ) {
 					$row_data{ STATUS_GREEN }=1 ;
 				}
 				if( 3==$row->{status} ) {

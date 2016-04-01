@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- <link href='dist/rome.min.css' rel='stylesheet' type='text/css' /> -->
+<title>Rome</title>
+<script src='dist/rome.min.js'></script>
+
+<h1>Rome</h1>
+<div class='examples'>
+	<input id='input' class='input' value='' />
+        <input type="button" onclick="getEpoc()" value="get Epoc time"/>
+</div>
+
+
+<script>
+//	rome(input);
+var dt=rome( input, { min: '2016-04-01 19:45' } );
+function getEpoc ( ) {
+//	Date.parse( dt.getDateString('YYYY-MM-DD hh:mm:ss') );
+	alert ( Date.parse( dt.getDate() )/1000 ); 
+//	Date.parse("March 21, 2012");
+}
+	
+</script>
