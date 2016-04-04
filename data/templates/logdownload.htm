@@ -56,6 +56,10 @@
 			<td> <TMPL_VAR NAME=DT> </td>
 			
 			<tr valign='top'>
+			<td> Task start planed </td>
+			<td> <TMPL_VAR NAME=PDT> </td>
+
+			<tr valign='top'>
 			<td> Status updated </td>
 			<td> <TMPL_VAR NAME=SDT> </td>
 
@@ -153,6 +157,7 @@
 		<td> Description </td>
 		<td> Type of task </td>
 		<td> Task added </td>
+		<td> Task start planed </td>
 		<td> Status updated  </td>
 		<td> Status </td>
 		<td> Progress </td>
@@ -166,6 +171,7 @@
 		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'> <TMPL_VAR NAME=DESC> </a> </td>
 		<td> <TMPL_VAR NAME=SNAME></td>
 		<td> <TMPL_VAR NAME=DT></td>
+		<td> <TMPL_VAR NAME=PDT></td>
 		<td> <TMPL_VAR NAME=SDT></td>
 		<td
 			<TMPL_IF NAME="STATUS_RED">	

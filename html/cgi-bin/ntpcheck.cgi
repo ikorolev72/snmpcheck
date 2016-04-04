@@ -62,21 +62,57 @@ $Param->{ucon}=$Param->{ucon}?1:0;
 $Param->{umng}=$Param->{umng}?1:0;
 
 
-if(  Action() ==0 ) {
-	$show_form=1;
-	$template->param( SHOWFORM=>1 );
-	$template->param( SHOWFORM_TO_TASK_=> 0 );
-	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-	$template->param( TITLE=> $title );
-	
-} else {
-	$template->param( SHOWFORM=> 0 );
-	$template->param( SHOWFORM_TO_TASK => 1 );
-	$template->param( LOGIN=>$Param->{login} );
-	$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-	$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD} );
-	$template->param( TITLE=>"$title. Ready to add task" );
+$template->param( SHOWFORM_FIRST=> 1 );
+$template->param( SHOWFORM_SECOND=> 0 );
+$template->param( SHOWFORM_TO_TASK=> 0 );
+
+
+if( $Param->{save_first} ) {
+	if( check_record()  ) {
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 1 );
+		$template->param( SHOWFORM_TO_TASK=> 0 );
+		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( TITLE=> $title );
+		$template->param( DESC=> "$sname task " ) ; 	# .get_date() );
+			if( $Param->{task_start_type} ) {
+				$template->param( "$sname crontable task " ) ; 	# .get_date() );
+			}		
+	} else{
+		$template->param( SHOWFORM_EXPANDED=>0 );
+		$template->param( SHOWFORM=>1 );
+		$template->param( SHOWFORM_TO_TASK=> 0 );
+		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( TITLE=> $title );
+	}
 }
+
+if( $Param->{save_second} ) {
+	if( check_record2()  ) {
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 0 );
+		$template->param( SHOWFORM_TO_TASK=> 1 );
+		$template->param( LOGIN=>$Param->{login} );
+		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD} );
+		$template->param( TITLE=>"$title. Ready to add task" );
+		$template->param( DESC=> $Param->{desc}.get_date() );
+			if( $Param->{task_start_type} ) {
+				$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD_CRONTAB} );
+			}
+			message2( "<pre>".Dumper($Param)."</pre>");
+		
+	} else {
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 1 );
+		$template->param( SHOWFORM_TO_TASK=> 0 );
+	}
+}
+
+
+
+
+
 	my $grp=get_groups(  $Cfg->{iplistdb} );
 	foreach $group ( sort keys( %{$grp} ) ) {
 		my %row_data;   
@@ -85,7 +121,6 @@ if(  Action() ==0 ) {
 		push(@loop_data, \%row_data);
 	}
 	$template->param(GROUP_LIST_LOOP => \@loop_data);	
-	$template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
 	$template->param( IP=> $Param->{ip} );
 	$template->param( GROUP=> $Param->{group} );
 	$template->param( SUBGROUP=> $Param->{subgroup} );
@@ -93,6 +128,8 @@ if(  Action() ==0 ) {
 	$template->param( INOP=> $Param->{inop} );
 	$template->param( UCON=> $Param->{ucon} );
 	$template->param( UMNG=> $Param->{umng} );
+	$template->param( WORKER_THREADS=> $Param->{worker_threads} );
+	$template->param( TASK_START_TYPE=> $Param->{task_start_type} );
 
 	 
 
@@ -105,12 +142,6 @@ db_disconnect( $dbh );
 
 ##############################################
 
-sub Action {
-	if( $Param->{save} ) {
-		return( check_record()  );
-	}	
-return 0;
-}
 
 
 
@@ -125,11 +156,19 @@ sub check_record {
 	unless( CheckField ( $Param->{all_ipasolink} ,'boolean', "Field 'IP list for all iPasolink' ") ){
 		$retval=0;
 	}
-	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
-		$retval=0;
-	}
+#	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
+#		$retval=0;
+#	}
 	if( !$Param->{ip} && !$Param->{group} && !$Param->{all_ipasolink} ) {
 		message2( "Must be set 'ip address' or 'group' or 'IP list for all iPasolink'" );
+		$retval=0;
+	}
+	return $retval;
+}
+
+sub check_record2 {
+	my $retval=1;
+	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
 		$retval=0;
 	}
 	return $retval;

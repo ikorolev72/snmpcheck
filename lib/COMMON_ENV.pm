@@ -24,8 +24,8 @@ use HTML::Entities;
 
 $Url->{OUTFILE_DIR}='../reports';
 $Url->{ACTION_TASK_ADD}="task_add.cgi" ;
+$Url->{ACTION_TASK_ADD_CRONTAB}="task_add_crontab.cgi" ;
 $Url->{ACTION_TASK_LIST}="task_list.cgi";
-
 
 $Paths->{HOME}='C:/GIT/snmpcheck/';
 if( -d '/opt/snmpcheck' ) { 

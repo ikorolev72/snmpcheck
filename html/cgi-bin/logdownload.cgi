@@ -72,6 +72,7 @@ if( $Param->{edit} ) {
 				$template->param( PARAM=> encode_entities(  $row->{param} )  ); # need check how it code it
 				$template->param( DT=>  get_date($row->{dt}) ); 
 				$template->param( SDT=> get_date( $row->{sdt} ) ); 
+				$template->param( PDT=> get_date( $row->{pdt} ) ); 
 				$template->param( STATUS=> $Task->{ $row->{status} } ); 
 				$template->param( PROGRESS=> "$row->{progress} %"  ); 
 					if( 4==$row->{status} ) {
