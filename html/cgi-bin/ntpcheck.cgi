@@ -40,7 +40,7 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 	unless (  require_authorisation()  ) { # we require any authorised user
 		message2( "Only authorised user can add this task" );
 		$template->param( AUTHORISED=>0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
 		$template->param( TITLE=>$title );
 		$template->param( MESSAGES=> $message );
 
@@ -72,17 +72,18 @@ if( $Param->{save_first} ) {
 		$template->param( SHOWFORM_FIRST=> 0 );
 		$template->param( SHOWFORM_SECOND=> 1 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
 		$template->param( TITLE=> $title );
 		$template->param( DESC=> "$sname task " ) ; 	# .get_date() );
-			if( $Param->{task_start_type} ) {
-				$template->param( "$sname crontable task " ) ; 	# .get_date() );
+			if( 1 == $Param->{task_start_type} ) {
+				$template->param( DESC=> "$sname crontab task " )
 			}		
+#message2( "<pre>".Dumper($Param)."</pre>");		
 	} else{
 		$template->param( SHOWFORM_EXPANDED=>0 );
 		$template->param( SHOWFORM=>1 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
 		$template->param( TITLE=> $title );
 	}
 }
@@ -92,17 +93,21 @@ if( $Param->{save_second} ) {
 		$template->param( SHOWFORM_FIRST=> 0 );
 		$template->param( SHOWFORM_SECOND=> 0 );
 		$template->param( SHOWFORM_TO_TASK=> 1 );
-		$template->param( LOGIN=>$Param->{login} );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD} );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME}  );
+		$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD} );
 		$template->param( TITLE=>"$title. Ready to add task" );
-		$template->param( DESC=> $Param->{desc}.get_date() );
-			if( $Param->{task_start_type} ) {
-				$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD_CRONTAB} );
-			}
-			message2( "<pre>".Dumper($Param)."</pre>");
+		
+		if( 1 == $Param->{task_start_type} ) {
+			$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD_CRONTAB} );
+			$template->param( DESC=> $Param->{desc} );
+		} else {
+			$template->param( DESC=> $Param->{desc}.get_date() );
+		}
 		
 	} else {
+		$template->param( DESC=> $Param->{desc} );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME}  );	
+		$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD}  );	
 		$template->param( SHOWFORM_FIRST=> 0 );
 		$template->param( SHOWFORM_SECOND=> 1 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
@@ -130,6 +135,8 @@ if( $Param->{save_second} ) {
 	$template->param( UMNG=> $Param->{umng} );
 	$template->param( WORKER_THREADS=> $Param->{worker_threads} );
 	$template->param( TASK_START_TYPE=> $Param->{task_start_type} );
+	$template->param( TASK_START_TYPE_CRON=>1 ) if( 1 == $Param->{task_start_type} ) ;
+	$template->param( CRON=> $Param->{cron} );
 
 	 
 
@@ -147,6 +154,10 @@ db_disconnect( $dbh );
 
 sub check_record {
 	my $retval=1;
+	if( 1 == $Param->{task_start_type} && !require_authorisation() ) { 
+			message2( "Only authorised user can add crontab task" );
+			$retval=0;
+	}	
 	unless( CheckField ( $Param->{ip} ,'ip_op_empty', "Field 'ip' " )) {
 			$retval=0;
 	} 
@@ -168,7 +179,14 @@ sub check_record {
 
 sub check_record2 {
 	my $retval=1;
+	if( 1 == $Param->{task_start_type} && !require_authorisation() ) { 
+			message2( "Only authorised user can add crontab task" );
+			$retval=0;
+	}
 	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
+		$retval=0;
+	}
+	unless( CheckField ( $Param->{cron} ,'cron', "Field 'Crontab' ") ){
 		$retval=0;
 	}
 	return $retval;

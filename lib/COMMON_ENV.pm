@@ -22,10 +22,12 @@ use HTML::Entities;
 
 
 
+
 $Url->{OUTFILE_DIR}='../reports';
 $Url->{ACTION_TASK_ADD}="task_add.cgi" ;
 $Url->{ACTION_TASK_ADD_CRONTAB}="task_add_crontab.cgi" ;
 $Url->{ACTION_TASK_LIST}="task_list.cgi";
+$Url->{ACTION_TASK_LIST_CRONTAB}="task_list_crontab.cgi" ;
 
 $Paths->{HOME}='C:/GIT/snmpcheck/';
 if( -d '/opt/snmpcheck' ) { 
@@ -59,6 +61,8 @@ $Task->{3}='running';
 $Task->{4}='finished';
 $Task->{5}='failed';
 $Task->{6}='canceled';
+$Task->{7}='pending';
+
 
 
 
@@ -137,15 +141,20 @@ sub get_ip_list {
 
 
 
-
 sub require_authorisation {
+	my $dbh=shift;
+	my $ifdbh=1 if( $dbh );
 	my %cookies = CGI::Cookie->fetch;
 	if(  $cookies{id} ) {
 		my $id=$cookies{id}->value;
 		if(  $cookies{secret} ) {
-			my $dbh=db_connect() ;
+			unless( $ifdbh ) {
+				$dbh=db_connect() ;
+			}
 			my $row=GetRecord( $dbh, $id, 'session' ) ;
-			db_disconnect( $dbh );
+			unless( $ifdbh ) {
+				db_disconnect( $dbh );
+			}
 			unless( $row->{secret} eq $cookies{secret}->value ) {
 				return 0;
 			}
@@ -156,6 +165,16 @@ sub require_authorisation {
 	}
 	return 0;
 }
+
+
+sub get_login {
+	my %cookies = CGI::Cookie->fetch;
+	if(  $cookies{login} ) {
+		return $cookies{login}->value;
+	}
+	return '';
+}
+
 
 
 sub ReadConfig {
@@ -516,6 +535,10 @@ sub CheckField {
 		#$constrains->{login}->{no_angle_brackets}=1;
 		#$constrains->{login}->{no_quotes}=1;
 
+		$constrains->{cron}->{min}=9;
+		$constrains->{cron}->{cron}=1;
+
+
 		$constrains->{int}->{numeric}=1;
 		$constrains->{int}->{max}=20;
 		$constrains->{int}->{min}=1;
@@ -654,6 +677,43 @@ sub CheckField {
 			if(  $f=~/\'/  ||  $f=~/\"/ ) {
 				message2( "$prefix must have not any quotes" );
 				$retval=0;
+			}
+		}
+
+		
+		if( $key eq 'cron' ) {
+			my $myf=$f;
+			$myf=~s/^\s+//; 
+			$myf=~s/\s+$//; 
+			my @fields=split(/\s/,$myf);
+				#message2( "<pre>".Dumper( @fields)."</pre>" );
+			
+			if( $#fields != 4 ) {
+				message2( "$prefix must have 5 fields" );
+				$retval=0;
+				next;
+			}
+			my @F=qw( Minute Hour Day Month Weekday );
+			my $k=0;
+			foreach $i (@fields) {
+				unless( $i=~/^[\d,-\/\*]+$/) {
+					message2( "$prefix fields '$F[$k]' have incorrect chars" );
+					$retval=0;
+					last;
+				}
+				next if( $i eq '*' );
+				my @a=( split(',', $i) );					
+				foreach ( @a ) {
+					#next if( /^\*$/ ); # if several and one is '*' then failed ?
+					next if( /^\d+$/ );
+					next if( /^(\d+)-(\d+)$/ && $1<$2 );
+					next if( /^\*\/\d+$/ );
+					next if( /^(\d+)-(\d+)\/\d+$/ && $1<$2 );
+					message2( "$prefix fields '$i' have incorrect chars or expression" );
+					$retval=0;
+					last;
+				}
+				++$k;
 			}
 		}
 	}		
