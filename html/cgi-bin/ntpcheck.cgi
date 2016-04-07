@@ -179,14 +179,16 @@ sub check_record {
 
 sub check_record2 {
 	my $retval=1;
-	if( 1 == $Param->{task_start_type} && !require_authorisation() ) { 
+	if( 1 == $Param->{task_start_type} ) {
+		unless( CheckField ( $Param->{cron} ,'cron', "Field 'Crontab' ") ){
+			$retval=0;
+		}
+		unless( require_authorisation() ) { 
 			message2( "Only authorised user can add crontab task" );
 			$retval=0;
+		}
 	}
 	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
-		$retval=0;
-	}
-	unless( CheckField ( $Param->{cron} ,'cron', "Field 'Crontab' ") ){
 		$retval=0;
 	}
 	return $retval;
