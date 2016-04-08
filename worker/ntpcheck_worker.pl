@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.1 2016.04.07
+# version 1.1 2016.04.08
 use lib "/home/nems/client_persist/htdocs/bulktool3/lib" ;
-use lib "C:\GIT\snmpcheck\lib" ;
+use lib 'C:\GIT\snmpcheck\lib' ;
 use lib "/opt/snmpcheck/lib" ;
 use lib "../lib" ;
 use lib "../../lib" ;
@@ -12,6 +12,7 @@ use File::Basename;
 
 use Getopt::Long;
 use threads;
+use threads::shared;
 
 GetOptions (
         'json=s' => \$json_file,
@@ -23,14 +24,15 @@ unless( -f $json_file ) {
 }
 
 
-$json_text=ReadFile( $json_file );
+my $row;
+my $json_text=ReadFile( $json_file );
 
-$Param =JSON->new->utf8->decode($json_text);
-$ip_param=JSON->new->utf8->decode($Param->{param});
+my $Param =JSON->new->utf8->decode($json_text);
+my $ip_param=JSON->new->utf8->decode($Param->{param});
 my $Cfg=ReadConfig();
 
 
-$outfile="$Paths->{OUTFILE_DIR}/$ip_param->{sname}_".generate_filename()."_$Param->{id}_log.csv";
+my $outfile="$Paths->{OUTFILE_DIR}/$ip_param->{sname}_".generate_filename()."_$Param->{id}_log.csv";
 if( 1==$Param->{task_start_type} ) { # if cron
 	$outfile="$Paths->{OUTFILE_DIR}/$ip_param->{sname}_".generate_filename()."_$Param->{id}_cron_$ip_param->{id}_log.csv";
 }
@@ -55,22 +57,31 @@ WriteFile( $outfile, "NE name,NE IP,Status,NTP server status,NTP server,Referenc
 ######### header of worker output table 
 
 my @IPs=get_ip_list( $ip_param );
-$count_max=$#IPs+1 ; #
+my $count_max=$#IPs+1 ; #
 my $count=0;
 my $error=0;
+
+## for threads
+share($count);
+share($error);
+##
+
+
 
 my $uniqfile="$Param->{sname}.$Param->{id}.".time();
 my @threads;
 my $worker_threads=$ip_param->{worker_threads} || 1 ;
 
-foreach( 1..$worker_threads ) {
-  push @threads, threads->create(\&worker_thread, $_);
+foreach $t ( 1..$worker_threads ) {
+  push @threads, threads->create(\&worker_thread, $t, \$count);
   sleep 1;
 }
 
-foreach my $t (@threads) {
+foreach $t (@threads) {
   $t->join();
 }
+
+
 
 my $body;
 foreach( 0..$#IPs ) {
@@ -78,6 +89,7 @@ foreach( 0..$#IPs ) {
 	my $tmp_outfile="$Paths->{TMP_DIR}/$uniqfile.out.$_.csv";
 	my $body=ReadFile( $tmp_outfile );
 	AppendFile( $outfile, $body );
+	unlink( $tmp_outfile );
 }
 
 ######### bottom of worker output table 
@@ -104,20 +116,21 @@ $0  --json='/tmp/123.json'
 
 sub worker_thread {
 	my $th=shift;
+	
 	while( 1 ) {
 		my $result_of_exec, $code ;
 		return 1 if( $count >= $count_max ) ;
 		my $tmp_outfile="$Paths->{TMP_DIR}/$uniqfile.out.$count.csv";
 		my $IP=@IPs[ $count++ ];
+
 		# timeout for working worker_body.sh set to 1200 sec (20 min)
 		$code="timeout 1200 $body_sh $Paths->{config.ini} $IP $tmp_outfile $export_param >/dev/null 2>&1";
 		$result_of_exec=system( $code );
-		if( 256==$result_of_exec ) {
+		if( 0 < $result_of_exec ) {
 			$error++;
 		}
 		if( 512==$result_of_exec ) {
 			w2log( "Incorrect parameters with script: $code" );
-			$error++;
 		}
 		if( time() - $timenow  > 15 || 0==$count ) {
 			write_out_json( 3, 'Task running. All ok.', int( $count*100/$count_max ) );
@@ -135,8 +148,12 @@ sub write_out_json {
 		$row->{status}=$status; # running
 		$row->{id}=$Param->{id};
 		$row->{mess}=$mess;
-		$row->{progress}=$progress; 
-		unless( WriteFile( $json_out, JSON->new->utf8->encode($row) ) ){
+		$row->{progress}=$progress;  
+		my $coder = JSON::XS->new->utf8->pretty->allow_nonref; # bugs with JSON module and threads. we need use JSON::XS
+		my $json = $coder->encode ($row);
+		#my $json=encode_json( \$row );
+		#my $json=JSON->new->utf8->encode( \$row );
+		unless( WriteFile( $json_out, $json ) ){
 				w2log ("Cannot write file $json_file: $!");
 				return 0;
 		}

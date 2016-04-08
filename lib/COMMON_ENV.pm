@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
 
-use lib "C:\GIT\snmpcheck\lib" ;
+use lib 'C:\GIT\snmpcheck\lib' ;
 use lib "/opt/snmpcheck/lib" ;
 use lib "../lib" ;
 use lib "../../lib" ;
@@ -732,7 +732,7 @@ sub ReadFile {
 sub WriteFile {
 	my $filename=shift;
 	my $body=shift;
-	unless( open (OUT,">$filename")) { w2log("Can't open file $filename" ) ;return 0; }
+	unless( open (OUT,">$filename")) { w2log("Can't open file $filename for write" ) ;return 0; }
 	print OUT $body;
 	close (OUT);
 	return 1;
@@ -741,7 +741,7 @@ sub WriteFile {
 sub AppendFile {
 	my $filename=shift;
 	my $body=shift;
-	unless( open (OUT,">>$filename")) { w2log("Can't open file $filename" ) ;return 0; }
+	unless( open (OUT,">>$filename")) { w2log("Can't open file $filename for append" ) ;return 0; }
 	print OUT $body;
 	close (OUT);
 	return 1;
