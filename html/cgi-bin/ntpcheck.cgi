@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.0 2016.03.18
+# version 1.1 2016.04.08
 use lib "C:\GIT\snmpcheck\lib" ;
 use lib "/opt/snmpcheck/lib" ;
 use lib "../lib" ;
@@ -51,6 +51,19 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 
 
 $dbh=db_connect() ;
+unless( $Param ) {
+	my $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname );	
+	my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+	$Param=$coder->decode ($row->{val});
+	undef( $Param->{id} );
+	undef( $Param->{save} );
+	undef( $Param->{save_first} );
+	undef( $Param->{save_second} );
+	undef( $Param->{save_as_default} );
+	undef( $Param->{edit} );
+	undef( $Param->{new} );
+}
+#message2( "<pre>".Dumper($Param)."</pre>");
 
 my $show_form=1;
 
@@ -67,6 +80,35 @@ $template->param( SHOWFORM_SECOND=> 0 );
 $template->param( SHOWFORM_TO_TASK=> 0 );
 
 
+if( $Param->{save_as_default} ) {
+	my $result=1;
+	if( check_record()  ) {
+		$template->param( SHOWFORM_FIRST=> 1 );
+		$template->param( SHOWFORM_SECOND=> 0 );
+		$template->param( SHOWFORM_TO_TASK=> 0 );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
+		$template->param( TITLE=> $title );	
+		my $coder = JSON::XS->new->utf8->pretty->allow_nonref; # bugs with JSON module and threads. we need use JSON::XS
+		my $json = $coder->encode ($Param);
+		my $row;
+		if( $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname )  ) {
+			$row->{ val }=$coder->encode ($Param);
+			$result=UpdateRecord( $dbh, $row->{id}, 'def_val', $row );
+		} else {
+			$row->{id}=GetNextSequence($dbh);
+			$row->{ val }=$coder->encode ($Param);
+			$row->{ sname }=$sname;			
+			$result=InsertRecord( $dbh, $row->{id}, 'def_val', $row );
+		}
+		if( $result) {
+			message2( "<font color=green>Default form values saved</font>");
+		} else {
+			message2( "Cannot save default form values");
+		}
+	}
+}
+
+
 if( $Param->{save_first} ) {
 	if( check_record()  ) {
 		$template->param( SHOWFORM_FIRST=> 0 );
@@ -80,8 +122,8 @@ if( $Param->{save_first} ) {
 			}		
 #message2( "<pre>".Dumper($Param)."</pre>");		
 	} else{
-		$template->param( SHOWFORM_EXPANDED=>0 );
-		$template->param( SHOWFORM=>1 );
+		$template->param( SHOWFORM_FIRST=> 1 );
+		$template->param( SHOWFORM_SECOND=> 0 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
 		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
 		$template->param( TITLE=> $title );
@@ -117,14 +159,23 @@ if( $Param->{save_second} ) {
 
 
 
-
+my @loop_data=();
 	my $grp=get_groups(  $Cfg->{iplistdb} );
 	foreach $group ( sort keys( %{$grp} ) ) {
 		my %row_data;   
+		$row_data{ SELECTED }=' selected ' if( $Param->{group} eq $group );
 		$row_data{ GROUP }=$group;
 		$row_data{ GROUP_NAME }=$grp->{$group};		
 		push(@loop_data, \%row_data);
 	}
+	unless( $Param->{group}  ) {
+		my %row_data;   
+		$row_data{ SELECTED }=' selected ' ;
+		$row_data{ GROUP }='';
+		$row_data{ GROUP_NAME }='';	
+		push(@loop_data, \%row_data);
+	}
+		
 	$template->param(GROUP_LIST_LOOP => \@loop_data);	
 	$template->param( IP=> $Param->{ip} );
 	$template->param( GROUP=> $Param->{group} );
@@ -193,3 +244,4 @@ sub check_record2 {
 	}
 	return $retval;
 }
+

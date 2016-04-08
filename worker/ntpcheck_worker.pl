@@ -99,7 +99,7 @@ AppendFile( $outfile, "End of the report\n");
 #######################################
 ########## we say to task manager thats task finished
 
-write_out_json( 4, $error ? "Finished successfully with $error errors.":'Finished successfully', 100 );
+write_out_json( 4, $error ? "Finished successfully with $error errors.":'Finished successfully', 100, $outfile );
 
 #######################################
 
@@ -126,6 +126,7 @@ sub worker_thread {
 		# timeout for working worker_body.sh set to 1200 sec (20 min)
 		$code="timeout 1200 $body_sh $Paths->{config.ini} $IP $tmp_outfile $export_param >/dev/null 2>&1";
 		$result_of_exec=system( $code );
+		print "$th $result_of_exec\n";
 		if( 0 < $result_of_exec ) {
 			$error++;
 		}
@@ -142,6 +143,7 @@ sub write_out_json {
 		my $status=shift;
 		my $mess=shift;
 		my $progress=shift;
+		my $outfile=shift;
 		my $row;	
 		$timenow=time();
 		$row->{sdt}=$timenow;
@@ -149,10 +151,10 @@ sub write_out_json {
 		$row->{id}=$Param->{id};
 		$row->{mess}=$mess;
 		$row->{progress}=$progress;  
+		$row->{outfile}=basename( $outfile ) if( $outfile );  
 		my $coder = JSON::XS->new->utf8->pretty->allow_nonref; # bugs with JSON module and threads. we need use JSON::XS
 		my $json = $coder->encode ($row);
-		#my $json=encode_json( \$row );
-		#my $json=JSON->new->utf8->encode( \$row );
+
 		unless( WriteFile( $json_out, $json ) ){
 				w2log ("Cannot write file $json_file: $!");
 				return 0;
