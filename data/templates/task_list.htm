@@ -42,6 +42,14 @@
 			<tr valign='top'>
 			<td> Description </td>
 			<td> <TMPL_VAR NAME=DESC> </td>
+			
+			<tr valign='top'>
+			<td> Task user </td>
+			<td> <TMPL_VAR NAME=LOGIN> </td>
+
+			<tr valign='top'>
+			<td> Worker threads </td>
+			<td> <TMPL_VAR NAME=WORKER_THREADS> </td>
 
 <!--			
 			<tr valign='top'>
@@ -156,6 +164,8 @@
 	<tr>
 		<td> Description </td>
 		<td> Type of task </td>
+		<!-- <td> User </td> -->
+		<td> Threads </td>
 		<td> Task added </td>
 		<td> Status updated  </td>
 		<td> Status </td>
@@ -170,6 +180,8 @@
 
 		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'> <TMPL_VAR NAME=DESC> </a> </td>
 		<td> <TMPL_VAR NAME=SNAME></td>
+		<!-- <td> <TMPL_VAR NAME=LOGIN></td> -->
+		<td> <TMPL_VAR NAME=WORKER_THREADS></td>
 		<td> <TMPL_VAR NAME=DT></td>
 		<td> <TMPL_VAR NAME=SDT></td>
 		<td

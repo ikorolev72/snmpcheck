@@ -66,7 +66,7 @@ exit 0;
 
 sub start_tasks{
 	my $dbh=shift;
-	my $stmt ="SELECT a.*,b.worker from tasks as a, snmpworker as b where a.status=? and a.pdt < ? and a.sname=b.sname; " ;  # select only added(planed) task   
+	my $stmt ="SELECT a.*,b.worker,b.export_param,b.worker_body,b.table_header from tasks as a, snmpworker as b where a.status=? and a.pdt < ? and a.sname=b.sname; " ;  # select only added(planed) task   
 	my $sth = $dbh->prepare( $stmt );
 	my $dt=time();
 	my $mess='';

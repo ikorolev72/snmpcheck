@@ -3,27 +3,37 @@
 
 ##  What is it?
 ##  -----------
-Project for checking snmp and get the results in csv 
+Web based frontend and sheduling ( once and periodicly ) background tasks for snmp-requests to devices iPasolink and get the results in csv. 
+
 
 
 ##  The Latest Version
 
-	version 1.5 2016.03.24
+	version 1.6 2016.04.11
+
+### What new
+- crontab tasks 
+- add/remove/show crontab table
+- workers multi threads ( Parallel run ) 
+- save default forms parameters 
 	
 ### There are realised:
 - add/edit/remove user form/table
 - login form
 - password change form
 - add/edit/remove snmpworkers form/table 
-- add ntpcheck or 'ntp ip change' tasks form (with dummy worker) and start task
 - add/remove/show tasks table. task monitoring, task status/progress/warning update, message system between tasks level and workers.
 - html templates
-- two dummy workers
+- all workers
+- all frontends forms
 - command line tool 'task starter', 'task updater' 
 - authorisation. Login-logout, check on pages if required.
 - real workers tested
 - test collection IPs from pgsql
 - logging of user actions
+- crontab tasks
+- add/remove/show crontab table.
+- worker threads 
 
 
 ### What technology used:
@@ -34,7 +44,9 @@ Project for checking snmp and get the results in csv
 -- use CGI qw(param);
 -- use Digest::SHA qw(sha1 sha1_hex );
 -- use JSON;
+-- use JSON::XS;
 -- use HTML::Entities;
+-- use threads;
 
 - db 
 -- sqlite

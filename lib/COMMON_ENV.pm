@@ -33,9 +33,10 @@ $Paths->{HOME}='C:/GIT/snmpcheck/';
 if( -d '/opt/snmpcheck' ) { 
 	$Paths->{HOME}='/opt/snmpcheck/';
 }	
-if( -d '/home/nems/client_persist/htdocs/bulktool3' ) { 
-	$Paths->{HOME}='/home/nems/client_persist/htdocs/bulktool3';
+if( -d '/home/nems/client_persist/htdocs/bulktool4' ) { 
+	$Paths->{HOME}='/home/nems/client_persist/htdocs/bulktool4';
 }
+
 	
 $Paths->{TEMPLATE}="$Paths->{HOME}/data/templates";
 $Paths->{DB}="$Paths->{HOME}/data/db";

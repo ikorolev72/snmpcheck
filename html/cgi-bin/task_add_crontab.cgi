@@ -76,6 +76,7 @@ sub Action {
 		$row->{desc}=$Param->{desc} ;
 		$row->{cron}=$Param->{cron} ;
 		$row->{login}=$login ;
+		$row->{worker_threads}=$Param->{worker_threads} ;		
 		$row->{sdt}=time() ;
 		$row->{dt}=time() ;		
 				

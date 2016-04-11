@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.1 2016.04.08
-use lib "C:\GIT\snmpcheck\lib" ;
-use lib "/opt/snmpcheck/lib" ;
-use lib "../lib" ;
-use lib "../../lib" ;
+# version 1.1 2016.04.11
+use lib 'C:\GIT\snmpcheck\lib' ;
+use lib '/opt/snmpcheck/lib' ;
+use lib '../lib' ;
+use lib '../../lib' ;
 
 print "Content-type: text/html
 
@@ -15,17 +15,13 @@ use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
 
+#REPLACE_ME
 
-
-$sname="ntpcheck";
-$ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
-$template = HTML::Template->new(filename => 'ntpcheck.htm', die_on_bad_params=>0 );
-$template->param( SNAME=> $sname  );
-$title="iPasolink NTP status check tool";
 
 
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
+
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
@@ -52,18 +48,20 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 
 $dbh=db_connect() ;
 unless( $Param ) {
-	my $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname );	
-	my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
-	$Param=$coder->decode ($row->{val});
-	undef( $Param->{id} );
-	undef( $Param->{save} );
-	undef( $Param->{save_first} );
-	undef( $Param->{save_second} );
-	undef( $Param->{save_as_default} );
-	undef( $Param->{edit} );
-	undef( $Param->{new} );
+	my $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname );
+	if( $row ) {
+		my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+		$Param=$coder->decode ($row->{val});
+		undef( $Param->{id} );
+		undef( $Param->{save} );
+		undef( $Param->{save_first} );
+		undef( $Param->{save_second} );
+		undef( $Param->{save_as_default} );
+		undef( $Param->{edit} );
+		undef( $Param->{new} );
+	}
 }
-#message2( "<pre>".Dumper($Param)."</pre>");
+
 
 my $show_form=1;
 
@@ -79,6 +77,9 @@ $template->param( SHOWFORM_FIRST=> 1 );
 $template->param( SHOWFORM_SECOND=> 0 );
 $template->param( SHOWFORM_TO_TASK=> 0 );
 
+# get title of page from db
+# my $trow=GetRecordByField ( $dbh, 'snmpworker', 'sname', $sname ) ;
+# $title=$trow->{desc} if( $trow->{desc});
 
 if( $Param->{save_as_default} ) {
 	my $result=1;
@@ -161,20 +162,20 @@ if( $Param->{save_second} ) {
 
 my @loop_data=();
 	my $grp=get_groups(  $Cfg->{iplistdb} );
+	$grp->{' '}='';
 	foreach $group ( sort keys( %{$grp} ) ) {
 		my %row_data;   
 		$row_data{ SELECTED }=' selected ' if( $Param->{group} eq $group );
+		$row_data{ SELECTED }=' selected ' if( !$Param->{group} and $grp eq ' ' ) ;
 		$row_data{ GROUP }=$group;
 		$row_data{ GROUP_NAME }=$grp->{$group};		
 		push(@loop_data, \%row_data);
 	}
-	unless( $Param->{group}  ) {
-		my %row_data;   
-		$row_data{ SELECTED }=' selected ' ;
-		$row_data{ GROUP }='';
-		$row_data{ GROUP_NAME }='';	
-		push(@loop_data, \%row_data);
-	}
+		#my %row_data;   
+		#$row_data{ SELECTED }=' selected ' 	unless( $Param->{group}  ) ;
+		#$row_data{ GROUP }='';
+		#$row_data{ GROUP_NAME }='';	
+		#push(@loop_data, \%row_data);
 		
 	$template->param(GROUP_LIST_LOOP => \@loop_data);	
 	$template->param( IP=> $Param->{ip} );
@@ -189,7 +190,8 @@ my @loop_data=();
 	$template->param( TASK_START_TYPE_CRON=>1 ) if( 1 == $Param->{task_start_type} ) ;
 	$template->param( CRON=> $Param->{cron} );
 
-	 
+
+#message2( "<pre>".Dumper($template)."</pre>");		 
 
 # print the template output
 $template->param( MESSAGES=> $message );

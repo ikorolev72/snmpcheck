@@ -121,14 +121,14 @@
 		<td> <TMPL_VAR NAME=DT></td>
 		<td> <TMPL_VAR NAME=LOGIN></td>
 		<td> <TMPL_VAR NAME=CRON></td>
-			<td> 
-				<TMPL_IF NAME=TASKID>
-					<a href='<TMPL_VAR NAME=ACTION_TASK_LIST>?edit=1&id=<TMPL_VAR NAME=TASKID>'> <TMPL_VAR NAME=TASKID> </a> 
-				</TMPL_IF>
-			</td>
+		<td> 
+			<TMPL_IF NAME=TASKID>
+				<a href='<TMPL_VAR NAME=ACTION_TASK_LIST>?edit=1&id=<TMPL_VAR NAME=TASKID>'> <TMPL_VAR NAME=TASKID> </a> 
+			</TMPL_IF>
+		</td>
 		<td> <TMPL_VAR NAME=SDT></td>
 		<td> <TMPL_VAR NAME=STATUS></td>
-		<td> [ <a href='' onclick="confirm_prompt('Are you sure to delete Task _<TMPL_VAR NAME=desc>_ and all output files','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
+		<td> [ <a href='' onclick="confirm_prompt('Are you sure to delete Task _<TMPL_VAR NAME=DESC>_ and all output files','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
 	</tr>
    </TMPL_LOOP>
 </table>

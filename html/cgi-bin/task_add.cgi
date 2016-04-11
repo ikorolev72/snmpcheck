@@ -73,7 +73,8 @@ sub Action {
 		$row->{id}=GetNextSequence( $dbh ) ;
 		$row->{sname}=$Param->{sname} ;
 		$row->{desc}=$Param->{desc} ;
-		$row->{user}=$login ;
+		$row->{worker_threads}=$Param->{worker_threads} ;
+		$row->{login}=$login ;
 		$row->{sdt}=time() ;
 		$row->{pdt}=time() ; # planed time of starting task. there can be inserted future time
 		$row->{dt}=time() ;

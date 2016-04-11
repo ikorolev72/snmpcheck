@@ -72,6 +72,7 @@ if( $Param->{edit} ) {
 				$template->param( TITLE=>"Show the task $row->{id} :".encode_entities( $row->{desc} ) );	
 				$template->param( ID=>$row->{id} ); 
 				$template->param( SNAME=>$row->{sname} ); 
+				$template->param( WORKER_THREADS=>$row->{worker_threads} ); 
 				$template->param( DESC=> encode_entities( $row->{desc} )); 
 				$template->param( WORKER=>$row->{worker} ); 
 				$template->param( PARAM=> encode_entities(  $row->{param} )  ); # need check how it code it
@@ -88,6 +89,7 @@ if( $Param->{edit} ) {
 					if( 5==$row->{status} || 6==$row->{status} ) {
 						$template->param( STATUS_RED=>1 );
 					}
+				$template->param( LOGIN=> $row->{login}    ); 				
 				$template->param( MESS=>  encode_entities(  $row->{mess} )   ); 				
 				$template->param( OUTFILE=>"$Url->{OUTFILE_DIR}/$row->{outfile}" ) if ( -f "$Paths->{OUTFILE_DIR}/$row->{outfile}" );
 				
@@ -142,10 +144,12 @@ if( $Param->{edit} ) {
 		$row_data{ DESC }=encode_entities(  $row->{desc} ); 
 		$row_data{ ACTION }=$row->{action} ; 
 		$row_data{ SNAME }=$row->{sname} ; 
+		$row_data{ LOGIN }= $row->{login} ; 						
 		$row_data{ DT }=get_date( $row->{dt} ); 
 		$row_data{ SDT }=get_date( $row->{sdt} ); 
 		$row_data{ STATUS }=$Task->{ $row->{status} }  ; 
 		$row_data{ WORKER }=$Task->{ $row->{worker} }  ; 
+		$row_data{ WORKER_THREADS }=$row->{worker_threads} || 1  ; 
 		$row_data{ PROGRESS }= "$row->{progress} %"  ; 
 				if( 2==$row->{status} || 4==$row->{status} ) {
 					$row_data{ STATUS_GREEN }=1 ;

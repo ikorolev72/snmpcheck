@@ -70,6 +70,9 @@ if( $show_form ) {
 	$template->param( DESC=>$Param->{desc} );
 	$template->param( WORKER=>$Param->{worker}  );
 	$template->param( CGISCRIPT=>$Param->{cgiscript}  );
+	$template->param( WORKER_BODY=>$Param->{worker_body}  );
+	$template->param( EXPORT_PARAM=>$Param->{export_param}  );
+	$template->param( TABLE_HEADER=>$Param->{table_header}  );
   }
   if( $Param->{edit} ) {
 	my $row=GetRecord ( $dbh, $Param->{id}, $table );
@@ -79,6 +82,9 @@ if( $show_form ) {
 		$template->param( DESC=>$row->{desc} );
 		$template->param( WORKER=>$row->{worker}  );
 		$template->param( CGISCRIPT=>$row->{cgiscript}  );
+		$template->param( WORKER_BODY=>$row->{worker_body}  );
+		$template->param( EXPORT_PARAM=>$row->{export_param}  );
+		$template->param( TABLE_HEADER=>$row->{table_header}  );
 	}
 	else{
 		message2 ( " Cannot to get record from table $table with id = $Param->{id}" );
@@ -162,6 +168,9 @@ sub Action {
 		$row->{desc}=$Param->{desc} ;
 		$row->{worker}=$Param->{worker} ;
 		$row->{cgiscript}=$Param->{cgiscript} ;
+		$row->{worker_body}=$Param->{worker_body} ;
+		$row->{export_param}=$Param->{export_param} ;
+		$row->{table_header}=$Param->{table_header} ;
 		
 		unless( $Param->{id} ) { # if we save the new record 					
 			if ( InsertRecord ( $dbh, $Param->{id},  $table, $row ) ) {

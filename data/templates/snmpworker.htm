@@ -78,7 +78,19 @@
 						<option value='<TMPL_VAR NAME=LOOP_WORKER>' ><TMPL_VAR NAME=LOOP_WORKER></option>
 					</TMPL_LOOP>					
 				</select>
-				</td>
+			</td>
+		<tr valign='top'>
+			<td> Worker body script </td>
+			<td> <input name='worker_body' type='text' size='50' maxlength='1024' value='<TMPL_VAR NAME=WORKER_BODY>'> </td>
+		</tr>
+		<tr valign='top'>
+			<td> Export params </td>
+			<td> <input name='export_param' type='text' size='100' maxlength='2048' value='<TMPL_VAR NAME=EXPORT_PARAM>'> </td>
+		</tr>
+		<tr valign='top'>
+			<td> Table header </td>
+			<td> <input name='table_header' type='text' size='100' maxlength='1024' value='<TMPL_VAR NAME=TABLE_HEADER>'> </td>
+		</tr>
 
 			<tr valign='top'>
             <td>&nbsp;</td>
@@ -97,13 +109,16 @@
 <div  class="left_div">
 <table border=1>
 	<tr>
-		<td colspan=5> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new record </a></td></tr>
+		<td colspan=8> <a href='<TMPL_VAR NAME=ACTION>?new=1'>Add new record </a></td></tr>
 	</tr>
 	<tr>
 		<td> sname </td>
 		<td> desc </td>
 		<td> cgiscript </td>
 		<td> worker </td>
+		<td> worker body </td>
+		<td> export params </td>
+		<td> table header </td>
 		<td>  </td>
 	</tr>
 
@@ -113,6 +128,9 @@
 		<td> <TMPL_VAR NAME=DESC></td>
 		<td> <TMPL_VAR NAME=CGISCRIPT></td>
 		<td> <TMPL_VAR NAME=WORKER></td>
+		<td> <TMPL_VAR NAME=WORKER_BODY></td>
+		<td> <TMPL_VAR NAME=EXPORT_PARAM></td>
+		<td> <TMPL_VAR NAME=TABLE_HEADER></td>
 		<td> [ <a href='' onclick="confirm_prompt('Are you sure to delete snmp worker definition _<TMPL_VAR NAME=NAME>_','<TMPL_VAR NAME=ACTION>?del=1&id=<TMPL_VAR NAME=ID>'); return false;">del</a> ] </td>
 	</tr>
    </TMPL_LOOP>

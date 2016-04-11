@@ -67,6 +67,8 @@ if( $Param->{edit} ) {
 				$template->param( SDT=> get_date( $row->{sdt} ) ); 
 				$template->param( DT=>  get_date($row->{dt}) ); 
 				$template->param( CRON=>  encode_entities($row->{cron}) ); 		
+				$template->param( WORKER_THREADS=>$row->{worker_threads} ); 
+				
 				
 			} else {
 				message2( "Do not found the record with id=$Param->{id}");
@@ -81,7 +83,7 @@ if( $Param->{edit} ) {
 	$template->param( SHOWFORM=>0 );
 
 	# show list of workers
-	$stmt ="SELECT * from $table order by dt DESC; " ; # LIMIT $limit OFFSET $page*$limit;
+	$stmt ="SELECT * from $table order by dt DESC; " ;
 	$sth = $dbh->prepare( $stmt );
 	unless ( $rv = $sth->execute() || $rv < 0 ) {
 		message2 ( "Someting wrong with database  : $DBI::errstr" );
@@ -101,8 +103,8 @@ if( $Param->{edit} ) {
 				$row_data{ SDT }= get_date( $row->{sdt} ) ;
 				$row_data{ DT }=  get_date($row->{dt}) ;		
 				$row_data{ CRON }=  encode_entities($row->{cron}) ;		
-
-
+				$row_data{ ACTION_TASK_LIST} = $Url->{ACTION_TASK_LIST} ;
+				$row_data{ ACTION } =  $ENV{SCRIPT_NAME} ;
 
 		push(@loop_data, \%row_data);
 	}
@@ -114,6 +116,7 @@ if( $Param->{edit} ) {
 
 $template->param( ACTION_TASK_LIST => $Url->{ACTION_TASK_LIST} );
 $template->param( ACTION =>  $ENV{SCRIPT_NAME} );
+
 $template->param( MESSAGES=> $message );
 print  $template->output;
 
