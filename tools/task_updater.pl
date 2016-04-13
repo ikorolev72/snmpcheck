@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.0 2016.03.18
-use lib "/home/nems/client_persist/htdocs/bulktool3/lib" ;
+# version 1.1 2016.04.11
+use lib "/home/nems/client_persist/htdocs/bulktool4/lib" ;
 use lib "C:\GIT\snmpcheck\lib" ;
 use lib "/opt/snmpcheck/lib" ;
 use lib "../lib" ;

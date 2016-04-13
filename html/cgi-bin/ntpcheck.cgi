@@ -15,7 +15,15 @@ use COMMON_ENV;
 use CGI::Carp qw ( fatalsToBrowser );
 
 
-#REPLACE_ME
+
+$sname="ntpcheck";
+$title="iPasolink NTP status check tool";
+$ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
+$template = HTML::Template->new(filename => 'ntpcheck.htm', die_on_bad_params=>0 );
+
+$template->param( SNAME=> $sname  );
+$template->param( TITLE=> $title  );
+$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
 
 
 
@@ -36,8 +44,6 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 	unless (  require_authorisation()  ) { # we require any authorised user
 		message2( "Only authorised user can add this task" );
 		$template->param( AUTHORISED=>0 );
-		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
-		$template->param( TITLE=>$title );
 		$template->param( MESSAGES=> $message );
 
 		print  $template->output;
@@ -115,8 +121,6 @@ if( $Param->{save_first} ) {
 		$template->param( SHOWFORM_FIRST=> 0 );
 		$template->param( SHOWFORM_SECOND=> 1 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
-		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
-		$template->param( TITLE=> $title );
 		$template->param( DESC=> "$sname task " ) ; 	# .get_date() );
 			if( 1 == $Param->{task_start_type} ) {
 				$template->param( DESC=> "$sname crontab task " )
@@ -126,8 +130,6 @@ if( $Param->{save_first} ) {
 		$template->param( SHOWFORM_FIRST=> 1 );
 		$template->param( SHOWFORM_SECOND=> 0 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
-		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
-		$template->param( TITLE=> $title );
 	}
 }
 
@@ -136,15 +138,13 @@ if( $Param->{save_second} ) {
 		$template->param( SHOWFORM_FIRST=> 0 );
 		$template->param( SHOWFORM_SECOND=> 0 );
 		$template->param( SHOWFORM_TO_TASK=> 1 );
-		$template->param( ACTION=>  $ENV{SCRIPT_NAME}  );
-		$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD} );
 		$template->param( TITLE=>"$title. Ready to add task" );
-		
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME}  );		
+		$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD} );
+		$template->param( DESC=> $Param->{desc}.get_date() );
 		if( 1 == $Param->{task_start_type} ) {
 			$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD_CRONTAB} );
 			$template->param( DESC=> $Param->{desc} );
-		} else {
-			$template->param( DESC=> $Param->{desc}.get_date() );
 		}
 		
 	} else {
@@ -162,11 +162,11 @@ if( $Param->{save_second} ) {
 
 my @loop_data=();
 	my $grp=get_groups(  $Cfg->{iplistdb} );
-	$grp->{' '}='';
+	$grp->{''}='';
 	foreach $group ( sort keys( %{$grp} ) ) {
 		my %row_data;   
 		$row_data{ SELECTED }=' selected ' if( $Param->{group} eq $group );
-		$row_data{ SELECTED }=' selected ' if( !$Param->{group} and $grp eq ' ' ) ;
+		$row_data{ SELECTED }=' selected ' if( !$Param->{group} and $grp eq '' ) ;
 		$row_data{ GROUP }=$group;
 		$row_data{ GROUP_NAME }=$grp->{$group};		
 		push(@loop_data, \%row_data);

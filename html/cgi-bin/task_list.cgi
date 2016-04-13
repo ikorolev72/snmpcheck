@@ -72,7 +72,7 @@ if( $Param->{edit} ) {
 				$template->param( TITLE=>"Show the task $row->{id} :".encode_entities( $row->{desc} ) );	
 				$template->param( ID=>$row->{id} ); 
 				$template->param( SNAME=>$row->{sname} ); 
-				$template->param( WORKER_THREADS=>$row->{worker_threads} ); 
+				$template->param( WORKER_THREADS=>$row->{worker_threads} || 1 ); 
 				$template->param( DESC=> encode_entities( $row->{desc} )); 
 				$template->param( WORKER=>$row->{worker} ); 
 				$template->param( PARAM=> encode_entities(  $row->{param} )  ); # need check how it code it

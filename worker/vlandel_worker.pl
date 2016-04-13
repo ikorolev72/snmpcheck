@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.0 2016.03.18
-use lib "/home/nems/client_persist/htdocs/bulktool3/lib" ;
+# version 1.1 2016.04.13
+use lib "/home/nems/client_persist/htdocs/bulktool4/lib" ;
 use lib "C:\GIT\snmpcheck\lib" ;
 use lib "/opt/snmpcheck/lib" ;
 use lib "../lib" ;
@@ -46,7 +46,9 @@ my $error=0;
 
 
 ######### header of worker output table 
-my @AA=qw( vlanidstart vlanidstop allvlan ) ;
+my @AA=qw( 
+vlanidstart vlanidstop allvlan 
+) ;
 my $export_param=join( ' ', map{ "$_='$ip_param->{$_}' " } @AA )  ;
 WriteFile( $outfile, "NE name,NE IP,VLAN ID,VLAN name,Operation,Result\n" ) ;
 ######### header of worker output table 

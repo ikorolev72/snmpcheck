@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.1 2016.04.07
-use lib "/home/nems/client_persist/htdocs/bulktool3/lib" ;
+# version 1.1 2016.04.11
+use lib "/home/nems/client_persist/htdocs/bulktool4/lib" ;
 use lib "C:\GIT\snmpcheck\lib" ;
 use lib "/opt/snmpcheck/lib" ;
 use lib "../lib" ;
@@ -68,7 +68,9 @@ sub cron_tasks{
 	my $dbh=shift;
 	my $rv;
 	my $retval=1;
-	my $stmt ="SELECT distinct a.* from crontasks as a, tasks as b where ( a.status=3 and a.taskid=0 ) or ( a.status=3 and b.id=a.taskid and b.status in ( 4, 5, 6 ) ) ; " ;  #  only finished, failed or canceled tasks
+	my $stmt ="SELECT distinct a.* from crontasks as a, tasks as b where  a.status=3 and a.taskid not in ( select id from tasks where status in ( 1, 2, 3 ) )  ;
+	# or ( a.status=3 and b.id=a.taskid and b.status in ( 4, 5, 6 ) ) ; " ;  #  only finished, failed or canceled tasks
+	#my $stmt ="SELECT distinct a.* from crontasks as a, tasks as b where ( a.status=3 and a.taskid=0 ) or ( a.status=3 and b.id=a.taskid and b.status in ( 4, 5, 6 ) ) ; " ;  #  only finished, failed or canceled tasks
 	#my $stmt ="SELECT * from crontasks where status=3; " ;  # select only running crontabs
 
 	my $sth = $dbh->prepare( $stmt );	
@@ -82,8 +84,9 @@ sub cron_tasks{
 			my $nrow;			
 			$nrow->{id}=GetNextSequence( $dbh ) ;
 			$nrow->{sname}=$row->{sname} ;
-			$nrow->{user}=$row->{login} ;
+			$nrow->{login}=$row->{login} ;
 			$nrow->{param}=$row->{param};
+			$nrow->{worker_threads}=$row->{worker_threads};
 			$nrow->{status}=1 ; # added
 			$nrow->{mess}='' ;
 
@@ -96,14 +99,14 @@ sub cron_tasks{
 			$mrow->{taskid}=$nrow->{id};
 		
 			if ( InsertRecord ( $dbh, $nrow->{id}, 'tasks', $nrow ) && UpdateRecord ( $dbh, $row->{id}, 'crontasks', $mrow )) {				
-				w2log( "Cron: user '$nrow->{user}' add task '$nrow->{desc}' for worker '$sname'. Parameters: $nrow->{param}" );
+				w2log( "Cron: user '$nrow->{login}' add task '$nrow->{desc}' for worker '$row->{sname}'. Parameters: $nrow->{param}" );
 			} else {
-				w2log( "Error: Cron: cannot add task : '$nrow->{desc}' for worker '$sname'. Parameters: $nrow->{param}" );
+				w2log( "Error: Cron: cannot add task : '$nrow->{desc}' for worker '$row->{sname}'. Parameters: $nrow->{param}" );
 				$retval=0;
 			}			
 		}	
 	}
-
+	
 	return $retval;
 }
 

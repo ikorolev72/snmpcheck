@@ -105,6 +105,7 @@ if( $Param->{edit} ) {
 				$row_data{ CRON }=  encode_entities($row->{cron}) ;		
 				$row_data{ ACTION_TASK_LIST} = $Url->{ACTION_TASK_LIST} ;
 				$row_data{ ACTION } =  $ENV{SCRIPT_NAME} ;
+				$row_data{ WORKER_THREADS } =  $row->{worker_threads} ;
 
 		push(@loop_data, \%row_data);
 	}

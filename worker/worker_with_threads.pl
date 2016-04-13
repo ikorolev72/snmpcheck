@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
 # version 1.2 2016.04.10
-use lib "/home/nems/client_persist/htdocs/bulktool3/lib" ;
+use lib "/home/nems/client_persist/htdocs/bulktool4/lib" ;
 use lib 'C:\GIT\snmpcheck\lib' ;
 use lib "/opt/snmpcheck/lib" ;
 use lib "../lib" ;
@@ -33,7 +33,7 @@ my $Cfg=ReadConfig();
 
 
 my $outfile="$Paths->{OUTFILE_DIR}/$val_param->{sname}_".generate_filename()."_$Param->{id}_log.csv";
-if( 1==$Param->{task_start_type} ) { # if cron
+if( 1==$val_param->{task_start_type} ) { # if cron
 	$outfile="$Paths->{OUTFILE_DIR}/$val_param->{sname}_".generate_filename()."_$Param->{id}_cron_$val_param->{id}_log.csv";
 }
 
@@ -42,18 +42,17 @@ my $timenow=time();
 
 # by default body have name depend of worker name. obsolete
 my $body_sh=dirname($0)."/body/$Param->{worker}_body.sh";
-w2log( Dumper($Param));
 if( $Param->{worker_body} ) {
 	my $b=$Param->{worker_body}; # absolute path
 	if( $b=~/^\// and -f $b and -x $b ) {
 		$body_sh=$b ;
 	}
 	$b=dirname($0)."/body/$Param->{worker_body}";
-	if( -f $b and -x $b ) { # relative path. Must be in 'worker dir'/body
+	if( -f $b and -x $b ) { # relative path. Must be in '$Paths->{WORKER_DIR}/body' 
 		$body_sh=$b ;
 	}
 }
-w2log( Dumper($body_sh));
+
 
 unless ( -f $body_sh  && -x $body_sh ) {
 		write_out_json( 5, "Cannot execute worker body file $body_sh" , 0 );
@@ -136,7 +135,7 @@ sub worker_thread {
 		# timeout for working worker_body.sh set to 1200 sec (20 min)
 		$code="timeout 1200 $body_sh $Paths->{config.ini} $IP $tmp_outfile $export_param >/dev/null 2>&1";
 		$result_of_exec=system( $code );
-		print "$th $result_of_exec\n";
+		#print "$th $result_of_exec\n";
 		if( 0 < $result_of_exec ) {
 			$error++;
 		}
