@@ -52,8 +52,24 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 }
 
 
+unless( $Param->{Que_num} ) {
+	$template->param( SHOWFORM_ZERO=> 1 );
+	$template->param( SHOWFORM_FIRST=> 0 );
+	$template->param( SHOWFORM_SECOND=> 0 );
+	$template->param( SHOWFORM_TO_TASK=> 0 );
+		print  $template->output;
+	exit 0;
+}
+
+if( 1==$Param->{Que_num} ) {	
+	$template->param( QUE_NUM_4=>1 ) ;
+}
+
+
+
+my $save_Que_num=$Param->{Que_num};
 $dbh=db_connect() ;
-unless( $Param ) {
+if( $Param->{new} ) {
 	my $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname );
 	if( $row ) {
 		my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
@@ -67,6 +83,8 @@ unless( $Param ) {
 		undef( $Param->{new} );
 	}
 }
+
+$Param->{Que_num}=$save_Que_num;
 
 
 my $show_form=1;
@@ -199,20 +217,27 @@ if( $Param->{Que_num}==2 ) {
 	$template->param( QUE_TXT=> 8 );
 }	
 		
-foreach $y ( qw( Que_num queset profnum proselect delpro actpro ent1cf ent1cp ent1cip ent2cf ent2cp ent2cip 
-ent3cf ent3cp ent3cip ent4cf ent4cp ent4cip ent5cf ent5cp ent5cip ent6cf ent6cp ent6cip ent7cf ent7cp ent7cip 
-ent8cf ent8cp ent8cip ent9cf ent9cp ent9cip ent10cf ent10cp ent10cip ent11cf ent11cp ent11cip ent12cf ent12cp ent12cip 
-ent13cf ent13cp ent13cip ent14cf ent14cp ent14cip ent15cf ent15cp ent15cip ent16cf ent16cp ent16cip ent17cf ent17cp ent17cip 
-ent18cf ent18cp ent18cip ent19cf ent19cp ent19cip ent20cf ent20cp ent20cip ent21cf ent21cp ent21cip ent22cf ent22cp ent22cip 
-ent23cf ent23cp ent23cip ent24cf ent24cp ent24cip ent25cf ent25cp ent25cip ent26cf ent26cp ent26cip ent27cf ent27cp ent27cip 
-ent28cf ent28cp ent28cip ent29cf ent29cp ent29cip ent30cf ent30cp ent30cip ent31cf ent31cp ent31cip ent32cf ent32cp ent32cip 
-ent33cf ent33cp ent33cip ent34cf ent34cp ent34cip ent35cf ent35cp ent35cip ent36cf ent36cp ent36cip ent37cf ent37cp ent37cip 
-ent38cf ent38cp ent38cip ent39cf ent39cp ent39cip ent40cf ent40cp ent40cip ent41cf ent41cp ent41cip ent42cf ent42cp ent42cip 
-ent43cf ent43cp ent43cip ent44cf ent44cp ent44cip ent45cf ent45cp ent45cip ent46cf ent46cp ent46cip ent47cf ent47cp ent47cip 
-ent48cf ent48cp ent48cip ent49cf ent49cp ent49cip ent50cf ent50cp ent50cip ent51cf ent51cp ent51cip ent52cf ent52cp ent52cip 
-ent53cf ent53cp ent53cip ent54cf ent54cp ent54cip ent55cf ent55cp ent55cip ent56cf ent56cp ent56cip ent57cf ent57cp ent57cip 
-ent58cf ent58cp ent58cip ent59cf ent59cp ent59cip ent60cf ent60cp ent60cip ent61cf ent61cp ent61cip ent62cf ent62cp ent62cip 
-ent63cf ent63cp ent63cip ent64cf ent64cp ent64cip
+foreach $y ( qw( Que_num actpro delpro ent10cf ent10cip ent10cp ent11cf ent11cip ent11cp ent12cf 
+ent12cip ent12cp ent13cf ent13cip ent13cp ent14cf ent14cip ent14cp ent15cf ent15cip 
+ent15cp ent16cf ent16cip ent16cp ent17cf ent17cip ent17cp ent18cf ent18cip ent18cp 
+ent19cf ent19cip ent19cp ent1cf ent1cip ent1cp ent20cf ent20cip ent20cp ent21cf 
+ent21cip ent21cp ent22cf ent22cip ent22cp ent23cf ent23cip ent23cp ent24cf ent24cip 
+ent24cp ent25cf ent25cip ent25cp ent26cf ent26cip ent26cp ent27cf ent27cip ent27cp 
+ent28cf ent28cip ent28cp ent29cf ent29cip ent29cp ent2cf ent2cip ent2cp ent30cf 
+ent30cip ent30cp ent31cf ent31cip ent31cp ent32cf ent32cip ent32cp ent33cf ent33cip 
+ent33cp ent34cf ent34cip ent34cp ent35cf ent35cip ent35cp ent36cf ent36cip ent36cp 
+ent37cf ent37cip ent37cp ent38cf ent38cip ent38cp ent39cf ent39cip ent39cp ent3cf 
+ent3cip ent3cp ent40cf ent40cip ent40cp ent41cf ent41cip ent41cp ent42cf ent42cip 
+ent42cp ent43cf ent43cip ent43cp ent44cf ent44cip ent44cp ent45cf ent45cip ent45cp 
+ent46cf ent46cip ent46cp ent47cf ent47cip ent47cp ent48cf ent48cip ent48cp ent49cf 
+ent49cip ent49cp ent4cf ent4cip ent4cp ent50cf ent50cip ent50cp ent51cf ent51cip 
+ent51cp ent52cf ent52cip ent52cp ent53cf ent53cip ent53cp ent54cf ent54cip ent54cp 
+ent55cf ent55cip ent55cp ent56cf ent56cip ent56cp ent57cf ent57cip ent57cp ent58cf 
+ent58cip ent58cp ent59cf ent59cip ent59cp ent5cf ent5cip ent5cp ent60cf ent60cip 
+ent60cp ent61cf ent61cip ent61cp ent62cf ent62cip ent62cp ent63cf ent63cip ent63cp 
+ent64cf ent64cip ent64cp ent6cf ent6cip ent6cp ent7cf ent7cip ent7cp ent8cf 
+ent8cip ent8cp ent9cf ent9cip ent9cp googletrick profnum proselect queset 
+
 )) {
 	my $Y=uc($y);
 	$template->param( $Y => $Param->{ $y } );
@@ -239,6 +264,10 @@ sub check_record {
 	unless( CheckField ( $Param->{Que_num} ,'int', "Field 'Number of queues' " )) {
 			$retval=0;
 	} 	
+	if( 1 != $Param->{Que_num} && 2 != $Param->{Que_num} ) {
+			message2( "Incorrected value of 'Queue number'" );
+			$retval=0;
+	}	
 	if( 1 == $Param->{task_start_type} && !require_authorisation() ) { 
 			message2( "Only authorised user can add crontab task" );
 			$retval=0;

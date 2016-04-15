@@ -52,8 +52,24 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 }
 
 
+unless( $Param->{Que_num} ) {
+	$template->param( SHOWFORM_ZERO=> 1 );
+	$template->param( SHOWFORM_FIRST=> 0 );
+	$template->param( SHOWFORM_SECOND=> 0 );
+	$template->param( SHOWFORM_TO_TASK=> 0 );
+		print  $template->output;
+	exit 0;
+}
+
+if( 1==$Param->{Que_num} ) {	
+	$template->param( QUE_NUM_4=>1 ) ;
+}
+
+
+
+my $save_Que_num=$Param->{Que_num};
 $dbh=db_connect() ;
-unless( $Param ) {
+if( $Param->{new} ) {
 	my $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname );
 	if( $row ) {
 		my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
@@ -68,6 +84,7 @@ unless( $Param ) {
 	}
 }
 
+$Param->{Que_num}=$save_Que_num;
 
 my $show_form=1;
 
@@ -198,17 +215,22 @@ if( $Param->{Que_num}==2 ) {
 	$template->param( QUE_TXT=> 8 );
 }	
 		
-foreach $y ( qw( Que_num queset modemport modemset modemscheduler modemschedulermode modemdefportprio modemdropmode 
-minterprioallow fakename0 fakename1 fakename2 fakename3 fakename4 fakename5 fakename6 fakename7 modeminternalpri0 
-modeminternalpri1 modeminternalpri2 modeminternalpri3 modeminternalpri4 modeminternalpri5 modeminternalpri6 modeminternalpri7 
-mdwrrallow mdwrr0 mql0 mqs0 mdwrr1 mql1 mqs1 mdwrr2 mql2 mqs2 mdwrr3 mql3 mqs3 mwtdallow mwtdy0 mwredg0 mwredy0 mwtdy1 
-mwredg1 mwredy1 mwtdy2 mwredg2 mwredy2 mwtdy3 mwredg3 mwredy3 
-ethernetset ethernetscheduler esps0 ethernetschedulermode ethernetdefportprio ethernetdropmode einterprioallow 
-fakename0 fakename1 fakename2 fakename3 fakename4 fakename5 fakename6 fakename7 ethernetinternalpri0 ethernetinternalpri1 
-ethernetinternalpri2 ethernetinternalpri3 ethernetinternalpri4 ethernetinternalpri5 ethernetinternalpri6 ethernetinternalpri7 
-edwrrallow edwrr0 eql0 eqs0 edwrr1 eql1 eqs1 edwrr2 eql2 eqs2 edwrr3 eql3 eqs3 ewtdallow ewtdy0 ewredg0 ewredy0 ewtdy1 ewredg1 
-ewredy1 ewtdy2 ewredg2 ewredy2 ewtdy3 ewredg3 ewredy3
-ethernetslot ethernetport
+foreach $y ( qw( Que_num edwrr0 edwrr1 edwrr2 edwrr3 edwrr4 edwrr5 edwrr6 edwrr7 edwrrallow 
+einterprioallow eql0 eql1 eql2 eql3 eql4 eql5 eql6 eql7 eqs0 
+eqs1 eqs2 eqs3 eqs4 eqs5 eqs6 eqs7 esps0 ethernetdefportprio ethernetdropmode 
+ethernetinternalpri0 ethernetinternalpri1 ethernetinternalpri2 ethernetinternalpri3 ethernetinternalpri4 ethernetinternalpri5 ethernetinternalpri6 ethernetinternalpri7 ethernetport ethernetscheduler 
+ethernetschedulermode ethernetset ethernetslot ewredg0 ewredg1 ewredg2 ewredg3 ewredg4 ewredg5 ewredg6 
+ewredg7 ewredy0 ewredy1 ewredy2 ewredy3 ewredy4 ewredy5 ewredy6 ewredy7 ewtdallow 
+ewtdy0 ewtdy1 ewtdy2 ewtdy3 ewtdy4 ewtdy5 ewtdy6 ewtdy7 fakename0 fakename1 
+fakename2 fakename3 fakename4 fakename5 fakename6 fakename7 googletrick mdwrr0 mdwrr1 mdwrr2 
+mdwrr3 mdwrr4 mdwrr5 mdwrr6 mdwrr7 mdwrrallow minterprioallow modemdefportprio modemdropmode modeminternalpri0 
+modeminternalpri1 modeminternalpri2 modeminternalpri3 modeminternalpri4 modeminternalpri5 modeminternalpri6 modeminternalpri7 modemport modemscheduler modemschedulermode 
+modemset mql0 mql1 mql2 mql3 mql4 mql5 mql6 mql7 mqs0 
+mqs1 mqs2 mqs3 mqs4 mqs5 mqs6 mqs7 mwredg0 mwredg1 mwredg2 
+mwredg3 mwredg4 mwredg5 mwredg6 mwredg7 mwredy0 mwredy1 mwredy2 mwredy3 mwredy4 
+mwredy5 mwredy6 mwredy7 mwtdallow mwtdy0 mwtdy1 mwtdy2 mwtdy3 mwtdy4 mwtdy5 
+mwtdy6 mwtdy7 queset 
+
 )) {
 	my $Y=uc($y);
 	$template->param( $Y => $Param->{ $y } );
@@ -235,7 +257,11 @@ sub check_record {
 	my $retval=1;
 		unless( CheckField ( $Param->{Que_num} ,'int', "Field 'Number of queues' " )) {
 			$retval=0;
-	} 		
+	} 
+	if( 1 != $Param->{Que_num} && 2 != $Param->{Que_num} ) {
+			message2( "Incorrected value of 'Queue number'" );
+			$retval=0;
+	}	
 	if( 1 == $Param->{task_start_type} && !require_authorisation() ) { 
 			message2( "Only authorised user can add crontab task" );
 			$retval=0;

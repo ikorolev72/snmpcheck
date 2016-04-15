@@ -21,6 +21,13 @@
 <TMPL_IF NAME=AUTHORISED> 
 <div  class="left_div">
 
+<TMPL_IF NAME=SHOWFORM_ZERO> 
+Would you set queue to 
+[ <a href='<TMPL_VAR NAME=ACTION>?Que_num=1&new=1'><b> 4 </b></a>] 
+or 
+[ <a href='<TMPL_VAR NAME=ACTION>?Que_num=2&new=1'><b> 8 </b></a> ] ?
+</TMPL_IF>
+
 <TMPL_IF NAME=SHOWFORM_FIRST> 
 
 
@@ -28,19 +35,17 @@
   <input name='id' type='hidden' value='<TMPL_VAR NAME=ID>' >
   <input name='new' type='hidden' value='<TMPL_VAR NAME=NEW>' >
   <input name='edit' type='hidden' value='<TMPL_VAR NAME=EDIT>' >
+  <input name='Que_num' type='hidden' value='<TMPL_VAR NAME=QUE_NUM>' >
+  
   <table border='1' cellspacing='0' cellpadding='2'>
   
 				<tr valign="top">
-				<td> Number of queues
-				<td> Check <INPUT TYPE="checkbox" NAME="queset" VALUE="on" <TMPL_IF NAME=QUESET> checked </TMPL_IF>> 
-
-					to set the number of queue to 
-					<select id="Queue_number" NAME="Que_num" SIZE=1 required>
-						<option value = ""></option>
-						<option <TMPL_IF NAME=QUE_NUM_1> selected </TMPL_IF>value=1>4 Queue</option>
-						<option <TMPL_IF NAME=QUE_NUM_2> selected </TMPL_IF>value=2>8 Queue</option>
-					</select> 
-				</td>  
+			<TMPL_IF NAME=QUE_NUM_4> 
+				<td> Number of queues to 4
+			<TMPL_ELSE>  				
+				<td> Number of queues to 8
+			</TMPL_IF>				
+				<td><INPUT TYPE="checkbox" <TMPL_IF NAME=QUESET> checked </TMPL_IF>  NAME="queset" VALUE="on">
 				<tr valign="top">
 				<td> Preferred profile number: 
 				<td> <INPUT <TMPL_IF NAME=PROFNUM> VALUE='<TMPL_VAR NAME=PROFNUM>'  <TMPL_ELSE> VALUE='2' </TMPL_IF>  TYPE="number" MIN="1" MAX="3" ID="profnum" NAME="profnum"   SIZE=1>
@@ -1036,11 +1041,412 @@ Classify internal prioriy: <INPUT <TMPL_IF NAME=ENT64CIP> VALUE='<TMPL_VAR NAME=
 	<input name='worker_threads' type='hidden' value='<TMPL_VAR NAME=WORKER_THREADS>'>  
 	<input name='task_start_type' type='hidden' value='<TMPL_VAR NAME=TASK_START_TYPE>'>  
 
+<input name='Que_num' type='hidden' value='<TMPL_VAR NAME=QUE_NUM>' >
+<input name='actpro' type='hidden' value='<TMPL_VAR NAME=ACTPRO>' >
+<input name='delpro' type='hidden' value='<TMPL_VAR NAME=DELPRO>' >
+<input name='ent10cf' type='hidden' value='<TMPL_VAR NAME=ENT10CF>' >
+<input name='ent10cip' type='hidden' value='<TMPL_VAR NAME=ENT10CIP>' >
+<input name='ent10cp' type='hidden' value='<TMPL_VAR NAME=ENT10CP>' >
+<input name='ent11cf' type='hidden' value='<TMPL_VAR NAME=ENT11CF>' >
+<input name='ent11cip' type='hidden' value='<TMPL_VAR NAME=ENT11CIP>' >
+<input name='ent11cp' type='hidden' value='<TMPL_VAR NAME=ENT11CP>' >
+<input name='ent12cf' type='hidden' value='<TMPL_VAR NAME=ENT12CF>' >
+<input name='ent12cip' type='hidden' value='<TMPL_VAR NAME=ENT12CIP>' >
+<input name='ent12cp' type='hidden' value='<TMPL_VAR NAME=ENT12CP>' >
+<input name='ent13cf' type='hidden' value='<TMPL_VAR NAME=ENT13CF>' >
+<input name='ent13cip' type='hidden' value='<TMPL_VAR NAME=ENT13CIP>' >
+<input name='ent13cp' type='hidden' value='<TMPL_VAR NAME=ENT13CP>' >
+<input name='ent14cf' type='hidden' value='<TMPL_VAR NAME=ENT14CF>' >
+<input name='ent14cip' type='hidden' value='<TMPL_VAR NAME=ENT14CIP>' >
+<input name='ent14cp' type='hidden' value='<TMPL_VAR NAME=ENT14CP>' >
+<input name='ent15cf' type='hidden' value='<TMPL_VAR NAME=ENT15CF>' >
+<input name='ent15cip' type='hidden' value='<TMPL_VAR NAME=ENT15CIP>' >
+<input name='ent15cp' type='hidden' value='<TMPL_VAR NAME=ENT15CP>' >
+<input name='ent16cf' type='hidden' value='<TMPL_VAR NAME=ENT16CF>' >
+<input name='ent16cip' type='hidden' value='<TMPL_VAR NAME=ENT16CIP>' >
+<input name='ent16cp' type='hidden' value='<TMPL_VAR NAME=ENT16CP>' >
+<input name='ent17cf' type='hidden' value='<TMPL_VAR NAME=ENT17CF>' >
+<input name='ent17cip' type='hidden' value='<TMPL_VAR NAME=ENT17CIP>' >
+<input name='ent17cp' type='hidden' value='<TMPL_VAR NAME=ENT17CP>' >
+<input name='ent18cf' type='hidden' value='<TMPL_VAR NAME=ENT18CF>' >
+<input name='ent18cip' type='hidden' value='<TMPL_VAR NAME=ENT18CIP>' >
+<input name='ent18cp' type='hidden' value='<TMPL_VAR NAME=ENT18CP>' >
+<input name='ent19cf' type='hidden' value='<TMPL_VAR NAME=ENT19CF>' >
+<input name='ent19cip' type='hidden' value='<TMPL_VAR NAME=ENT19CIP>' >
+<input name='ent19cp' type='hidden' value='<TMPL_VAR NAME=ENT19CP>' >
+<input name='ent1cf' type='hidden' value='<TMPL_VAR NAME=ENT1CF>' >
+<input name='ent1cip' type='hidden' value='<TMPL_VAR NAME=ENT1CIP>' >
+<input name='ent1cp' type='hidden' value='<TMPL_VAR NAME=ENT1CP>' >
+<input name='ent20cf' type='hidden' value='<TMPL_VAR NAME=ENT20CF>' >
+<input name='ent20cip' type='hidden' value='<TMPL_VAR NAME=ENT20CIP>' >
+<input name='ent20cp' type='hidden' value='<TMPL_VAR NAME=ENT20CP>' >
+<input name='ent21cf' type='hidden' value='<TMPL_VAR NAME=ENT21CF>' >
+<input name='ent21cip' type='hidden' value='<TMPL_VAR NAME=ENT21CIP>' >
+<input name='ent21cp' type='hidden' value='<TMPL_VAR NAME=ENT21CP>' >
+<input name='ent22cf' type='hidden' value='<TMPL_VAR NAME=ENT22CF>' >
+<input name='ent22cip' type='hidden' value='<TMPL_VAR NAME=ENT22CIP>' >
+<input name='ent22cp' type='hidden' value='<TMPL_VAR NAME=ENT22CP>' >
+<input name='ent23cf' type='hidden' value='<TMPL_VAR NAME=ENT23CF>' >
+<input name='ent23cip' type='hidden' value='<TMPL_VAR NAME=ENT23CIP>' >
+<input name='ent23cp' type='hidden' value='<TMPL_VAR NAME=ENT23CP>' >
+<input name='ent24cf' type='hidden' value='<TMPL_VAR NAME=ENT24CF>' >
+<input name='ent24cip' type='hidden' value='<TMPL_VAR NAME=ENT24CIP>' >
+<input name='ent24cp' type='hidden' value='<TMPL_VAR NAME=ENT24CP>' >
+<input name='ent25cf' type='hidden' value='<TMPL_VAR NAME=ENT25CF>' >
+<input name='ent25cip' type='hidden' value='<TMPL_VAR NAME=ENT25CIP>' >
+<input name='ent25cp' type='hidden' value='<TMPL_VAR NAME=ENT25CP>' >
+<input name='ent26cf' type='hidden' value='<TMPL_VAR NAME=ENT26CF>' >
+<input name='ent26cip' type='hidden' value='<TMPL_VAR NAME=ENT26CIP>' >
+<input name='ent26cp' type='hidden' value='<TMPL_VAR NAME=ENT26CP>' >
+<input name='ent27cf' type='hidden' value='<TMPL_VAR NAME=ENT27CF>' >
+<input name='ent27cip' type='hidden' value='<TMPL_VAR NAME=ENT27CIP>' >
+<input name='ent27cp' type='hidden' value='<TMPL_VAR NAME=ENT27CP>' >
+<input name='ent28cf' type='hidden' value='<TMPL_VAR NAME=ENT28CF>' >
+<input name='ent28cip' type='hidden' value='<TMPL_VAR NAME=ENT28CIP>' >
+<input name='ent28cp' type='hidden' value='<TMPL_VAR NAME=ENT28CP>' >
+<input name='ent29cf' type='hidden' value='<TMPL_VAR NAME=ENT29CF>' >
+<input name='ent29cip' type='hidden' value='<TMPL_VAR NAME=ENT29CIP>' >
+<input name='ent29cp' type='hidden' value='<TMPL_VAR NAME=ENT29CP>' >
+<input name='ent2cf' type='hidden' value='<TMPL_VAR NAME=ENT2CF>' >
+<input name='ent2cip' type='hidden' value='<TMPL_VAR NAME=ENT2CIP>' >
+<input name='ent2cp' type='hidden' value='<TMPL_VAR NAME=ENT2CP>' >
+<input name='ent30cf' type='hidden' value='<TMPL_VAR NAME=ENT30CF>' >
+<input name='ent30cip' type='hidden' value='<TMPL_VAR NAME=ENT30CIP>' >
+<input name='ent30cp' type='hidden' value='<TMPL_VAR NAME=ENT30CP>' >
+<input name='ent31cf' type='hidden' value='<TMPL_VAR NAME=ENT31CF>' >
+<input name='ent31cip' type='hidden' value='<TMPL_VAR NAME=ENT31CIP>' >
+<input name='ent31cp' type='hidden' value='<TMPL_VAR NAME=ENT31CP>' >
+<input name='ent32cf' type='hidden' value='<TMPL_VAR NAME=ENT32CF>' >
+<input name='ent32cip' type='hidden' value='<TMPL_VAR NAME=ENT32CIP>' >
+<input name='ent32cp' type='hidden' value='<TMPL_VAR NAME=ENT32CP>' >
+<input name='ent33cf' type='hidden' value='<TMPL_VAR NAME=ENT33CF>' >
+<input name='ent33cip' type='hidden' value='<TMPL_VAR NAME=ENT33CIP>' >
+<input name='ent33cp' type='hidden' value='<TMPL_VAR NAME=ENT33CP>' >
+<input name='ent34cf' type='hidden' value='<TMPL_VAR NAME=ENT34CF>' >
+<input name='ent34cip' type='hidden' value='<TMPL_VAR NAME=ENT34CIP>' >
+<input name='ent34cp' type='hidden' value='<TMPL_VAR NAME=ENT34CP>' >
+<input name='ent35cf' type='hidden' value='<TMPL_VAR NAME=ENT35CF>' >
+<input name='ent35cip' type='hidden' value='<TMPL_VAR NAME=ENT35CIP>' >
+<input name='ent35cp' type='hidden' value='<TMPL_VAR NAME=ENT35CP>' >
+<input name='ent36cf' type='hidden' value='<TMPL_VAR NAME=ENT36CF>' >
+<input name='ent36cip' type='hidden' value='<TMPL_VAR NAME=ENT36CIP>' >
+<input name='ent36cp' type='hidden' value='<TMPL_VAR NAME=ENT36CP>' >
+<input name='ent37cf' type='hidden' value='<TMPL_VAR NAME=ENT37CF>' >
+<input name='ent37cip' type='hidden' value='<TMPL_VAR NAME=ENT37CIP>' >
+<input name='ent37cp' type='hidden' value='<TMPL_VAR NAME=ENT37CP>' >
+<input name='ent38cf' type='hidden' value='<TMPL_VAR NAME=ENT38CF>' >
+<input name='ent38cip' type='hidden' value='<TMPL_VAR NAME=ENT38CIP>' >
+<input name='ent38cp' type='hidden' value='<TMPL_VAR NAME=ENT38CP>' >
+<input name='ent39cf' type='hidden' value='<TMPL_VAR NAME=ENT39CF>' >
+<input name='ent39cip' type='hidden' value='<TMPL_VAR NAME=ENT39CIP>' >
+<input name='ent39cp' type='hidden' value='<TMPL_VAR NAME=ENT39CP>' >
+<input name='ent3cf' type='hidden' value='<TMPL_VAR NAME=ENT3CF>' >
+<input name='ent3cip' type='hidden' value='<TMPL_VAR NAME=ENT3CIP>' >
+<input name='ent3cp' type='hidden' value='<TMPL_VAR NAME=ENT3CP>' >
+<input name='ent40cf' type='hidden' value='<TMPL_VAR NAME=ENT40CF>' >
+<input name='ent40cip' type='hidden' value='<TMPL_VAR NAME=ENT40CIP>' >
+<input name='ent40cp' type='hidden' value='<TMPL_VAR NAME=ENT40CP>' >
+<input name='ent41cf' type='hidden' value='<TMPL_VAR NAME=ENT41CF>' >
+<input name='ent41cip' type='hidden' value='<TMPL_VAR NAME=ENT41CIP>' >
+<input name='ent41cp' type='hidden' value='<TMPL_VAR NAME=ENT41CP>' >
+<input name='ent42cf' type='hidden' value='<TMPL_VAR NAME=ENT42CF>' >
+<input name='ent42cip' type='hidden' value='<TMPL_VAR NAME=ENT42CIP>' >
+<input name='ent42cp' type='hidden' value='<TMPL_VAR NAME=ENT42CP>' >
+<input name='ent43cf' type='hidden' value='<TMPL_VAR NAME=ENT43CF>' >
+<input name='ent43cip' type='hidden' value='<TMPL_VAR NAME=ENT43CIP>' >
+<input name='ent43cp' type='hidden' value='<TMPL_VAR NAME=ENT43CP>' >
+<input name='ent44cf' type='hidden' value='<TMPL_VAR NAME=ENT44CF>' >
+<input name='ent44cip' type='hidden' value='<TMPL_VAR NAME=ENT44CIP>' >
+<input name='ent44cp' type='hidden' value='<TMPL_VAR NAME=ENT44CP>' >
+<input name='ent45cf' type='hidden' value='<TMPL_VAR NAME=ENT45CF>' >
+<input name='ent45cip' type='hidden' value='<TMPL_VAR NAME=ENT45CIP>' >
+<input name='ent45cp' type='hidden' value='<TMPL_VAR NAME=ENT45CP>' >
+<input name='ent46cf' type='hidden' value='<TMPL_VAR NAME=ENT46CF>' >
+<input name='ent46cip' type='hidden' value='<TMPL_VAR NAME=ENT46CIP>' >
+<input name='ent46cp' type='hidden' value='<TMPL_VAR NAME=ENT46CP>' >
+<input name='ent47cf' type='hidden' value='<TMPL_VAR NAME=ENT47CF>' >
+<input name='ent47cip' type='hidden' value='<TMPL_VAR NAME=ENT47CIP>' >
+<input name='ent47cp' type='hidden' value='<TMPL_VAR NAME=ENT47CP>' >
+<input name='ent48cf' type='hidden' value='<TMPL_VAR NAME=ENT48CF>' >
+<input name='ent48cip' type='hidden' value='<TMPL_VAR NAME=ENT48CIP>' >
+<input name='ent48cp' type='hidden' value='<TMPL_VAR NAME=ENT48CP>' >
+<input name='ent49cf' type='hidden' value='<TMPL_VAR NAME=ENT49CF>' >
+<input name='ent49cip' type='hidden' value='<TMPL_VAR NAME=ENT49CIP>' >
+<input name='ent49cp' type='hidden' value='<TMPL_VAR NAME=ENT49CP>' >
+<input name='ent4cf' type='hidden' value='<TMPL_VAR NAME=ENT4CF>' >
+<input name='ent4cip' type='hidden' value='<TMPL_VAR NAME=ENT4CIP>' >
+<input name='ent4cp' type='hidden' value='<TMPL_VAR NAME=ENT4CP>' >
+<input name='ent50cf' type='hidden' value='<TMPL_VAR NAME=ENT50CF>' >
+<input name='ent50cip' type='hidden' value='<TMPL_VAR NAME=ENT50CIP>' >
+<input name='ent50cp' type='hidden' value='<TMPL_VAR NAME=ENT50CP>' >
+<input name='ent51cf' type='hidden' value='<TMPL_VAR NAME=ENT51CF>' >
+<input name='ent51cip' type='hidden' value='<TMPL_VAR NAME=ENT51CIP>' >
+<input name='ent51cp' type='hidden' value='<TMPL_VAR NAME=ENT51CP>' >
+<input name='ent52cf' type='hidden' value='<TMPL_VAR NAME=ENT52CF>' >
+<input name='ent52cip' type='hidden' value='<TMPL_VAR NAME=ENT52CIP>' >
+<input name='ent52cp' type='hidden' value='<TMPL_VAR NAME=ENT52CP>' >
+<input name='ent53cf' type='hidden' value='<TMPL_VAR NAME=ENT53CF>' >
+<input name='ent53cip' type='hidden' value='<TMPL_VAR NAME=ENT53CIP>' >
+<input name='ent53cp' type='hidden' value='<TMPL_VAR NAME=ENT53CP>' >
+<input name='ent54cf' type='hidden' value='<TMPL_VAR NAME=ENT54CF>' >
+<input name='ent54cip' type='hidden' value='<TMPL_VAR NAME=ENT54CIP>' >
+<input name='ent54cp' type='hidden' value='<TMPL_VAR NAME=ENT54CP>' >
+<input name='ent55cf' type='hidden' value='<TMPL_VAR NAME=ENT55CF>' >
+<input name='ent55cip' type='hidden' value='<TMPL_VAR NAME=ENT55CIP>' >
+<input name='ent55cp' type='hidden' value='<TMPL_VAR NAME=ENT55CP>' >
+<input name='ent56cf' type='hidden' value='<TMPL_VAR NAME=ENT56CF>' >
+<input name='ent56cip' type='hidden' value='<TMPL_VAR NAME=ENT56CIP>' >
+<input name='ent56cp' type='hidden' value='<TMPL_VAR NAME=ENT56CP>' >
+<input name='ent57cf' type='hidden' value='<TMPL_VAR NAME=ENT57CF>' >
+<input name='ent57cip' type='hidden' value='<TMPL_VAR NAME=ENT57CIP>' >
+<input name='ent57cp' type='hidden' value='<TMPL_VAR NAME=ENT57CP>' >
+<input name='ent58cf' type='hidden' value='<TMPL_VAR NAME=ENT58CF>' >
+<input name='ent58cip' type='hidden' value='<TMPL_VAR NAME=ENT58CIP>' >
+<input name='ent58cp' type='hidden' value='<TMPL_VAR NAME=ENT58CP>' >
+<input name='ent59cf' type='hidden' value='<TMPL_VAR NAME=ENT59CF>' >
+<input name='ent59cip' type='hidden' value='<TMPL_VAR NAME=ENT59CIP>' >
+<input name='ent59cp' type='hidden' value='<TMPL_VAR NAME=ENT59CP>' >
+<input name='ent5cf' type='hidden' value='<TMPL_VAR NAME=ENT5CF>' >
+<input name='ent5cip' type='hidden' value='<TMPL_VAR NAME=ENT5CIP>' >
+<input name='ent5cp' type='hidden' value='<TMPL_VAR NAME=ENT5CP>' >
+<input name='ent60cf' type='hidden' value='<TMPL_VAR NAME=ENT60CF>' >
+<input name='ent60cip' type='hidden' value='<TMPL_VAR NAME=ENT60CIP>' >
+<input name='ent60cp' type='hidden' value='<TMPL_VAR NAME=ENT60CP>' >
+<input name='ent61cf' type='hidden' value='<TMPL_VAR NAME=ENT61CF>' >
+<input name='ent61cip' type='hidden' value='<TMPL_VAR NAME=ENT61CIP>' >
+<input name='ent61cp' type='hidden' value='<TMPL_VAR NAME=ENT61CP>' >
+<input name='ent62cf' type='hidden' value='<TMPL_VAR NAME=ENT62CF>' >
+<input name='ent62cip' type='hidden' value='<TMPL_VAR NAME=ENT62CIP>' >
+<input name='ent62cp' type='hidden' value='<TMPL_VAR NAME=ENT62CP>' >
+<input name='ent63cf' type='hidden' value='<TMPL_VAR NAME=ENT63CF>' >
+<input name='ent63cip' type='hidden' value='<TMPL_VAR NAME=ENT63CIP>' >
+<input name='ent63cp' type='hidden' value='<TMPL_VAR NAME=ENT63CP>' >
+<input name='ent64cf' type='hidden' value='<TMPL_VAR NAME=ENT64CF>' >
+<input name='ent64cip' type='hidden' value='<TMPL_VAR NAME=ENT64CIP>' >
+<input name='ent64cp' type='hidden' value='<TMPL_VAR NAME=ENT64CP>' >
+<input name='ent6cf' type='hidden' value='<TMPL_VAR NAME=ENT6CF>' >
+<input name='ent6cip' type='hidden' value='<TMPL_VAR NAME=ENT6CIP>' >
+<input name='ent6cp' type='hidden' value='<TMPL_VAR NAME=ENT6CP>' >
+<input name='ent7cf' type='hidden' value='<TMPL_VAR NAME=ENT7CF>' >
+<input name='ent7cip' type='hidden' value='<TMPL_VAR NAME=ENT7CIP>' >
+<input name='ent7cp' type='hidden' value='<TMPL_VAR NAME=ENT7CP>' >
+<input name='ent8cf' type='hidden' value='<TMPL_VAR NAME=ENT8CF>' >
+<input name='ent8cip' type='hidden' value='<TMPL_VAR NAME=ENT8CIP>' >
+<input name='ent8cp' type='hidden' value='<TMPL_VAR NAME=ENT8CP>' >
+<input name='ent9cf' type='hidden' value='<TMPL_VAR NAME=ENT9CF>' >
+<input name='ent9cip' type='hidden' value='<TMPL_VAR NAME=ENT9CIP>' >
+<input name='ent9cp' type='hidden' value='<TMPL_VAR NAME=ENT9CP>' >
+<input name='googletrick' type='hidden' value='<TMPL_VAR NAME=GOOGLETRICK>' >
+<input name='profnum' type='hidden' value='<TMPL_VAR NAME=PROFNUM>' >
+<input name='proselect' type='hidden' value='<TMPL_VAR NAME=PROSELECT>' >
+<input name='queset' type='hidden' value='<TMPL_VAR NAME=QUESET>' >
+	
 	
   <table border='1' cellspacing='0' cellpadding='2'>
 			<tr valign='top'>
 			<td> Add task for worker </td>
-			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
+			<td> <TMPL_VAR NAME=SNAME> </td>
+
+
+<tr valign='top'> <td> Que_num </td> <td> <TMPL_VAR NAME=QUE_TXT> </td>
+<tr valign='top'> <td> queset </td> <td> <TMPL_VAR NAME=QUESET> </td>
+<tr valign='top'> <td> profnum </td> <td> <TMPL_VAR NAME=PROFNUM> </td>
+<tr valign='top'> <td> proselect </td> <td> <TMPL_VAR NAME=PROSELECT> </td>
+<tr valign='top'> <td> delpro </td> <td> <TMPL_VAR NAME=DELPRO> </td>
+<tr valign='top'> <td> actpro </td> <td> <TMPL_VAR NAME=ACTPRO> </td>
+<tr valign='top'> <td> ent1cf </td> <td> <TMPL_VAR NAME=ENT1CF> </td>
+<tr valign='top'> <td> ent1cp </td> <td> <TMPL_VAR NAME=ENT1CP> </td>
+<tr valign='top'> <td> ent1cip </td> <td> <TMPL_VAR NAME=ENT1CIP> </td>
+<tr valign='top'> <td> ent2cf </td> <td> <TMPL_VAR NAME=ENT2CF> </td>
+<tr valign='top'> <td> ent2cp </td> <td> <TMPL_VAR NAME=ENT2CP> </td>
+<tr valign='top'> <td> ent2cip </td> <td> <TMPL_VAR NAME=ENT2CIP> </td>
+<tr valign='top'> <td> ent3cf </td> <td> <TMPL_VAR NAME=ENT3CF> </td>
+<tr valign='top'> <td> ent3cp </td> <td> <TMPL_VAR NAME=ENT3CP> </td>
+<tr valign='top'> <td> ent3cip </td> <td> <TMPL_VAR NAME=ENT3CIP> </td>
+<tr valign='top'> <td> ent4cf </td> <td> <TMPL_VAR NAME=ENT4CF> </td>
+<tr valign='top'> <td> ent4cp </td> <td> <TMPL_VAR NAME=ENT4CP> </td>
+<tr valign='top'> <td> ent4cip </td> <td> <TMPL_VAR NAME=ENT4CIP> </td>
+<tr valign='top'> <td> ent5cf </td> <td> <TMPL_VAR NAME=ENT5CF> </td>
+<tr valign='top'> <td> ent5cp </td> <td> <TMPL_VAR NAME=ENT5CP> </td>
+<tr valign='top'> <td> ent5cip </td> <td> <TMPL_VAR NAME=ENT5CIP> </td>
+<tr valign='top'> <td> ent6cf </td> <td> <TMPL_VAR NAME=ENT6CF> </td>
+<tr valign='top'> <td> ent6cp </td> <td> <TMPL_VAR NAME=ENT6CP> </td>
+<tr valign='top'> <td> ent6cip </td> <td> <TMPL_VAR NAME=ENT6CIP> </td>
+<tr valign='top'> <td> ent7cf </td> <td> <TMPL_VAR NAME=ENT7CF> </td>
+<tr valign='top'> <td> ent7cp </td> <td> <TMPL_VAR NAME=ENT7CP> </td>
+<tr valign='top'> <td> ent7cip </td> <td> <TMPL_VAR NAME=ENT7CIP> </td>
+<tr valign='top'> <td> ent8cf </td> <td> <TMPL_VAR NAME=ENT8CF> </td>
+<tr valign='top'> <td> ent8cp </td> <td> <TMPL_VAR NAME=ENT8CP> </td>
+<tr valign='top'> <td> ent8cip </td> <td> <TMPL_VAR NAME=ENT8CIP> </td>
+<tr valign='top'> <td> ent9cf </td> <td> <TMPL_VAR NAME=ENT9CF> </td>
+<tr valign='top'> <td> ent9cp </td> <td> <TMPL_VAR NAME=ENT9CP> </td>
+<tr valign='top'> <td> ent9cip </td> <td> <TMPL_VAR NAME=ENT9CIP> </td>
+<tr valign='top'> <td> ent10cf </td> <td> <TMPL_VAR NAME=ENT10CF> </td>
+<tr valign='top'> <td> ent10cp </td> <td> <TMPL_VAR NAME=ENT10CP> </td>
+<tr valign='top'> <td> ent10cip </td> <td> <TMPL_VAR NAME=ENT10CIP> </td>
+<tr valign='top'> <td> ent11cf </td> <td> <TMPL_VAR NAME=ENT11CF> </td>
+<tr valign='top'> <td> ent11cp </td> <td> <TMPL_VAR NAME=ENT11CP> </td>
+<tr valign='top'> <td> ent11cip </td> <td> <TMPL_VAR NAME=ENT11CIP> </td>
+<tr valign='top'> <td> ent12cf </td> <td> <TMPL_VAR NAME=ENT12CF> </td>
+<tr valign='top'> <td> ent12cp </td> <td> <TMPL_VAR NAME=ENT12CP> </td>
+<tr valign='top'> <td> ent12cip </td> <td> <TMPL_VAR NAME=ENT12CIP> </td>
+<tr valign='top'> <td> ent13cf </td> <td> <TMPL_VAR NAME=ENT13CF> </td>
+<tr valign='top'> <td> ent13cp </td> <td> <TMPL_VAR NAME=ENT13CP> </td>
+<tr valign='top'> <td> ent13cip </td> <td> <TMPL_VAR NAME=ENT13CIP> </td>
+<tr valign='top'> <td> ent14cf </td> <td> <TMPL_VAR NAME=ENT14CF> </td>
+<tr valign='top'> <td> ent14cp </td> <td> <TMPL_VAR NAME=ENT14CP> </td>
+<tr valign='top'> <td> ent14cip </td> <td> <TMPL_VAR NAME=ENT14CIP> </td>
+<tr valign='top'> <td> ent15cf </td> <td> <TMPL_VAR NAME=ENT15CF> </td>
+<tr valign='top'> <td> ent15cp </td> <td> <TMPL_VAR NAME=ENT15CP> </td>
+<tr valign='top'> <td> ent15cip </td> <td> <TMPL_VAR NAME=ENT15CIP> </td>
+<tr valign='top'> <td> ent16cf </td> <td> <TMPL_VAR NAME=ENT16CF> </td>
+<tr valign='top'> <td> ent16cp </td> <td> <TMPL_VAR NAME=ENT16CP> </td>
+<tr valign='top'> <td> ent16cip </td> <td> <TMPL_VAR NAME=ENT16CIP> </td>
+<tr valign='top'> <td> ent17cf </td> <td> <TMPL_VAR NAME=ENT17CF> </td>
+<tr valign='top'> <td> ent17cp </td> <td> <TMPL_VAR NAME=ENT17CP> </td>
+<tr valign='top'> <td> ent17cip </td> <td> <TMPL_VAR NAME=ENT17CIP> </td>
+<tr valign='top'> <td> ent18cf </td> <td> <TMPL_VAR NAME=ENT18CF> </td>
+<tr valign='top'> <td> ent18cp </td> <td> <TMPL_VAR NAME=ENT18CP> </td>
+<tr valign='top'> <td> ent18cip </td> <td> <TMPL_VAR NAME=ENT18CIP> </td>
+<tr valign='top'> <td> ent19cf </td> <td> <TMPL_VAR NAME=ENT19CF> </td>
+<tr valign='top'> <td> ent19cp </td> <td> <TMPL_VAR NAME=ENT19CP> </td>
+<tr valign='top'> <td> ent19cip </td> <td> <TMPL_VAR NAME=ENT19CIP> </td>
+<tr valign='top'> <td> ent20cf </td> <td> <TMPL_VAR NAME=ENT20CF> </td>
+<tr valign='top'> <td> ent20cp </td> <td> <TMPL_VAR NAME=ENT20CP> </td>
+<tr valign='top'> <td> ent20cip </td> <td> <TMPL_VAR NAME=ENT20CIP> </td>
+<tr valign='top'> <td> ent21cf </td> <td> <TMPL_VAR NAME=ENT21CF> </td>
+<tr valign='top'> <td> ent21cp </td> <td> <TMPL_VAR NAME=ENT21CP> </td>
+<tr valign='top'> <td> ent21cip </td> <td> <TMPL_VAR NAME=ENT21CIP> </td>
+<tr valign='top'> <td> ent22cf </td> <td> <TMPL_VAR NAME=ENT22CF> </td>
+<tr valign='top'> <td> ent22cp </td> <td> <TMPL_VAR NAME=ENT22CP> </td>
+<tr valign='top'> <td> ent22cip </td> <td> <TMPL_VAR NAME=ENT22CIP> </td>
+<tr valign='top'> <td> ent23cf </td> <td> <TMPL_VAR NAME=ENT23CF> </td>
+<tr valign='top'> <td> ent23cp </td> <td> <TMPL_VAR NAME=ENT23CP> </td>
+<tr valign='top'> <td> ent23cip </td> <td> <TMPL_VAR NAME=ENT23CIP> </td>
+<tr valign='top'> <td> ent24cf </td> <td> <TMPL_VAR NAME=ENT24CF> </td>
+<tr valign='top'> <td> ent24cp </td> <td> <TMPL_VAR NAME=ENT24CP> </td>
+<tr valign='top'> <td> ent24cip </td> <td> <TMPL_VAR NAME=ENT24CIP> </td>
+<tr valign='top'> <td> ent25cf </td> <td> <TMPL_VAR NAME=ENT25CF> </td>
+<tr valign='top'> <td> ent25cp </td> <td> <TMPL_VAR NAME=ENT25CP> </td>
+<tr valign='top'> <td> ent25cip </td> <td> <TMPL_VAR NAME=ENT25CIP> </td>
+<tr valign='top'> <td> ent26cf </td> <td> <TMPL_VAR NAME=ENT26CF> </td>
+<tr valign='top'> <td> ent26cp </td> <td> <TMPL_VAR NAME=ENT26CP> </td>
+<tr valign='top'> <td> ent26cip </td> <td> <TMPL_VAR NAME=ENT26CIP> </td>
+<tr valign='top'> <td> ent27cf </td> <td> <TMPL_VAR NAME=ENT27CF> </td>
+<tr valign='top'> <td> ent27cp </td> <td> <TMPL_VAR NAME=ENT27CP> </td>
+<tr valign='top'> <td> ent27cip </td> <td> <TMPL_VAR NAME=ENT27CIP> </td>
+<tr valign='top'> <td> ent28cf </td> <td> <TMPL_VAR NAME=ENT28CF> </td>
+<tr valign='top'> <td> ent28cp </td> <td> <TMPL_VAR NAME=ENT28CP> </td>
+<tr valign='top'> <td> ent28cip </td> <td> <TMPL_VAR NAME=ENT28CIP> </td>
+<tr valign='top'> <td> ent29cf </td> <td> <TMPL_VAR NAME=ENT29CF> </td>
+<tr valign='top'> <td> ent29cp </td> <td> <TMPL_VAR NAME=ENT29CP> </td>
+<tr valign='top'> <td> ent29cip </td> <td> <TMPL_VAR NAME=ENT29CIP> </td>
+<tr valign='top'> <td> ent30cf </td> <td> <TMPL_VAR NAME=ENT30CF> </td>
+<tr valign='top'> <td> ent30cp </td> <td> <TMPL_VAR NAME=ENT30CP> </td>
+<tr valign='top'> <td> ent30cip </td> <td> <TMPL_VAR NAME=ENT30CIP> </td>
+<tr valign='top'> <td> ent31cf </td> <td> <TMPL_VAR NAME=ENT31CF> </td>
+<tr valign='top'> <td> ent31cp </td> <td> <TMPL_VAR NAME=ENT31CP> </td>
+<tr valign='top'> <td> ent31cip </td> <td> <TMPL_VAR NAME=ENT31CIP> </td>
+<tr valign='top'> <td> ent32cf </td> <td> <TMPL_VAR NAME=ENT32CF> </td>
+<tr valign='top'> <td> ent32cp </td> <td> <TMPL_VAR NAME=ENT32CP> </td>
+<tr valign='top'> <td> ent32cip </td> <td> <TMPL_VAR NAME=ENT32CIP> </td>
+<tr valign='top'> <td> ent33cf </td> <td> <TMPL_VAR NAME=ENT33CF> </td>
+<tr valign='top'> <td> ent33cp </td> <td> <TMPL_VAR NAME=ENT33CP> </td>
+<tr valign='top'> <td> ent33cip </td> <td> <TMPL_VAR NAME=ENT33CIP> </td>
+<tr valign='top'> <td> ent34cf </td> <td> <TMPL_VAR NAME=ENT34CF> </td>
+<tr valign='top'> <td> ent34cp </td> <td> <TMPL_VAR NAME=ENT34CP> </td>
+<tr valign='top'> <td> ent34cip </td> <td> <TMPL_VAR NAME=ENT34CIP> </td>
+<tr valign='top'> <td> ent35cf </td> <td> <TMPL_VAR NAME=ENT35CF> </td>
+<tr valign='top'> <td> ent35cp </td> <td> <TMPL_VAR NAME=ENT35CP> </td>
+<tr valign='top'> <td> ent35cip </td> <td> <TMPL_VAR NAME=ENT35CIP> </td>
+<tr valign='top'> <td> ent36cf </td> <td> <TMPL_VAR NAME=ENT36CF> </td>
+<tr valign='top'> <td> ent36cp </td> <td> <TMPL_VAR NAME=ENT36CP> </td>
+<tr valign='top'> <td> ent36cip </td> <td> <TMPL_VAR NAME=ENT36CIP> </td>
+<tr valign='top'> <td> ent37cf </td> <td> <TMPL_VAR NAME=ENT37CF> </td>
+<tr valign='top'> <td> ent37cp </td> <td> <TMPL_VAR NAME=ENT37CP> </td>
+<tr valign='top'> <td> ent37cip </td> <td> <TMPL_VAR NAME=ENT37CIP> </td>
+<tr valign='top'> <td> ent38cf </td> <td> <TMPL_VAR NAME=ENT38CF> </td>
+<tr valign='top'> <td> ent38cp </td> <td> <TMPL_VAR NAME=ENT38CP> </td>
+<tr valign='top'> <td> ent38cip </td> <td> <TMPL_VAR NAME=ENT38CIP> </td>
+<tr valign='top'> <td> ent39cf </td> <td> <TMPL_VAR NAME=ENT39CF> </td>
+<tr valign='top'> <td> ent39cp </td> <td> <TMPL_VAR NAME=ENT39CP> </td>
+<tr valign='top'> <td> ent39cip </td> <td> <TMPL_VAR NAME=ENT39CIP> </td>
+<tr valign='top'> <td> ent40cf </td> <td> <TMPL_VAR NAME=ENT40CF> </td>
+<tr valign='top'> <td> ent40cp </td> <td> <TMPL_VAR NAME=ENT40CP> </td>
+<tr valign='top'> <td> ent40cip </td> <td> <TMPL_VAR NAME=ENT40CIP> </td>
+<tr valign='top'> <td> ent41cf </td> <td> <TMPL_VAR NAME=ENT41CF> </td>
+<tr valign='top'> <td> ent41cp </td> <td> <TMPL_VAR NAME=ENT41CP> </td>
+<tr valign='top'> <td> ent41cip </td> <td> <TMPL_VAR NAME=ENT41CIP> </td>
+<tr valign='top'> <td> ent42cf </td> <td> <TMPL_VAR NAME=ENT42CF> </td>
+<tr valign='top'> <td> ent42cp </td> <td> <TMPL_VAR NAME=ENT42CP> </td>
+<tr valign='top'> <td> ent42cip </td> <td> <TMPL_VAR NAME=ENT42CIP> </td>
+<tr valign='top'> <td> ent43cf </td> <td> <TMPL_VAR NAME=ENT43CF> </td>
+<tr valign='top'> <td> ent43cp </td> <td> <TMPL_VAR NAME=ENT43CP> </td>
+<tr valign='top'> <td> ent43cip </td> <td> <TMPL_VAR NAME=ENT43CIP> </td>
+<tr valign='top'> <td> ent44cf </td> <td> <TMPL_VAR NAME=ENT44CF> </td>
+<tr valign='top'> <td> ent44cp </td> <td> <TMPL_VAR NAME=ENT44CP> </td>
+<tr valign='top'> <td> ent44cip </td> <td> <TMPL_VAR NAME=ENT44CIP> </td>
+<tr valign='top'> <td> ent45cf </td> <td> <TMPL_VAR NAME=ENT45CF> </td>
+<tr valign='top'> <td> ent45cp </td> <td> <TMPL_VAR NAME=ENT45CP> </td>
+<tr valign='top'> <td> ent45cip </td> <td> <TMPL_VAR NAME=ENT45CIP> </td>
+<tr valign='top'> <td> ent46cf </td> <td> <TMPL_VAR NAME=ENT46CF> </td>
+<tr valign='top'> <td> ent46cp </td> <td> <TMPL_VAR NAME=ENT46CP> </td>
+<tr valign='top'> <td> ent46cip </td> <td> <TMPL_VAR NAME=ENT46CIP> </td>
+<tr valign='top'> <td> ent47cf </td> <td> <TMPL_VAR NAME=ENT47CF> </td>
+<tr valign='top'> <td> ent47cp </td> <td> <TMPL_VAR NAME=ENT47CP> </td>
+<tr valign='top'> <td> ent47cip </td> <td> <TMPL_VAR NAME=ENT47CIP> </td>
+<tr valign='top'> <td> ent48cf </td> <td> <TMPL_VAR NAME=ENT48CF> </td>
+<tr valign='top'> <td> ent48cp </td> <td> <TMPL_VAR NAME=ENT48CP> </td>
+<tr valign='top'> <td> ent48cip </td> <td> <TMPL_VAR NAME=ENT48CIP> </td>
+<tr valign='top'> <td> ent49cf </td> <td> <TMPL_VAR NAME=ENT49CF> </td>
+<tr valign='top'> <td> ent49cp </td> <td> <TMPL_VAR NAME=ENT49CP> </td>
+<tr valign='top'> <td> ent49cip </td> <td> <TMPL_VAR NAME=ENT49CIP> </td>
+<tr valign='top'> <td> ent50cf </td> <td> <TMPL_VAR NAME=ENT50CF> </td>
+<tr valign='top'> <td> ent50cp </td> <td> <TMPL_VAR NAME=ENT50CP> </td>
+<tr valign='top'> <td> ent50cip </td> <td> <TMPL_VAR NAME=ENT50CIP> </td>
+<tr valign='top'> <td> ent51cf </td> <td> <TMPL_VAR NAME=ENT51CF> </td>
+<tr valign='top'> <td> ent51cp </td> <td> <TMPL_VAR NAME=ENT51CP> </td>
+<tr valign='top'> <td> ent51cip </td> <td> <TMPL_VAR NAME=ENT51CIP> </td>
+<tr valign='top'> <td> ent52cf </td> <td> <TMPL_VAR NAME=ENT52CF> </td>
+<tr valign='top'> <td> ent52cp </td> <td> <TMPL_VAR NAME=ENT52CP> </td>
+<tr valign='top'> <td> ent52cip </td> <td> <TMPL_VAR NAME=ENT52CIP> </td>
+<tr valign='top'> <td> ent53cf </td> <td> <TMPL_VAR NAME=ENT53CF> </td>
+<tr valign='top'> <td> ent53cp </td> <td> <TMPL_VAR NAME=ENT53CP> </td>
+<tr valign='top'> <td> ent53cip </td> <td> <TMPL_VAR NAME=ENT53CIP> </td>
+<tr valign='top'> <td> ent54cf </td> <td> <TMPL_VAR NAME=ENT54CF> </td>
+<tr valign='top'> <td> ent54cp </td> <td> <TMPL_VAR NAME=ENT54CP> </td>
+<tr valign='top'> <td> ent54cip </td> <td> <TMPL_VAR NAME=ENT54CIP> </td>
+<tr valign='top'> <td> ent55cf </td> <td> <TMPL_VAR NAME=ENT55CF> </td>
+<tr valign='top'> <td> ent55cp </td> <td> <TMPL_VAR NAME=ENT55CP> </td>
+<tr valign='top'> <td> ent55cip </td> <td> <TMPL_VAR NAME=ENT55CIP> </td>
+<tr valign='top'> <td> ent56cf </td> <td> <TMPL_VAR NAME=ENT56CF> </td>
+<tr valign='top'> <td> ent56cp </td> <td> <TMPL_VAR NAME=ENT56CP> </td>
+<tr valign='top'> <td> ent56cip </td> <td> <TMPL_VAR NAME=ENT56CIP> </td>
+<tr valign='top'> <td> ent57cf </td> <td> <TMPL_VAR NAME=ENT57CF> </td>
+<tr valign='top'> <td> ent57cp </td> <td> <TMPL_VAR NAME=ENT57CP> </td>
+<tr valign='top'> <td> ent57cip </td> <td> <TMPL_VAR NAME=ENT57CIP> </td>
+<tr valign='top'> <td> ent58cf </td> <td> <TMPL_VAR NAME=ENT58CF> </td>
+<tr valign='top'> <td> ent58cp </td> <td> <TMPL_VAR NAME=ENT58CP> </td>
+<tr valign='top'> <td> ent58cip </td> <td> <TMPL_VAR NAME=ENT58CIP> </td>
+<tr valign='top'> <td> ent59cf </td> <td> <TMPL_VAR NAME=ENT59CF> </td>
+<tr valign='top'> <td> ent59cp </td> <td> <TMPL_VAR NAME=ENT59CP> </td>
+<tr valign='top'> <td> ent59cip </td> <td> <TMPL_VAR NAME=ENT59CIP> </td>
+<tr valign='top'> <td> ent60cf </td> <td> <TMPL_VAR NAME=ENT60CF> </td>
+<tr valign='top'> <td> ent60cp </td> <td> <TMPL_VAR NAME=ENT60CP> </td>
+<tr valign='top'> <td> ent60cip </td> <td> <TMPL_VAR NAME=ENT60CIP> </td>
+<tr valign='top'> <td> ent61cf </td> <td> <TMPL_VAR NAME=ENT61CF> </td>
+<tr valign='top'> <td> ent61cp </td> <td> <TMPL_VAR NAME=ENT61CP> </td>
+<tr valign='top'> <td> ent61cip </td> <td> <TMPL_VAR NAME=ENT61CIP> </td>
+<tr valign='top'> <td> ent62cf </td> <td> <TMPL_VAR NAME=ENT62CF> </td>
+<tr valign='top'> <td> ent62cp </td> <td> <TMPL_VAR NAME=ENT62CP> </td>
+<tr valign='top'> <td> ent62cip </td> <td> <TMPL_VAR NAME=ENT62CIP> </td>
+<tr valign='top'> <td> ent63cf </td> <td> <TMPL_VAR NAME=ENT63CF> </td>
+<tr valign='top'> <td> ent63cp </td> <td> <TMPL_VAR NAME=ENT63CP> </td>
+<tr valign='top'> <td> ent63cip </td> <td> <TMPL_VAR NAME=ENT63CIP> </td>
+<tr valign='top'> <td> ent64cf </td> <td> <TMPL_VAR NAME=ENT64CF> </td>
+<tr valign='top'> <td> ent64cp </td> <td> <TMPL_VAR NAME=ENT64CP> </td>
+<tr valign='top'> <td> ent64cip </td> <td> <TMPL_VAR NAME=ENT64CIP> </td>
+
 		<TMPL_IF NAME=MS5000>
 			<tr valign='top'>
 			<td> Selected IP </td>
@@ -1324,11 +1730,416 @@ Result Crontab Line:<br />
 	<input name='task_start_type' type='hidden' value='<TMPL_VAR NAME=TASK_START_TYPE>'>  	
 	<input name='cron' type='hidden' value='<TMPL_VAR NAME=CRON>'>  	
 
+<input name='Que_num' type='hidden' value='<TMPL_VAR NAME=QUE_NUM>' >
+<input name='actpro' type='hidden' value='<TMPL_VAR NAME=ACTPRO>' >
+<input name='delpro' type='hidden' value='<TMPL_VAR NAME=DELPRO>' >
+<input name='ent10cf' type='hidden' value='<TMPL_VAR NAME=ENT10CF>' >
+<input name='ent10cip' type='hidden' value='<TMPL_VAR NAME=ENT10CIP>' >
+<input name='ent10cp' type='hidden' value='<TMPL_VAR NAME=ENT10CP>' >
+<input name='ent11cf' type='hidden' value='<TMPL_VAR NAME=ENT11CF>' >
+<input name='ent11cip' type='hidden' value='<TMPL_VAR NAME=ENT11CIP>' >
+<input name='ent11cp' type='hidden' value='<TMPL_VAR NAME=ENT11CP>' >
+<input name='ent12cf' type='hidden' value='<TMPL_VAR NAME=ENT12CF>' >
+<input name='ent12cip' type='hidden' value='<TMPL_VAR NAME=ENT12CIP>' >
+<input name='ent12cp' type='hidden' value='<TMPL_VAR NAME=ENT12CP>' >
+<input name='ent13cf' type='hidden' value='<TMPL_VAR NAME=ENT13CF>' >
+<input name='ent13cip' type='hidden' value='<TMPL_VAR NAME=ENT13CIP>' >
+<input name='ent13cp' type='hidden' value='<TMPL_VAR NAME=ENT13CP>' >
+<input name='ent14cf' type='hidden' value='<TMPL_VAR NAME=ENT14CF>' >
+<input name='ent14cip' type='hidden' value='<TMPL_VAR NAME=ENT14CIP>' >
+<input name='ent14cp' type='hidden' value='<TMPL_VAR NAME=ENT14CP>' >
+<input name='ent15cf' type='hidden' value='<TMPL_VAR NAME=ENT15CF>' >
+<input name='ent15cip' type='hidden' value='<TMPL_VAR NAME=ENT15CIP>' >
+<input name='ent15cp' type='hidden' value='<TMPL_VAR NAME=ENT15CP>' >
+<input name='ent16cf' type='hidden' value='<TMPL_VAR NAME=ENT16CF>' >
+<input name='ent16cip' type='hidden' value='<TMPL_VAR NAME=ENT16CIP>' >
+<input name='ent16cp' type='hidden' value='<TMPL_VAR NAME=ENT16CP>' >
+<input name='ent17cf' type='hidden' value='<TMPL_VAR NAME=ENT17CF>' >
+<input name='ent17cip' type='hidden' value='<TMPL_VAR NAME=ENT17CIP>' >
+<input name='ent17cp' type='hidden' value='<TMPL_VAR NAME=ENT17CP>' >
+<input name='ent18cf' type='hidden' value='<TMPL_VAR NAME=ENT18CF>' >
+<input name='ent18cip' type='hidden' value='<TMPL_VAR NAME=ENT18CIP>' >
+<input name='ent18cp' type='hidden' value='<TMPL_VAR NAME=ENT18CP>' >
+<input name='ent19cf' type='hidden' value='<TMPL_VAR NAME=ENT19CF>' >
+<input name='ent19cip' type='hidden' value='<TMPL_VAR NAME=ENT19CIP>' >
+<input name='ent19cp' type='hidden' value='<TMPL_VAR NAME=ENT19CP>' >
+<input name='ent1cf' type='hidden' value='<TMPL_VAR NAME=ENT1CF>' >
+<input name='ent1cip' type='hidden' value='<TMPL_VAR NAME=ENT1CIP>' >
+<input name='ent1cp' type='hidden' value='<TMPL_VAR NAME=ENT1CP>' >
+<input name='ent20cf' type='hidden' value='<TMPL_VAR NAME=ENT20CF>' >
+<input name='ent20cip' type='hidden' value='<TMPL_VAR NAME=ENT20CIP>' >
+<input name='ent20cp' type='hidden' value='<TMPL_VAR NAME=ENT20CP>' >
+<input name='ent21cf' type='hidden' value='<TMPL_VAR NAME=ENT21CF>' >
+<input name='ent21cip' type='hidden' value='<TMPL_VAR NAME=ENT21CIP>' >
+<input name='ent21cp' type='hidden' value='<TMPL_VAR NAME=ENT21CP>' >
+<input name='ent22cf' type='hidden' value='<TMPL_VAR NAME=ENT22CF>' >
+<input name='ent22cip' type='hidden' value='<TMPL_VAR NAME=ENT22CIP>' >
+<input name='ent22cp' type='hidden' value='<TMPL_VAR NAME=ENT22CP>' >
+<input name='ent23cf' type='hidden' value='<TMPL_VAR NAME=ENT23CF>' >
+<input name='ent23cip' type='hidden' value='<TMPL_VAR NAME=ENT23CIP>' >
+<input name='ent23cp' type='hidden' value='<TMPL_VAR NAME=ENT23CP>' >
+<input name='ent24cf' type='hidden' value='<TMPL_VAR NAME=ENT24CF>' >
+<input name='ent24cip' type='hidden' value='<TMPL_VAR NAME=ENT24CIP>' >
+<input name='ent24cp' type='hidden' value='<TMPL_VAR NAME=ENT24CP>' >
+<input name='ent25cf' type='hidden' value='<TMPL_VAR NAME=ENT25CF>' >
+<input name='ent25cip' type='hidden' value='<TMPL_VAR NAME=ENT25CIP>' >
+<input name='ent25cp' type='hidden' value='<TMPL_VAR NAME=ENT25CP>' >
+<input name='ent26cf' type='hidden' value='<TMPL_VAR NAME=ENT26CF>' >
+<input name='ent26cip' type='hidden' value='<TMPL_VAR NAME=ENT26CIP>' >
+<input name='ent26cp' type='hidden' value='<TMPL_VAR NAME=ENT26CP>' >
+<input name='ent27cf' type='hidden' value='<TMPL_VAR NAME=ENT27CF>' >
+<input name='ent27cip' type='hidden' value='<TMPL_VAR NAME=ENT27CIP>' >
+<input name='ent27cp' type='hidden' value='<TMPL_VAR NAME=ENT27CP>' >
+<input name='ent28cf' type='hidden' value='<TMPL_VAR NAME=ENT28CF>' >
+<input name='ent28cip' type='hidden' value='<TMPL_VAR NAME=ENT28CIP>' >
+<input name='ent28cp' type='hidden' value='<TMPL_VAR NAME=ENT28CP>' >
+<input name='ent29cf' type='hidden' value='<TMPL_VAR NAME=ENT29CF>' >
+<input name='ent29cip' type='hidden' value='<TMPL_VAR NAME=ENT29CIP>' >
+<input name='ent29cp' type='hidden' value='<TMPL_VAR NAME=ENT29CP>' >
+<input name='ent2cf' type='hidden' value='<TMPL_VAR NAME=ENT2CF>' >
+<input name='ent2cip' type='hidden' value='<TMPL_VAR NAME=ENT2CIP>' >
+<input name='ent2cp' type='hidden' value='<TMPL_VAR NAME=ENT2CP>' >
+<input name='ent30cf' type='hidden' value='<TMPL_VAR NAME=ENT30CF>' >
+<input name='ent30cip' type='hidden' value='<TMPL_VAR NAME=ENT30CIP>' >
+<input name='ent30cp' type='hidden' value='<TMPL_VAR NAME=ENT30CP>' >
+<input name='ent31cf' type='hidden' value='<TMPL_VAR NAME=ENT31CF>' >
+<input name='ent31cip' type='hidden' value='<TMPL_VAR NAME=ENT31CIP>' >
+<input name='ent31cp' type='hidden' value='<TMPL_VAR NAME=ENT31CP>' >
+<input name='ent32cf' type='hidden' value='<TMPL_VAR NAME=ENT32CF>' >
+<input name='ent32cip' type='hidden' value='<TMPL_VAR NAME=ENT32CIP>' >
+<input name='ent32cp' type='hidden' value='<TMPL_VAR NAME=ENT32CP>' >
+<input name='ent33cf' type='hidden' value='<TMPL_VAR NAME=ENT33CF>' >
+<input name='ent33cip' type='hidden' value='<TMPL_VAR NAME=ENT33CIP>' >
+<input name='ent33cp' type='hidden' value='<TMPL_VAR NAME=ENT33CP>' >
+<input name='ent34cf' type='hidden' value='<TMPL_VAR NAME=ENT34CF>' >
+<input name='ent34cip' type='hidden' value='<TMPL_VAR NAME=ENT34CIP>' >
+<input name='ent34cp' type='hidden' value='<TMPL_VAR NAME=ENT34CP>' >
+<input name='ent35cf' type='hidden' value='<TMPL_VAR NAME=ENT35CF>' >
+<input name='ent35cip' type='hidden' value='<TMPL_VAR NAME=ENT35CIP>' >
+<input name='ent35cp' type='hidden' value='<TMPL_VAR NAME=ENT35CP>' >
+<input name='ent36cf' type='hidden' value='<TMPL_VAR NAME=ENT36CF>' >
+<input name='ent36cip' type='hidden' value='<TMPL_VAR NAME=ENT36CIP>' >
+<input name='ent36cp' type='hidden' value='<TMPL_VAR NAME=ENT36CP>' >
+<input name='ent37cf' type='hidden' value='<TMPL_VAR NAME=ENT37CF>' >
+<input name='ent37cip' type='hidden' value='<TMPL_VAR NAME=ENT37CIP>' >
+<input name='ent37cp' type='hidden' value='<TMPL_VAR NAME=ENT37CP>' >
+<input name='ent38cf' type='hidden' value='<TMPL_VAR NAME=ENT38CF>' >
+<input name='ent38cip' type='hidden' value='<TMPL_VAR NAME=ENT38CIP>' >
+<input name='ent38cp' type='hidden' value='<TMPL_VAR NAME=ENT38CP>' >
+<input name='ent39cf' type='hidden' value='<TMPL_VAR NAME=ENT39CF>' >
+<input name='ent39cip' type='hidden' value='<TMPL_VAR NAME=ENT39CIP>' >
+<input name='ent39cp' type='hidden' value='<TMPL_VAR NAME=ENT39CP>' >
+<input name='ent3cf' type='hidden' value='<TMPL_VAR NAME=ENT3CF>' >
+<input name='ent3cip' type='hidden' value='<TMPL_VAR NAME=ENT3CIP>' >
+<input name='ent3cp' type='hidden' value='<TMPL_VAR NAME=ENT3CP>' >
+<input name='ent40cf' type='hidden' value='<TMPL_VAR NAME=ENT40CF>' >
+<input name='ent40cip' type='hidden' value='<TMPL_VAR NAME=ENT40CIP>' >
+<input name='ent40cp' type='hidden' value='<TMPL_VAR NAME=ENT40CP>' >
+<input name='ent41cf' type='hidden' value='<TMPL_VAR NAME=ENT41CF>' >
+<input name='ent41cip' type='hidden' value='<TMPL_VAR NAME=ENT41CIP>' >
+<input name='ent41cp' type='hidden' value='<TMPL_VAR NAME=ENT41CP>' >
+<input name='ent42cf' type='hidden' value='<TMPL_VAR NAME=ENT42CF>' >
+<input name='ent42cip' type='hidden' value='<TMPL_VAR NAME=ENT42CIP>' >
+<input name='ent42cp' type='hidden' value='<TMPL_VAR NAME=ENT42CP>' >
+<input name='ent43cf' type='hidden' value='<TMPL_VAR NAME=ENT43CF>' >
+<input name='ent43cip' type='hidden' value='<TMPL_VAR NAME=ENT43CIP>' >
+<input name='ent43cp' type='hidden' value='<TMPL_VAR NAME=ENT43CP>' >
+<input name='ent44cf' type='hidden' value='<TMPL_VAR NAME=ENT44CF>' >
+<input name='ent44cip' type='hidden' value='<TMPL_VAR NAME=ENT44CIP>' >
+<input name='ent44cp' type='hidden' value='<TMPL_VAR NAME=ENT44CP>' >
+<input name='ent45cf' type='hidden' value='<TMPL_VAR NAME=ENT45CF>' >
+<input name='ent45cip' type='hidden' value='<TMPL_VAR NAME=ENT45CIP>' >
+<input name='ent45cp' type='hidden' value='<TMPL_VAR NAME=ENT45CP>' >
+<input name='ent46cf' type='hidden' value='<TMPL_VAR NAME=ENT46CF>' >
+<input name='ent46cip' type='hidden' value='<TMPL_VAR NAME=ENT46CIP>' >
+<input name='ent46cp' type='hidden' value='<TMPL_VAR NAME=ENT46CP>' >
+<input name='ent47cf' type='hidden' value='<TMPL_VAR NAME=ENT47CF>' >
+<input name='ent47cip' type='hidden' value='<TMPL_VAR NAME=ENT47CIP>' >
+<input name='ent47cp' type='hidden' value='<TMPL_VAR NAME=ENT47CP>' >
+<input name='ent48cf' type='hidden' value='<TMPL_VAR NAME=ENT48CF>' >
+<input name='ent48cip' type='hidden' value='<TMPL_VAR NAME=ENT48CIP>' >
+<input name='ent48cp' type='hidden' value='<TMPL_VAR NAME=ENT48CP>' >
+<input name='ent49cf' type='hidden' value='<TMPL_VAR NAME=ENT49CF>' >
+<input name='ent49cip' type='hidden' value='<TMPL_VAR NAME=ENT49CIP>' >
+<input name='ent49cp' type='hidden' value='<TMPL_VAR NAME=ENT49CP>' >
+<input name='ent4cf' type='hidden' value='<TMPL_VAR NAME=ENT4CF>' >
+<input name='ent4cip' type='hidden' value='<TMPL_VAR NAME=ENT4CIP>' >
+<input name='ent4cp' type='hidden' value='<TMPL_VAR NAME=ENT4CP>' >
+<input name='ent50cf' type='hidden' value='<TMPL_VAR NAME=ENT50CF>' >
+<input name='ent50cip' type='hidden' value='<TMPL_VAR NAME=ENT50CIP>' >
+<input name='ent50cp' type='hidden' value='<TMPL_VAR NAME=ENT50CP>' >
+<input name='ent51cf' type='hidden' value='<TMPL_VAR NAME=ENT51CF>' >
+<input name='ent51cip' type='hidden' value='<TMPL_VAR NAME=ENT51CIP>' >
+<input name='ent51cp' type='hidden' value='<TMPL_VAR NAME=ENT51CP>' >
+<input name='ent52cf' type='hidden' value='<TMPL_VAR NAME=ENT52CF>' >
+<input name='ent52cip' type='hidden' value='<TMPL_VAR NAME=ENT52CIP>' >
+<input name='ent52cp' type='hidden' value='<TMPL_VAR NAME=ENT52CP>' >
+<input name='ent53cf' type='hidden' value='<TMPL_VAR NAME=ENT53CF>' >
+<input name='ent53cip' type='hidden' value='<TMPL_VAR NAME=ENT53CIP>' >
+<input name='ent53cp' type='hidden' value='<TMPL_VAR NAME=ENT53CP>' >
+<input name='ent54cf' type='hidden' value='<TMPL_VAR NAME=ENT54CF>' >
+<input name='ent54cip' type='hidden' value='<TMPL_VAR NAME=ENT54CIP>' >
+<input name='ent54cp' type='hidden' value='<TMPL_VAR NAME=ENT54CP>' >
+<input name='ent55cf' type='hidden' value='<TMPL_VAR NAME=ENT55CF>' >
+<input name='ent55cip' type='hidden' value='<TMPL_VAR NAME=ENT55CIP>' >
+<input name='ent55cp' type='hidden' value='<TMPL_VAR NAME=ENT55CP>' >
+<input name='ent56cf' type='hidden' value='<TMPL_VAR NAME=ENT56CF>' >
+<input name='ent56cip' type='hidden' value='<TMPL_VAR NAME=ENT56CIP>' >
+<input name='ent56cp' type='hidden' value='<TMPL_VAR NAME=ENT56CP>' >
+<input name='ent57cf' type='hidden' value='<TMPL_VAR NAME=ENT57CF>' >
+<input name='ent57cip' type='hidden' value='<TMPL_VAR NAME=ENT57CIP>' >
+<input name='ent57cp' type='hidden' value='<TMPL_VAR NAME=ENT57CP>' >
+<input name='ent58cf' type='hidden' value='<TMPL_VAR NAME=ENT58CF>' >
+<input name='ent58cip' type='hidden' value='<TMPL_VAR NAME=ENT58CIP>' >
+<input name='ent58cp' type='hidden' value='<TMPL_VAR NAME=ENT58CP>' >
+<input name='ent59cf' type='hidden' value='<TMPL_VAR NAME=ENT59CF>' >
+<input name='ent59cip' type='hidden' value='<TMPL_VAR NAME=ENT59CIP>' >
+<input name='ent59cp' type='hidden' value='<TMPL_VAR NAME=ENT59CP>' >
+<input name='ent5cf' type='hidden' value='<TMPL_VAR NAME=ENT5CF>' >
+<input name='ent5cip' type='hidden' value='<TMPL_VAR NAME=ENT5CIP>' >
+<input name='ent5cp' type='hidden' value='<TMPL_VAR NAME=ENT5CP>' >
+<input name='ent60cf' type='hidden' value='<TMPL_VAR NAME=ENT60CF>' >
+<input name='ent60cip' type='hidden' value='<TMPL_VAR NAME=ENT60CIP>' >
+<input name='ent60cp' type='hidden' value='<TMPL_VAR NAME=ENT60CP>' >
+<input name='ent61cf' type='hidden' value='<TMPL_VAR NAME=ENT61CF>' >
+<input name='ent61cip' type='hidden' value='<TMPL_VAR NAME=ENT61CIP>' >
+<input name='ent61cp' type='hidden' value='<TMPL_VAR NAME=ENT61CP>' >
+<input name='ent62cf' type='hidden' value='<TMPL_VAR NAME=ENT62CF>' >
+<input name='ent62cip' type='hidden' value='<TMPL_VAR NAME=ENT62CIP>' >
+<input name='ent62cp' type='hidden' value='<TMPL_VAR NAME=ENT62CP>' >
+<input name='ent63cf' type='hidden' value='<TMPL_VAR NAME=ENT63CF>' >
+<input name='ent63cip' type='hidden' value='<TMPL_VAR NAME=ENT63CIP>' >
+<input name='ent63cp' type='hidden' value='<TMPL_VAR NAME=ENT63CP>' >
+<input name='ent64cf' type='hidden' value='<TMPL_VAR NAME=ENT64CF>' >
+<input name='ent64cip' type='hidden' value='<TMPL_VAR NAME=ENT64CIP>' >
+<input name='ent64cp' type='hidden' value='<TMPL_VAR NAME=ENT64CP>' >
+<input name='ent6cf' type='hidden' value='<TMPL_VAR NAME=ENT6CF>' >
+<input name='ent6cip' type='hidden' value='<TMPL_VAR NAME=ENT6CIP>' >
+<input name='ent6cp' type='hidden' value='<TMPL_VAR NAME=ENT6CP>' >
+<input name='ent7cf' type='hidden' value='<TMPL_VAR NAME=ENT7CF>' >
+<input name='ent7cip' type='hidden' value='<TMPL_VAR NAME=ENT7CIP>' >
+<input name='ent7cp' type='hidden' value='<TMPL_VAR NAME=ENT7CP>' >
+<input name='ent8cf' type='hidden' value='<TMPL_VAR NAME=ENT8CF>' >
+<input name='ent8cip' type='hidden' value='<TMPL_VAR NAME=ENT8CIP>' >
+<input name='ent8cp' type='hidden' value='<TMPL_VAR NAME=ENT8CP>' >
+<input name='ent9cf' type='hidden' value='<TMPL_VAR NAME=ENT9CF>' >
+<input name='ent9cip' type='hidden' value='<TMPL_VAR NAME=ENT9CIP>' >
+<input name='ent9cp' type='hidden' value='<TMPL_VAR NAME=ENT9CP>' >
+<input name='googletrick' type='hidden' value='<TMPL_VAR NAME=GOOGLETRICK>' >
+<input name='profnum' type='hidden' value='<TMPL_VAR NAME=PROFNUM>' >
+<input name='proselect' type='hidden' value='<TMPL_VAR NAME=PROSELECT>' >
+<input name='queset' type='hidden' value='<TMPL_VAR NAME=QUESET>' >
+	
 	
   <table border='1' cellspacing='0' cellpadding='2'>
 			<tr valign='top'>
 			<td> Add task for worker </td>
 			<td> <TMPL_VAR NAME=SNAME> </td>
+
+
+<tr valign='top'> <td> Que_num </td> <td> <TMPL_VAR NAME=QUE_TXT> </td>
+<tr valign='top'> <td> queset </td> <td> <TMPL_VAR NAME=QUESET> </td>
+<tr valign='top'> <td> profnum </td> <td> <TMPL_VAR NAME=PROFNUM> </td>
+<tr valign='top'> <td> proselect </td> <td> <TMPL_VAR NAME=PROSELECT> </td>
+<tr valign='top'> <td> delpro </td> <td> <TMPL_VAR NAME=DELPRO> </td>
+<tr valign='top'> <td> actpro </td> <td> <TMPL_VAR NAME=ACTPRO> </td>
+<tr valign='top'> <td> ent1cf </td> <td> <TMPL_VAR NAME=ENT1CF> </td>
+<tr valign='top'> <td> ent1cp </td> <td> <TMPL_VAR NAME=ENT1CP> </td>
+<tr valign='top'> <td> ent1cip </td> <td> <TMPL_VAR NAME=ENT1CIP> </td>
+<tr valign='top'> <td> ent2cf </td> <td> <TMPL_VAR NAME=ENT2CF> </td>
+<tr valign='top'> <td> ent2cp </td> <td> <TMPL_VAR NAME=ENT2CP> </td>
+<tr valign='top'> <td> ent2cip </td> <td> <TMPL_VAR NAME=ENT2CIP> </td>
+<tr valign='top'> <td> ent3cf </td> <td> <TMPL_VAR NAME=ENT3CF> </td>
+<tr valign='top'> <td> ent3cp </td> <td> <TMPL_VAR NAME=ENT3CP> </td>
+<tr valign='top'> <td> ent3cip </td> <td> <TMPL_VAR NAME=ENT3CIP> </td>
+<tr valign='top'> <td> ent4cf </td> <td> <TMPL_VAR NAME=ENT4CF> </td>
+<tr valign='top'> <td> ent4cp </td> <td> <TMPL_VAR NAME=ENT4CP> </td>
+<tr valign='top'> <td> ent4cip </td> <td> <TMPL_VAR NAME=ENT4CIP> </td>
+<tr valign='top'> <td> ent5cf </td> <td> <TMPL_VAR NAME=ENT5CF> </td>
+<tr valign='top'> <td> ent5cp </td> <td> <TMPL_VAR NAME=ENT5CP> </td>
+<tr valign='top'> <td> ent5cip </td> <td> <TMPL_VAR NAME=ENT5CIP> </td>
+<tr valign='top'> <td> ent6cf </td> <td> <TMPL_VAR NAME=ENT6CF> </td>
+<tr valign='top'> <td> ent6cp </td> <td> <TMPL_VAR NAME=ENT6CP> </td>
+<tr valign='top'> <td> ent6cip </td> <td> <TMPL_VAR NAME=ENT6CIP> </td>
+<tr valign='top'> <td> ent7cf </td> <td> <TMPL_VAR NAME=ENT7CF> </td>
+<tr valign='top'> <td> ent7cp </td> <td> <TMPL_VAR NAME=ENT7CP> </td>
+<tr valign='top'> <td> ent7cip </td> <td> <TMPL_VAR NAME=ENT7CIP> </td>
+<tr valign='top'> <td> ent8cf </td> <td> <TMPL_VAR NAME=ENT8CF> </td>
+<tr valign='top'> <td> ent8cp </td> <td> <TMPL_VAR NAME=ENT8CP> </td>
+<tr valign='top'> <td> ent8cip </td> <td> <TMPL_VAR NAME=ENT8CIP> </td>
+<tr valign='top'> <td> ent9cf </td> <td> <TMPL_VAR NAME=ENT9CF> </td>
+<tr valign='top'> <td> ent9cp </td> <td> <TMPL_VAR NAME=ENT9CP> </td>
+<tr valign='top'> <td> ent9cip </td> <td> <TMPL_VAR NAME=ENT9CIP> </td>
+<tr valign='top'> <td> ent10cf </td> <td> <TMPL_VAR NAME=ENT10CF> </td>
+<tr valign='top'> <td> ent10cp </td> <td> <TMPL_VAR NAME=ENT10CP> </td>
+<tr valign='top'> <td> ent10cip </td> <td> <TMPL_VAR NAME=ENT10CIP> </td>
+<tr valign='top'> <td> ent11cf </td> <td> <TMPL_VAR NAME=ENT11CF> </td>
+<tr valign='top'> <td> ent11cp </td> <td> <TMPL_VAR NAME=ENT11CP> </td>
+<tr valign='top'> <td> ent11cip </td> <td> <TMPL_VAR NAME=ENT11CIP> </td>
+<tr valign='top'> <td> ent12cf </td> <td> <TMPL_VAR NAME=ENT12CF> </td>
+<tr valign='top'> <td> ent12cp </td> <td> <TMPL_VAR NAME=ENT12CP> </td>
+<tr valign='top'> <td> ent12cip </td> <td> <TMPL_VAR NAME=ENT12CIP> </td>
+<tr valign='top'> <td> ent13cf </td> <td> <TMPL_VAR NAME=ENT13CF> </td>
+<tr valign='top'> <td> ent13cp </td> <td> <TMPL_VAR NAME=ENT13CP> </td>
+<tr valign='top'> <td> ent13cip </td> <td> <TMPL_VAR NAME=ENT13CIP> </td>
+<tr valign='top'> <td> ent14cf </td> <td> <TMPL_VAR NAME=ENT14CF> </td>
+<tr valign='top'> <td> ent14cp </td> <td> <TMPL_VAR NAME=ENT14CP> </td>
+<tr valign='top'> <td> ent14cip </td> <td> <TMPL_VAR NAME=ENT14CIP> </td>
+<tr valign='top'> <td> ent15cf </td> <td> <TMPL_VAR NAME=ENT15CF> </td>
+<tr valign='top'> <td> ent15cp </td> <td> <TMPL_VAR NAME=ENT15CP> </td>
+<tr valign='top'> <td> ent15cip </td> <td> <TMPL_VAR NAME=ENT15CIP> </td>
+<tr valign='top'> <td> ent16cf </td> <td> <TMPL_VAR NAME=ENT16CF> </td>
+<tr valign='top'> <td> ent16cp </td> <td> <TMPL_VAR NAME=ENT16CP> </td>
+<tr valign='top'> <td> ent16cip </td> <td> <TMPL_VAR NAME=ENT16CIP> </td>
+<tr valign='top'> <td> ent17cf </td> <td> <TMPL_VAR NAME=ENT17CF> </td>
+<tr valign='top'> <td> ent17cp </td> <td> <TMPL_VAR NAME=ENT17CP> </td>
+<tr valign='top'> <td> ent17cip </td> <td> <TMPL_VAR NAME=ENT17CIP> </td>
+<tr valign='top'> <td> ent18cf </td> <td> <TMPL_VAR NAME=ENT18CF> </td>
+<tr valign='top'> <td> ent18cp </td> <td> <TMPL_VAR NAME=ENT18CP> </td>
+<tr valign='top'> <td> ent18cip </td> <td> <TMPL_VAR NAME=ENT18CIP> </td>
+<tr valign='top'> <td> ent19cf </td> <td> <TMPL_VAR NAME=ENT19CF> </td>
+<tr valign='top'> <td> ent19cp </td> <td> <TMPL_VAR NAME=ENT19CP> </td>
+<tr valign='top'> <td> ent19cip </td> <td> <TMPL_VAR NAME=ENT19CIP> </td>
+<tr valign='top'> <td> ent20cf </td> <td> <TMPL_VAR NAME=ENT20CF> </td>
+<tr valign='top'> <td> ent20cp </td> <td> <TMPL_VAR NAME=ENT20CP> </td>
+<tr valign='top'> <td> ent20cip </td> <td> <TMPL_VAR NAME=ENT20CIP> </td>
+<tr valign='top'> <td> ent21cf </td> <td> <TMPL_VAR NAME=ENT21CF> </td>
+<tr valign='top'> <td> ent21cp </td> <td> <TMPL_VAR NAME=ENT21CP> </td>
+<tr valign='top'> <td> ent21cip </td> <td> <TMPL_VAR NAME=ENT21CIP> </td>
+<tr valign='top'> <td> ent22cf </td> <td> <TMPL_VAR NAME=ENT22CF> </td>
+<tr valign='top'> <td> ent22cp </td> <td> <TMPL_VAR NAME=ENT22CP> </td>
+<tr valign='top'> <td> ent22cip </td> <td> <TMPL_VAR NAME=ENT22CIP> </td>
+<tr valign='top'> <td> ent23cf </td> <td> <TMPL_VAR NAME=ENT23CF> </td>
+<tr valign='top'> <td> ent23cp </td> <td> <TMPL_VAR NAME=ENT23CP> </td>
+<tr valign='top'> <td> ent23cip </td> <td> <TMPL_VAR NAME=ENT23CIP> </td>
+<tr valign='top'> <td> ent24cf </td> <td> <TMPL_VAR NAME=ENT24CF> </td>
+<tr valign='top'> <td> ent24cp </td> <td> <TMPL_VAR NAME=ENT24CP> </td>
+<tr valign='top'> <td> ent24cip </td> <td> <TMPL_VAR NAME=ENT24CIP> </td>
+<tr valign='top'> <td> ent25cf </td> <td> <TMPL_VAR NAME=ENT25CF> </td>
+<tr valign='top'> <td> ent25cp </td> <td> <TMPL_VAR NAME=ENT25CP> </td>
+<tr valign='top'> <td> ent25cip </td> <td> <TMPL_VAR NAME=ENT25CIP> </td>
+<tr valign='top'> <td> ent26cf </td> <td> <TMPL_VAR NAME=ENT26CF> </td>
+<tr valign='top'> <td> ent26cp </td> <td> <TMPL_VAR NAME=ENT26CP> </td>
+<tr valign='top'> <td> ent26cip </td> <td> <TMPL_VAR NAME=ENT26CIP> </td>
+<tr valign='top'> <td> ent27cf </td> <td> <TMPL_VAR NAME=ENT27CF> </td>
+<tr valign='top'> <td> ent27cp </td> <td> <TMPL_VAR NAME=ENT27CP> </td>
+<tr valign='top'> <td> ent27cip </td> <td> <TMPL_VAR NAME=ENT27CIP> </td>
+<tr valign='top'> <td> ent28cf </td> <td> <TMPL_VAR NAME=ENT28CF> </td>
+<tr valign='top'> <td> ent28cp </td> <td> <TMPL_VAR NAME=ENT28CP> </td>
+<tr valign='top'> <td> ent28cip </td> <td> <TMPL_VAR NAME=ENT28CIP> </td>
+<tr valign='top'> <td> ent29cf </td> <td> <TMPL_VAR NAME=ENT29CF> </td>
+<tr valign='top'> <td> ent29cp </td> <td> <TMPL_VAR NAME=ENT29CP> </td>
+<tr valign='top'> <td> ent29cip </td> <td> <TMPL_VAR NAME=ENT29CIP> </td>
+<tr valign='top'> <td> ent30cf </td> <td> <TMPL_VAR NAME=ENT30CF> </td>
+<tr valign='top'> <td> ent30cp </td> <td> <TMPL_VAR NAME=ENT30CP> </td>
+<tr valign='top'> <td> ent30cip </td> <td> <TMPL_VAR NAME=ENT30CIP> </td>
+<tr valign='top'> <td> ent31cf </td> <td> <TMPL_VAR NAME=ENT31CF> </td>
+<tr valign='top'> <td> ent31cp </td> <td> <TMPL_VAR NAME=ENT31CP> </td>
+<tr valign='top'> <td> ent31cip </td> <td> <TMPL_VAR NAME=ENT31CIP> </td>
+<tr valign='top'> <td> ent32cf </td> <td> <TMPL_VAR NAME=ENT32CF> </td>
+<tr valign='top'> <td> ent32cp </td> <td> <TMPL_VAR NAME=ENT32CP> </td>
+<tr valign='top'> <td> ent32cip </td> <td> <TMPL_VAR NAME=ENT32CIP> </td>
+<tr valign='top'> <td> ent33cf </td> <td> <TMPL_VAR NAME=ENT33CF> </td>
+<tr valign='top'> <td> ent33cp </td> <td> <TMPL_VAR NAME=ENT33CP> </td>
+<tr valign='top'> <td> ent33cip </td> <td> <TMPL_VAR NAME=ENT33CIP> </td>
+<tr valign='top'> <td> ent34cf </td> <td> <TMPL_VAR NAME=ENT34CF> </td>
+<tr valign='top'> <td> ent34cp </td> <td> <TMPL_VAR NAME=ENT34CP> </td>
+<tr valign='top'> <td> ent34cip </td> <td> <TMPL_VAR NAME=ENT34CIP> </td>
+<tr valign='top'> <td> ent35cf </td> <td> <TMPL_VAR NAME=ENT35CF> </td>
+<tr valign='top'> <td> ent35cp </td> <td> <TMPL_VAR NAME=ENT35CP> </td>
+<tr valign='top'> <td> ent35cip </td> <td> <TMPL_VAR NAME=ENT35CIP> </td>
+<tr valign='top'> <td> ent36cf </td> <td> <TMPL_VAR NAME=ENT36CF> </td>
+<tr valign='top'> <td> ent36cp </td> <td> <TMPL_VAR NAME=ENT36CP> </td>
+<tr valign='top'> <td> ent36cip </td> <td> <TMPL_VAR NAME=ENT36CIP> </td>
+<tr valign='top'> <td> ent37cf </td> <td> <TMPL_VAR NAME=ENT37CF> </td>
+<tr valign='top'> <td> ent37cp </td> <td> <TMPL_VAR NAME=ENT37CP> </td>
+<tr valign='top'> <td> ent37cip </td> <td> <TMPL_VAR NAME=ENT37CIP> </td>
+<tr valign='top'> <td> ent38cf </td> <td> <TMPL_VAR NAME=ENT38CF> </td>
+<tr valign='top'> <td> ent38cp </td> <td> <TMPL_VAR NAME=ENT38CP> </td>
+<tr valign='top'> <td> ent38cip </td> <td> <TMPL_VAR NAME=ENT38CIP> </td>
+<tr valign='top'> <td> ent39cf </td> <td> <TMPL_VAR NAME=ENT39CF> </td>
+<tr valign='top'> <td> ent39cp </td> <td> <TMPL_VAR NAME=ENT39CP> </td>
+<tr valign='top'> <td> ent39cip </td> <td> <TMPL_VAR NAME=ENT39CIP> </td>
+<tr valign='top'> <td> ent40cf </td> <td> <TMPL_VAR NAME=ENT40CF> </td>
+<tr valign='top'> <td> ent40cp </td> <td> <TMPL_VAR NAME=ENT40CP> </td>
+<tr valign='top'> <td> ent40cip </td> <td> <TMPL_VAR NAME=ENT40CIP> </td>
+<tr valign='top'> <td> ent41cf </td> <td> <TMPL_VAR NAME=ENT41CF> </td>
+<tr valign='top'> <td> ent41cp </td> <td> <TMPL_VAR NAME=ENT41CP> </td>
+<tr valign='top'> <td> ent41cip </td> <td> <TMPL_VAR NAME=ENT41CIP> </td>
+<tr valign='top'> <td> ent42cf </td> <td> <TMPL_VAR NAME=ENT42CF> </td>
+<tr valign='top'> <td> ent42cp </td> <td> <TMPL_VAR NAME=ENT42CP> </td>
+<tr valign='top'> <td> ent42cip </td> <td> <TMPL_VAR NAME=ENT42CIP> </td>
+<tr valign='top'> <td> ent43cf </td> <td> <TMPL_VAR NAME=ENT43CF> </td>
+<tr valign='top'> <td> ent43cp </td> <td> <TMPL_VAR NAME=ENT43CP> </td>
+<tr valign='top'> <td> ent43cip </td> <td> <TMPL_VAR NAME=ENT43CIP> </td>
+<tr valign='top'> <td> ent44cf </td> <td> <TMPL_VAR NAME=ENT44CF> </td>
+<tr valign='top'> <td> ent44cp </td> <td> <TMPL_VAR NAME=ENT44CP> </td>
+<tr valign='top'> <td> ent44cip </td> <td> <TMPL_VAR NAME=ENT44CIP> </td>
+<tr valign='top'> <td> ent45cf </td> <td> <TMPL_VAR NAME=ENT45CF> </td>
+<tr valign='top'> <td> ent45cp </td> <td> <TMPL_VAR NAME=ENT45CP> </td>
+<tr valign='top'> <td> ent45cip </td> <td> <TMPL_VAR NAME=ENT45CIP> </td>
+<tr valign='top'> <td> ent46cf </td> <td> <TMPL_VAR NAME=ENT46CF> </td>
+<tr valign='top'> <td> ent46cp </td> <td> <TMPL_VAR NAME=ENT46CP> </td>
+<tr valign='top'> <td> ent46cip </td> <td> <TMPL_VAR NAME=ENT46CIP> </td>
+<tr valign='top'> <td> ent47cf </td> <td> <TMPL_VAR NAME=ENT47CF> </td>
+<tr valign='top'> <td> ent47cp </td> <td> <TMPL_VAR NAME=ENT47CP> </td>
+<tr valign='top'> <td> ent47cip </td> <td> <TMPL_VAR NAME=ENT47CIP> </td>
+<tr valign='top'> <td> ent48cf </td> <td> <TMPL_VAR NAME=ENT48CF> </td>
+<tr valign='top'> <td> ent48cp </td> <td> <TMPL_VAR NAME=ENT48CP> </td>
+<tr valign='top'> <td> ent48cip </td> <td> <TMPL_VAR NAME=ENT48CIP> </td>
+<tr valign='top'> <td> ent49cf </td> <td> <TMPL_VAR NAME=ENT49CF> </td>
+<tr valign='top'> <td> ent49cp </td> <td> <TMPL_VAR NAME=ENT49CP> </td>
+<tr valign='top'> <td> ent49cip </td> <td> <TMPL_VAR NAME=ENT49CIP> </td>
+<tr valign='top'> <td> ent50cf </td> <td> <TMPL_VAR NAME=ENT50CF> </td>
+<tr valign='top'> <td> ent50cp </td> <td> <TMPL_VAR NAME=ENT50CP> </td>
+<tr valign='top'> <td> ent50cip </td> <td> <TMPL_VAR NAME=ENT50CIP> </td>
+<tr valign='top'> <td> ent51cf </td> <td> <TMPL_VAR NAME=ENT51CF> </td>
+<tr valign='top'> <td> ent51cp </td> <td> <TMPL_VAR NAME=ENT51CP> </td>
+<tr valign='top'> <td> ent51cip </td> <td> <TMPL_VAR NAME=ENT51CIP> </td>
+<tr valign='top'> <td> ent52cf </td> <td> <TMPL_VAR NAME=ENT52CF> </td>
+<tr valign='top'> <td> ent52cp </td> <td> <TMPL_VAR NAME=ENT52CP> </td>
+<tr valign='top'> <td> ent52cip </td> <td> <TMPL_VAR NAME=ENT52CIP> </td>
+<tr valign='top'> <td> ent53cf </td> <td> <TMPL_VAR NAME=ENT53CF> </td>
+<tr valign='top'> <td> ent53cp </td> <td> <TMPL_VAR NAME=ENT53CP> </td>
+<tr valign='top'> <td> ent53cip </td> <td> <TMPL_VAR NAME=ENT53CIP> </td>
+<tr valign='top'> <td> ent54cf </td> <td> <TMPL_VAR NAME=ENT54CF> </td>
+<tr valign='top'> <td> ent54cp </td> <td> <TMPL_VAR NAME=ENT54CP> </td>
+<tr valign='top'> <td> ent54cip </td> <td> <TMPL_VAR NAME=ENT54CIP> </td>
+<tr valign='top'> <td> ent55cf </td> <td> <TMPL_VAR NAME=ENT55CF> </td>
+<tr valign='top'> <td> ent55cp </td> <td> <TMPL_VAR NAME=ENT55CP> </td>
+<tr valign='top'> <td> ent55cip </td> <td> <TMPL_VAR NAME=ENT55CIP> </td>
+<tr valign='top'> <td> ent56cf </td> <td> <TMPL_VAR NAME=ENT56CF> </td>
+<tr valign='top'> <td> ent56cp </td> <td> <TMPL_VAR NAME=ENT56CP> </td>
+<tr valign='top'> <td> ent56cip </td> <td> <TMPL_VAR NAME=ENT56CIP> </td>
+<tr valign='top'> <td> ent57cf </td> <td> <TMPL_VAR NAME=ENT57CF> </td>
+<tr valign='top'> <td> ent57cp </td> <td> <TMPL_VAR NAME=ENT57CP> </td>
+<tr valign='top'> <td> ent57cip </td> <td> <TMPL_VAR NAME=ENT57CIP> </td>
+<tr valign='top'> <td> ent58cf </td> <td> <TMPL_VAR NAME=ENT58CF> </td>
+<tr valign='top'> <td> ent58cp </td> <td> <TMPL_VAR NAME=ENT58CP> </td>
+<tr valign='top'> <td> ent58cip </td> <td> <TMPL_VAR NAME=ENT58CIP> </td>
+<tr valign='top'> <td> ent59cf </td> <td> <TMPL_VAR NAME=ENT59CF> </td>
+<tr valign='top'> <td> ent59cp </td> <td> <TMPL_VAR NAME=ENT59CP> </td>
+<tr valign='top'> <td> ent59cip </td> <td> <TMPL_VAR NAME=ENT59CIP> </td>
+<tr valign='top'> <td> ent60cf </td> <td> <TMPL_VAR NAME=ENT60CF> </td>
+<tr valign='top'> <td> ent60cp </td> <td> <TMPL_VAR NAME=ENT60CP> </td>
+<tr valign='top'> <td> ent60cip </td> <td> <TMPL_VAR NAME=ENT60CIP> </td>
+<tr valign='top'> <td> ent61cf </td> <td> <TMPL_VAR NAME=ENT61CF> </td>
+<tr valign='top'> <td> ent61cp </td> <td> <TMPL_VAR NAME=ENT61CP> </td>
+<tr valign='top'> <td> ent61cip </td> <td> <TMPL_VAR NAME=ENT61CIP> </td>
+<tr valign='top'> <td> ent62cf </td> <td> <TMPL_VAR NAME=ENT62CF> </td>
+<tr valign='top'> <td> ent62cp </td> <td> <TMPL_VAR NAME=ENT62CP> </td>
+<tr valign='top'> <td> ent62cip </td> <td> <TMPL_VAR NAME=ENT62CIP> </td>
+<tr valign='top'> <td> ent63cf </td> <td> <TMPL_VAR NAME=ENT63CF> </td>
+<tr valign='top'> <td> ent63cp </td> <td> <TMPL_VAR NAME=ENT63CP> </td>
+<tr valign='top'> <td> ent63cip </td> <td> <TMPL_VAR NAME=ENT63CIP> </td>
+<tr valign='top'> <td> ent64cf </td> <td> <TMPL_VAR NAME=ENT64CF> </td>
+<tr valign='top'> <td> ent64cp </td> <td> <TMPL_VAR NAME=ENT64CP> </td>
+<tr valign='top'> <td> ent64cip </td> <td> <TMPL_VAR NAME=ENT64CIP> </td>
+
+			
+			
+			
+			
 		<TMPL_IF NAME=MS5000>
 			<tr valign='top'>
 			<td> Selected IP </td>
