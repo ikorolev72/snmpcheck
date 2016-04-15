@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.0 2016.03.18
-use lib "C:\GIT\snmpcheck\lib" ;
-use lib "/opt/snmpcheck/lib" ;
-use lib "../lib" ;
-use lib "../../lib" ;
+# version 1.1 2016.04.11
+use lib 'C:\GIT\snmpcheck\lib' ;
+use lib '/opt/snmpcheck/lib' ;
+use lib '../lib' ;
+use lib '../../lib' ;
 
 print "Content-type: text/html
 
@@ -16,22 +16,20 @@ use CGI::Carp qw ( fatalsToBrowser );
 
 
 
-
 $sname="qosequip";
+$title="iPasolink QoS set tool (equipment mode)";
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'qosequip.htm', die_on_bad_params=>0 );
-$template->param( SNAME=> $sname  );
-$title="iPasolink QoS set tool (equipment mode)";
 
-#$sname="clkread";
-#$ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
-#$template = HTML::Template->new(filename => 'clkread.htm', die_on_bad_params=>0 );
-#$template->param( SNAME=> $sname  );
-#$title="Syncronization (clock) report tool";
+$template->param( SNAME=> $sname  );
+$template->param( TITLE=> $title  );
+$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
+
 
 
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
+
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
@@ -46,8 +44,6 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 	unless (  require_authorisation()  ) { # we require any authorised user
 		message2( "Only authorised user can add this task" );
 		$template->param( AUTHORISED=>0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( TITLE=>$title );
 		$template->param( MESSAGES=> $message );
 
 		print  $template->output;
@@ -57,7 +53,23 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 
 
 $dbh=db_connect() ;
+unless( $Param ) {
+	my $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname );
+	if( $row ) {
+		my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+		$Param=$coder->decode ($row->{val});
+		undef( $Param->{id} );
+		undef( $Param->{save} );
+		undef( $Param->{save_first} );
+		undef( $Param->{save_second} );
+		undef( $Param->{save_as_default} );
+		undef( $Param->{edit} );
+		undef( $Param->{new} );
+	}
+}
 
+
+my $show_form=1;
 
 
 $Param->{all_ipasolink}=$Param->{all_ipasolink}?1:0;
@@ -67,50 +79,105 @@ $Param->{ucon}=$Param->{ucon}?1:0;
 $Param->{umng}=$Param->{umng}?1:0;
 
 
-#SHOWFORM_EXPANDED
+$template->param( SHOWFORM_FIRST=> 1 );
+$template->param( SHOWFORM_SECOND=> 0 );
+$template->param( SHOWFORM_TO_TASK=> 0 );
 
-if( !$Param->{save_first} && !$Param->{save_second} ) {
-		$template->param( SHOWFORM_EXPANDED=>0 );
-		$template->param( SHOWFORM=>1 );
-		$template->param( SHOWFORM_TO_TASK_=> 0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( TITLE=> $title );
+# get title of page from db
+# my $trow=GetRecordByField ( $dbh, 'snmpworker', 'sname', $sname ) ;
+# $title=$trow->{desc} if( $trow->{desc});
+
+if( $Param->{save_as_default} ) {
+	my $result=1;
+	if( check_record()  ) {
+		$template->param( SHOWFORM_FIRST=> 1 );
+		$template->param( SHOWFORM_SECOND=> 0 );
+		$template->param( SHOWFORM_TO_TASK=> 0 );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
+		$template->param( TITLE=> $title );	
+		my $coder = JSON::XS->new->utf8->pretty->allow_nonref; # bugs with JSON module and threads. we need use JSON::XS
+		my $json = $coder->encode ($Param);
+		my $row;
+		if( $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname )  ) {
+			$row->{ val }=$coder->encode ($Param);
+			$result=UpdateRecord( $dbh, $row->{id}, 'def_val', $row );
+		} else {
+			$row->{id}=GetNextSequence($dbh);
+			$row->{ val }=$coder->encode ($Param);
+			$row->{ sname }=$sname;			
+			$result=InsertRecord( $dbh, $row->{id}, 'def_val', $row );
+		}
+		if( $result) {
+			message2( "<font color=green>Default form values saved</font>");
+		} else {
+			message2( "Cannot save default form values");
+		}
+	}
 }
+
 
 if( $Param->{save_first} ) {
 	if( check_record()  ) {
-		$template->param( SHOWFORM_EXPANDED=>1 );
-		$template->param( SHOWFORM=>0 );
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 1 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( TITLE=> $title );
+		$template->param( DESC=> "$sname task " ) ; 	# .get_date() );
+			if( 1 == $Param->{task_start_type} ) {
+				$template->param( DESC=> "$sname crontab task " )
+			}		
+#message2( "<pre>".Dumper($Param)."</pre>");		
 	} else{
-		$template->param( SHOWFORM_EXPANDED=>0 );
-		$template->param( SHOWFORM=>1 );
+		$template->param( SHOWFORM_FIRST=> 1 );
+		$template->param( SHOWFORM_SECOND=> 0 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( TITLE=> $title );
 	}
 }
+
 if( $Param->{save_second} ) {
-		$template->param( SHOWFORM_EXPANDED=>0 );
-		$template->param( SHOWFORM=>0 );
+	if( check_record2()  ) {
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 0 );
 		$template->param( SHOWFORM_TO_TASK=> 1 );
-		$template->param( LOGIN=>$Param->{login} );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD} );
 		$template->param( TITLE=>"$title. Ready to add task" );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME}  );		
+		$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD} );
+		$template->param( DESC=> $Param->{desc}.get_date() );
+		if( 1 == $Param->{task_start_type} ) {
+			$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD_CRONTAB} );
+			$template->param( DESC=> $Param->{desc} );
+		}
+		
+	} else {
+		$template->param( DESC=> $Param->{desc} );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME}  );	
+		$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD}  );	
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 1 );
+		$template->param( SHOWFORM_TO_TASK=> 0 );
+	}
 }
 
+
+
+
+my @loop_data=();
 	my $grp=get_groups(  $Cfg->{iplistdb} );
+	$grp->{''}='';
 	foreach $group ( sort keys( %{$grp} ) ) {
 		my %row_data;   
+		$row_data{ SELECTED }=' selected ' if( $Param->{group} eq $group );
+		$row_data{ SELECTED }=' selected ' if( !$Param->{group} and $grp eq '' ) ;
 		$row_data{ GROUP }=$group;
 		$row_data{ GROUP_NAME }=$grp->{$group};		
 		push(@loop_data, \%row_data);
 	}
+		#my %row_data;   
+		#$row_data{ SELECTED }=' selected ' 	unless( $Param->{group}  ) ;
+		#$row_data{ GROUP }='';
+		#$row_data{ GROUP_NAME }='';	
+		#push(@loop_data, \%row_data);
+		
 	$template->param(GROUP_LIST_LOOP => \@loop_data);	
-	$template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
 	$template->param( IP=> $Param->{ip} );
 	$template->param( GROUP=> $Param->{group} );
 	$template->param( SUBGROUP=> $Param->{subgroup} );
@@ -118,215 +185,42 @@ if( $Param->{save_second} ) {
 	$template->param( INOP=> $Param->{inop} );
 	$template->param( UCON=> $Param->{ucon} );
 	$template->param( UMNG=> $Param->{umng} );
+	$template->param( WORKER_THREADS=> $Param->{worker_threads} );
+	$template->param( TASK_START_TYPE=> $Param->{task_start_type} );
+	$template->param( TASK_START_TYPE_CRON=>1 ) if( 1 == $Param->{task_start_type} ) ;
+	$template->param( CRON=> $Param->{cron} );
 
 
+	
 if( $Param->{Que_num}==1 ) {
 	$template->param( QUE_TXT=> 4 );
 }
 if( $Param->{Que_num}==2 ) {
 	$template->param( QUE_TXT=> 8 );
+}	
+		
+foreach $y ( qw( Que_num queset profnum proselect delpro actpro ent1cf ent1cp ent1cip ent2cf ent2cp ent2cip 
+ent3cf ent3cp ent3cip ent4cf ent4cp ent4cip ent5cf ent5cp ent5cip ent6cf ent6cp ent6cip ent7cf ent7cp ent7cip 
+ent8cf ent8cp ent8cip ent9cf ent9cp ent9cip ent10cf ent10cp ent10cip ent11cf ent11cp ent11cip ent12cf ent12cp ent12cip 
+ent13cf ent13cp ent13cip ent14cf ent14cp ent14cip ent15cf ent15cp ent15cip ent16cf ent16cp ent16cip ent17cf ent17cp ent17cip 
+ent18cf ent18cp ent18cip ent19cf ent19cp ent19cip ent20cf ent20cp ent20cip ent21cf ent21cp ent21cip ent22cf ent22cp ent22cip 
+ent23cf ent23cp ent23cip ent24cf ent24cp ent24cip ent25cf ent25cp ent25cip ent26cf ent26cp ent26cip ent27cf ent27cp ent27cip 
+ent28cf ent28cp ent28cip ent29cf ent29cp ent29cip ent30cf ent30cp ent30cip ent31cf ent31cp ent31cip ent32cf ent32cp ent32cip 
+ent33cf ent33cp ent33cip ent34cf ent34cp ent34cip ent35cf ent35cp ent35cip ent36cf ent36cp ent36cip ent37cf ent37cp ent37cip 
+ent38cf ent38cp ent38cip ent39cf ent39cp ent39cip ent40cf ent40cp ent40cip ent41cf ent41cp ent41cip ent42cf ent42cp ent42cip 
+ent43cf ent43cp ent43cip ent44cf ent44cp ent44cip ent45cf ent45cp ent45cip ent46cf ent46cp ent46cip ent47cf ent47cp ent47cip 
+ent48cf ent48cp ent48cip ent49cf ent49cp ent49cip ent50cf ent50cp ent50cip ent51cf ent51cp ent51cip ent52cf ent52cp ent52cip 
+ent53cf ent53cp ent53cip ent54cf ent54cp ent54cip ent55cf ent55cp ent55cip ent56cf ent56cp ent56cip ent57cf ent57cp ent57cip 
+ent58cf ent58cp ent58cip ent59cf ent59cp ent59cip ent60cf ent60cp ent60cip ent61cf ent61cp ent61cip ent62cf ent62cp ent62cip 
+ent63cf ent63cp ent63cip ent64cf ent64cp ent64cip
+)) {
+	my $Y=uc($y);
+	$template->param( $Y => $Param->{ $y } );
+	$template->param( "${Y}_$Param->{ $y }" => 1 ) if( $Param->{ $y } );
 }
-	
-$template->param( QUE_NUM=> $Param->{Que_num} );
-$template->param( QUESET=> $Param->{queset} );
-$template->param( PROFNUM=> $Param->{profnum} );
-$template->param( PROSELECT=> $Param->{proselect} );
-$template->param( DELPRO=> $Param->{delpro} );
-$template->param( ACTPRO=> $Param->{actpro} );
-$template->param( ENT1CF=> $Param->{ent1cf} );
-$template->param( ENT1CP=> $Param->{ent1cp} );
-$template->param( ENT1CIP=> $Param->{ent1cip} );
-$template->param( ENT2CF=> $Param->{ent2cf} );
-$template->param( ENT2CP=> $Param->{ent2cp} );
-$template->param( ENT2CIP=> $Param->{ent2cip} );
-$template->param( ENT3CF=> $Param->{ent3cf} );
-$template->param( ENT3CP=> $Param->{ent3cp} );
-$template->param( ENT3CIP=> $Param->{ent3cip} );
-$template->param( ENT4CF=> $Param->{ent4cf} );
-$template->param( ENT4CP=> $Param->{ent4cp} );
-$template->param( ENT4CIP=> $Param->{ent4cip} );
-$template->param( ENT5CF=> $Param->{ent5cf} );
-$template->param( ENT5CP=> $Param->{ent5cp} );
-$template->param( ENT5CIP=> $Param->{ent5cip} );
-$template->param( ENT6CF=> $Param->{ent6cf} );
-$template->param( ENT6CP=> $Param->{ent6cp} );
-$template->param( ENT6CIP=> $Param->{ent6cip} );
-$template->param( ENT7CF=> $Param->{ent7cf} );
-$template->param( ENT7CP=> $Param->{ent7cp} );
-$template->param( ENT7CIP=> $Param->{ent7cip} );
-$template->param( ENT8CF=> $Param->{ent8cf} );
-$template->param( ENT8CP=> $Param->{ent8cp} );
-$template->param( ENT8CIP=> $Param->{ent8cip} );
-$template->param( ENT9CF=> $Param->{ent9cf} );
-$template->param( ENT9CP=> $Param->{ent9cp} );
-$template->param( ENT9CIP=> $Param->{ent9cip} );
-$template->param( ENT10CF=> $Param->{ent10cf} );
-$template->param( ENT10CP=> $Param->{ent10cp} );
-$template->param( ENT10CIP=> $Param->{ent10cip} );
-$template->param( ENT11CF=> $Param->{ent11cf} );
-$template->param( ENT11CP=> $Param->{ent11cp} );
-$template->param( ENT11CIP=> $Param->{ent11cip} );
-$template->param( ENT12CF=> $Param->{ent12cf} );
-$template->param( ENT12CP=> $Param->{ent12cp} );
-$template->param( ENT12CIP=> $Param->{ent12cip} );
-$template->param( ENT13CF=> $Param->{ent13cf} );
-$template->param( ENT13CP=> $Param->{ent13cp} );
-$template->param( ENT13CIP=> $Param->{ent13cip} );
-$template->param( ENT14CF=> $Param->{ent14cf} );
-$template->param( ENT14CP=> $Param->{ent14cp} );
-$template->param( ENT14CIP=> $Param->{ent14cip} );
-$template->param( ENT15CF=> $Param->{ent15cf} );
-$template->param( ENT15CP=> $Param->{ent15cp} );
-$template->param( ENT15CIP=> $Param->{ent15cip} );
-$template->param( ENT16CF=> $Param->{ent16cf} );
-$template->param( ENT16CP=> $Param->{ent16cp} );
-$template->param( ENT16CIP=> $Param->{ent16cip} );
-$template->param( ENT17CF=> $Param->{ent17cf} );
-$template->param( ENT17CP=> $Param->{ent17cp} );
-$template->param( ENT17CIP=> $Param->{ent17cip} );
-$template->param( ENT18CF=> $Param->{ent18cf} );
-$template->param( ENT18CP=> $Param->{ent18cp} );
-$template->param( ENT18CIP=> $Param->{ent18cip} );
-$template->param( ENT19CF=> $Param->{ent19cf} );
-$template->param( ENT19CP=> $Param->{ent19cp} );
-$template->param( ENT19CIP=> $Param->{ent19cip} );
-$template->param( ENT20CF=> $Param->{ent20cf} );
-$template->param( ENT20CP=> $Param->{ent20cp} );
-$template->param( ENT20CIP=> $Param->{ent20cip} );
-$template->param( ENT21CF=> $Param->{ent21cf} );
-$template->param( ENT21CP=> $Param->{ent21cp} );
-$template->param( ENT21CIP=> $Param->{ent21cip} );
-$template->param( ENT22CF=> $Param->{ent22cf} );
-$template->param( ENT22CP=> $Param->{ent22cp} );
-$template->param( ENT22CIP=> $Param->{ent22cip} );
-$template->param( ENT23CF=> $Param->{ent23cf} );
-$template->param( ENT23CP=> $Param->{ent23cp} );
-$template->param( ENT23CIP=> $Param->{ent23cip} );
-$template->param( ENT24CF=> $Param->{ent24cf} );
-$template->param( ENT24CP=> $Param->{ent24cp} );
-$template->param( ENT24CIP=> $Param->{ent24cip} );
-$template->param( ENT25CF=> $Param->{ent25cf} );
-$template->param( ENT25CP=> $Param->{ent25cp} );
-$template->param( ENT25CIP=> $Param->{ent25cip} );
-$template->param( ENT26CF=> $Param->{ent26cf} );
-$template->param( ENT26CP=> $Param->{ent26cp} );
-$template->param( ENT26CIP=> $Param->{ent26cip} );
-$template->param( ENT27CF=> $Param->{ent27cf} );
-$template->param( ENT27CP=> $Param->{ent27cp} );
-$template->param( ENT27CIP=> $Param->{ent27cip} );
-$template->param( ENT28CF=> $Param->{ent28cf} );
-$template->param( ENT28CP=> $Param->{ent28cp} );
-$template->param( ENT28CIP=> $Param->{ent28cip} );
-$template->param( ENT29CF=> $Param->{ent29cf} );
-$template->param( ENT29CP=> $Param->{ent29cp} );
-$template->param( ENT29CIP=> $Param->{ent29cip} );
-$template->param( ENT30CF=> $Param->{ent30cf} );
-$template->param( ENT30CP=> $Param->{ent30cp} );
-$template->param( ENT30CIP=> $Param->{ent30cip} );
-$template->param( ENT31CF=> $Param->{ent31cf} );
-$template->param( ENT31CP=> $Param->{ent31cp} );
-$template->param( ENT31CIP=> $Param->{ent31cip} );
-$template->param( ENT32CF=> $Param->{ent32cf} );
-$template->param( ENT32CP=> $Param->{ent32cp} );
-$template->param( ENT32CIP=> $Param->{ent32cip} );
-$template->param( ENT33CF=> $Param->{ent33cf} );
-$template->param( ENT33CP=> $Param->{ent33cp} );
-$template->param( ENT33CIP=> $Param->{ent33cip} );
-$template->param( ENT34CF=> $Param->{ent34cf} );
-$template->param( ENT34CP=> $Param->{ent34cp} );
-$template->param( ENT34CIP=> $Param->{ent34cip} );
-$template->param( ENT35CF=> $Param->{ent35cf} );
-$template->param( ENT35CP=> $Param->{ent35cp} );
-$template->param( ENT35CIP=> $Param->{ent35cip} );
-$template->param( ENT36CF=> $Param->{ent36cf} );
-$template->param( ENT36CP=> $Param->{ent36cp} );
-$template->param( ENT36CIP=> $Param->{ent36cip} );
-$template->param( ENT37CF=> $Param->{ent37cf} );
-$template->param( ENT37CP=> $Param->{ent37cp} );
-$template->param( ENT37CIP=> $Param->{ent37cip} );
-$template->param( ENT38CF=> $Param->{ent38cf} );
-$template->param( ENT38CP=> $Param->{ent38cp} );
-$template->param( ENT38CIP=> $Param->{ent38cip} );
-$template->param( ENT39CF=> $Param->{ent39cf} );
-$template->param( ENT39CP=> $Param->{ent39cp} );
-$template->param( ENT39CIP=> $Param->{ent39cip} );
-$template->param( ENT40CF=> $Param->{ent40cf} );
-$template->param( ENT40CP=> $Param->{ent40cp} );
-$template->param( ENT40CIP=> $Param->{ent40cip} );
-$template->param( ENT41CF=> $Param->{ent41cf} );
-$template->param( ENT41CP=> $Param->{ent41cp} );
-$template->param( ENT41CIP=> $Param->{ent41cip} );
-$template->param( ENT42CF=> $Param->{ent42cf} );
-$template->param( ENT42CP=> $Param->{ent42cp} );
-$template->param( ENT42CIP=> $Param->{ent42cip} );
-$template->param( ENT43CF=> $Param->{ent43cf} );
-$template->param( ENT43CP=> $Param->{ent43cp} );
-$template->param( ENT43CIP=> $Param->{ent43cip} );
-$template->param( ENT44CF=> $Param->{ent44cf} );
-$template->param( ENT44CP=> $Param->{ent44cp} );
-$template->param( ENT44CIP=> $Param->{ent44cip} );
-$template->param( ENT45CF=> $Param->{ent45cf} );
-$template->param( ENT45CP=> $Param->{ent45cp} );
-$template->param( ENT45CIP=> $Param->{ent45cip} );
-$template->param( ENT46CF=> $Param->{ent46cf} );
-$template->param( ENT46CP=> $Param->{ent46cp} );
-$template->param( ENT46CIP=> $Param->{ent46cip} );
-$template->param( ENT47CF=> $Param->{ent47cf} );
-$template->param( ENT47CP=> $Param->{ent47cp} );
-$template->param( ENT47CIP=> $Param->{ent47cip} );
-$template->param( ENT48CF=> $Param->{ent48cf} );
-$template->param( ENT48CP=> $Param->{ent48cp} );
-$template->param( ENT48CIP=> $Param->{ent48cip} );
-$template->param( ENT49CF=> $Param->{ent49cf} );
-$template->param( ENT49CP=> $Param->{ent49cp} );
-$template->param( ENT49CIP=> $Param->{ent49cip} );
-$template->param( ENT50CF=> $Param->{ent50cf} );
-$template->param( ENT50CP=> $Param->{ent50cp} );
-$template->param( ENT50CIP=> $Param->{ent50cip} );
-$template->param( ENT51CF=> $Param->{ent51cf} );
-$template->param( ENT51CP=> $Param->{ent51cp} );
-$template->param( ENT51CIP=> $Param->{ent51cip} );
-$template->param( ENT52CF=> $Param->{ent52cf} );
-$template->param( ENT52CP=> $Param->{ent52cp} );
-$template->param( ENT52CIP=> $Param->{ent52cip} );
-$template->param( ENT53CF=> $Param->{ent53cf} );
-$template->param( ENT53CP=> $Param->{ent53cp} );
-$template->param( ENT53CIP=> $Param->{ent53cip} );
-$template->param( ENT54CF=> $Param->{ent54cf} );
-$template->param( ENT54CP=> $Param->{ent54cp} );
-$template->param( ENT54CIP=> $Param->{ent54cip} );
-$template->param( ENT55CF=> $Param->{ent55cf} );
-$template->param( ENT55CP=> $Param->{ent55cp} );
-$template->param( ENT55CIP=> $Param->{ent55cip} );
-$template->param( ENT56CF=> $Param->{ent56cf} );
-$template->param( ENT56CP=> $Param->{ent56cp} );
-$template->param( ENT56CIP=> $Param->{ent56cip} );
-$template->param( ENT57CF=> $Param->{ent57cf} );
-$template->param( ENT57CP=> $Param->{ent57cp} );
-$template->param( ENT57CIP=> $Param->{ent57cip} );
-$template->param( ENT58CF=> $Param->{ent58cf} );
-$template->param( ENT58CP=> $Param->{ent58cp} );
-$template->param( ENT58CIP=> $Param->{ent58cip} );
-$template->param( ENT59CF=> $Param->{ent59cf} );
-$template->param( ENT59CP=> $Param->{ent59cp} );
-$template->param( ENT59CIP=> $Param->{ent59cip} );
-$template->param( ENT60CF=> $Param->{ent60cf} );
-$template->param( ENT60CP=> $Param->{ent60cp} );
-$template->param( ENT60CIP=> $Param->{ent60cip} );
-$template->param( ENT61CF=> $Param->{ent61cf} );
-$template->param( ENT61CP=> $Param->{ent61cp} );
-$template->param( ENT61CIP=> $Param->{ent61cip} );
-$template->param( ENT62CF=> $Param->{ent62cf} );
-$template->param( ENT62CP=> $Param->{ent62cp} );
-$template->param( ENT62CIP=> $Param->{ent62cip} );
-$template->param( ENT63CF=> $Param->{ent63cf} );
-$template->param( ENT63CP=> $Param->{ent63cp} );
-$template->param( ENT63CIP=> $Param->{ent63cip} );
-$template->param( ENT64CF=> $Param->{ent64cf} );
-$template->param( ENT64CP=> $Param->{ent64cp} );
-$template->param( ENT64CIP=> $Param->{ent64cip} );
+			
 
-	 
+#message2( "<pre>".Dumper($template)."</pre>");		 
 
 # print the template output
 $template->param( MESSAGES=> $message );
@@ -344,7 +238,11 @@ sub check_record {
 	my $retval=1;
 	unless( CheckField ( $Param->{Que_num} ,'int', "Field 'Number of queues' " )) {
 			$retval=0;
-	} 
+	} 	
+	if( 1 == $Param->{task_start_type} && !require_authorisation() ) { 
+			message2( "Only authorised user can add crontab task" );
+			$retval=0;
+	}	
 	unless( CheckField ( $Param->{ip} ,'ip_op_empty', "Field 'ip' " )) {
 			$retval=0;
 	} 
@@ -354,12 +252,30 @@ sub check_record {
 	unless( CheckField ( $Param->{all_ipasolink} ,'boolean', "Field 'IP list for all iPasolink' ") ){
 		$retval=0;
 	}
-	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
-		$retval=0;
-	}
+#	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
+#		$retval=0;
+#	}
 	if( !$Param->{ip} && !$Param->{group} && !$Param->{all_ipasolink} ) {
 		message2( "Must be set 'ip address' or 'group' or 'IP list for all iPasolink'" );
 		$retval=0;
 	}
 	return $retval;
 }
+
+sub check_record2 {
+	my $retval=1;
+	if( 1 == $Param->{task_start_type} ) {
+		unless( CheckField ( $Param->{cron} ,'cron', "Field 'Crontab' ") ){
+			$retval=0;
+		}
+		unless( require_authorisation() ) { 
+			message2( "Only authorised user can add crontab task" );
+			$retval=0;
+		}
+	}
+	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
+		$retval=0;
+	}
+	return $retval;
+}
+

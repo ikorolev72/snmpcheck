@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.0 2016.03.18
-use lib "C:\GIT\snmpcheck\lib" ;
-use lib "/opt/snmpcheck/lib" ;
-use lib "../lib" ;
-use lib "../../lib" ;
+# version 1.1 2016.04.11
+use lib 'C:\GIT\snmpcheck\lib' ;
+use lib '/opt/snmpcheck/lib' ;
+use lib '../lib' ;
+use lib '../../lib' ;
 
 print "Content-type: text/html
 
@@ -16,22 +16,20 @@ use CGI::Carp qw ( fatalsToBrowser );
 
 
 
-
 $sname="qosport";
+$title="iPasolink QoS set tool  (port mode)";
 $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'qosport.htm', die_on_bad_params=>0 );
-$template->param( SNAME=> $sname  );
-$title="iPasolink QoS set tool  (port mode)";
 
-#$sname="clkread";
-#$ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
-#$template = HTML::Template->new(filename => 'clkread.htm', die_on_bad_params=>0 );
-#$template->param( SNAME=> $sname  );
-#$title="Syncronization (clock) report tool";
+$template->param( SNAME=> $sname  );
+$template->param( TITLE=> $title  );
+$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
+
 
 
 $query = new CGI;
 foreach ( $query->param() ) { $Param->{$_}=$query->param($_); }
+
 
 my $dbh, $stmt, $sth, $rv;
 $message='';
@@ -46,8 +44,6 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 	unless (  require_authorisation()  ) { # we require any authorised user
 		message2( "Only authorised user can add this task" );
 		$template->param( AUTHORISED=>0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( TITLE=>$title );
 		$template->param( MESSAGES=> $message );
 
 		print  $template->output;
@@ -57,6 +53,21 @@ if(  grep {/^$sname$/ } split( /,/, $Cfg->{approved_application_for_authenticati
 
 
 $dbh=db_connect() ;
+unless( $Param ) {
+	my $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname );
+	if( $row ) {
+		my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+		$Param=$coder->decode ($row->{val});
+		undef( $Param->{id} );
+		undef( $Param->{save} );
+		undef( $Param->{save_first} );
+		undef( $Param->{save_second} );
+		undef( $Param->{save_as_default} );
+		undef( $Param->{edit} );
+		undef( $Param->{new} );
+	}
+}
+
 
 my $show_form=1;
 
@@ -68,52 +79,105 @@ $Param->{ucon}=$Param->{ucon}?1:0;
 $Param->{umng}=$Param->{umng}?1:0;
 
 
-#SHOWFORM_EXPANDED
+$template->param( SHOWFORM_FIRST=> 1 );
+$template->param( SHOWFORM_SECOND=> 0 );
+$template->param( SHOWFORM_TO_TASK=> 0 );
 
-if( !$Param->{save_first} && !$Param->{save_second} ) {
-		$template->param( SHOWFORM_EXPANDED=>0 );
-		$template->param( SHOWFORM=>1 );
-		$template->param( SHOWFORM_TO_TASK_=> 0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( TITLE=> $title );
+# get title of page from db
+# my $trow=GetRecordByField ( $dbh, 'snmpworker', 'sname', $sname ) ;
+# $title=$trow->{desc} if( $trow->{desc});
+
+if( $Param->{save_as_default} ) {
+	my $result=1;
+	if( check_record()  ) {
+		$template->param( SHOWFORM_FIRST=> 1 );
+		$template->param( SHOWFORM_SECOND=> 0 );
+		$template->param( SHOWFORM_TO_TASK=> 0 );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME} );
+		$template->param( TITLE=> $title );	
+		my $coder = JSON::XS->new->utf8->pretty->allow_nonref; # bugs with JSON module and threads. we need use JSON::XS
+		my $json = $coder->encode ($Param);
+		my $row;
+		if( $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname )  ) {
+			$row->{ val }=$coder->encode ($Param);
+			$result=UpdateRecord( $dbh, $row->{id}, 'def_val', $row );
+		} else {
+			$row->{id}=GetNextSequence($dbh);
+			$row->{ val }=$coder->encode ($Param);
+			$row->{ sname }=$sname;			
+			$result=InsertRecord( $dbh, $row->{id}, 'def_val', $row );
+		}
+		if( $result) {
+			message2( "<font color=green>Default form values saved</font>");
+		} else {
+			message2( "Cannot save default form values");
+		}
+	}
 }
+
 
 if( $Param->{save_first} ) {
 	if( check_record()  ) {
-		$template->param( SHOWFORM_EXPANDED=>1 );
-		$template->param( SHOWFORM=>0 );
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 1 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( TITLE=> $title );
+		$template->param( DESC=> "$sname task " ) ; 	# .get_date() );
+			if( 1 == $Param->{task_start_type} ) {
+				$template->param( DESC=> "$sname crontab task " )
+			}		
+#message2( "<pre>".Dumper($Param)."</pre>");		
 	} else{
-		$template->param( SHOWFORM_EXPANDED=>0 );
-		$template->param( SHOWFORM=>1 );
+		$template->param( SHOWFORM_FIRST=> 1 );
+		$template->param( SHOWFORM_SECOND=> 0 );
 		$template->param( SHOWFORM_TO_TASK=> 0 );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( TITLE=> $title );
 	}
 }
+
 if( $Param->{save_second} ) {
-		$template->param( SHOWFORM_EXPANDED=>0 );
-		$template->param( SHOWFORM=>0 );
+	if( check_record2()  ) {
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 0 );
 		$template->param( SHOWFORM_TO_TASK=> 1 );
-		$template->param( LOGIN=>$Param->{login} );
-		$template->param( ACTION=>  "$ENV{'SCRIPT_NAME'}" );
-		$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD} );
 		$template->param( TITLE=>"$title. Ready to add task" );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME}  );		
+		$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD} );
+		$template->param( DESC=> $Param->{desc}.get_date() );
+		if( 1 == $Param->{task_start_type} ) {
+			$template->param( ACTION_TASK_ADD =>  $Url->{ACTION_TASK_ADD_CRONTAB} );
+			$template->param( DESC=> $Param->{desc} );
+		}
+		
+	} else {
+		$template->param( DESC=> $Param->{desc} );
+		$template->param( ACTION=>  $ENV{SCRIPT_NAME}  );	
+		$template->param( ACTION_TASK_ADD=>  $Url->{ACTION_TASK_ADD}  );	
+		$template->param( SHOWFORM_FIRST=> 0 );
+		$template->param( SHOWFORM_SECOND=> 1 );
+		$template->param( SHOWFORM_TO_TASK=> 0 );
+	}
 }
 
 
 
+
+my @loop_data=();
 	my $grp=get_groups(  $Cfg->{iplistdb} );
+	$grp->{''}='';
 	foreach $group ( sort keys( %{$grp} ) ) {
 		my %row_data;   
+		$row_data{ SELECTED }=' selected ' if( $Param->{group} eq $group );
+		$row_data{ SELECTED }=' selected ' if( !$Param->{group} and $grp eq '' ) ;
 		$row_data{ GROUP }=$group;
 		$row_data{ GROUP_NAME }=$grp->{$group};		
 		push(@loop_data, \%row_data);
 	}
+		#my %row_data;   
+		#$row_data{ SELECTED }=' selected ' 	unless( $Param->{group}  ) ;
+		#$row_data{ GROUP }='';
+		#$row_data{ GROUP_NAME }='';	
+		#push(@loop_data, \%row_data);
+		
 	$template->param(GROUP_LIST_LOOP => \@loop_data);	
-	$template->param( DESC=> $Param->{desc} || "$sname task ".get_date() );
 	$template->param( IP=> $Param->{ip} );
 	$template->param( GROUP=> $Param->{group} );
 	$template->param( SUBGROUP=> $Param->{subgroup} );
@@ -121,118 +185,39 @@ if( $Param->{save_second} ) {
 	$template->param( INOP=> $Param->{inop} );
 	$template->param( UCON=> $Param->{ucon} );
 	$template->param( UMNG=> $Param->{umng} );
+	$template->param( WORKER_THREADS=> $Param->{worker_threads} );
+	$template->param( TASK_START_TYPE=> $Param->{task_start_type} );
+	$template->param( TASK_START_TYPE_CRON=>1 ) if( 1 == $Param->{task_start_type} ) ;
+	$template->param( CRON=> $Param->{cron} );
 
-	
 	
 if( $Param->{Que_num}==1 ) {
 	$template->param( QUE_TXT=> 4 );
 }
 if( $Param->{Que_num}==2 ) {
 	$template->param( QUE_TXT=> 8 );
-}		
-	
-$template->param( QUE_NUM=> $Param->{Que_num} );
-$template->param( QUESET=> $Param->{queset} );
-$template->param( MODEMPORT=> $Param->{modemport} );
-$template->param( MODEMSET=> $Param->{modemset} );
-$template->param( MODEMSCHEDULER=> $Param->{modemscheduler} );
-$template->param( MODEMSCHEDULERMODE=> $Param->{modemschedulermode} );
-$template->param( MODEMDEFPORTPRIO=> $Param->{modemdefportprio} );
-$template->param( MODEMDROPMODE=> $Param->{modemdropmode} );
-$template->param( MINTERPRIOALLOW=> $Param->{minterprioallow} );
-$template->param( FAKENAME0=> $Param->{fakename0} );
-$template->param( FAKENAME1=> $Param->{fakename1} );
-$template->param( FAKENAME2=> $Param->{fakename2} );
-$template->param( FAKENAME3=> $Param->{fakename3} );
-$template->param( FAKENAME4=> $Param->{fakename4} );
-$template->param( FAKENAME5=> $Param->{fakename5} );
-$template->param( FAKENAME6=> $Param->{fakename6} );
-$template->param( FAKENAME7=> $Param->{fakename7} );
-$template->param( MODEMINTERNALPRI0=> $Param->{modeminternalpri0} );
-$template->param( MODEMINTERNALPRI1=> $Param->{modeminternalpri1} );
-$template->param( MODEMINTERNALPRI2=> $Param->{modeminternalpri2} );
-$template->param( MODEMINTERNALPRI3=> $Param->{modeminternalpri3} );
-$template->param( MODEMINTERNALPRI4=> $Param->{modeminternalpri4} );
-$template->param( MODEMINTERNALPRI5=> $Param->{modeminternalpri5} );
-$template->param( MODEMINTERNALPRI6=> $Param->{modeminternalpri6} );
-$template->param( MODEMINTERNALPRI7=> $Param->{modeminternalpri7} );
-$template->param( MDWRRALLOW=> $Param->{mdwrrallow} );
-$template->param( MDWRR0=> $Param->{mdwrr0} );
-$template->param( MQL0=> $Param->{mql0} );
-$template->param( MQS0=> $Param->{mqs0} );
-$template->param( MDWRR1=> $Param->{mdwrr1} );
-$template->param( MQL1=> $Param->{mql1} );
-$template->param( MQS1=> $Param->{mqs1} );
-$template->param( MDWRR2=> $Param->{mdwrr2} );
-$template->param( MQL2=> $Param->{mql2} );
-$template->param( MQS2=> $Param->{mqs2} );
-$template->param( MDWRR3=> $Param->{mdwrr3} );
-$template->param( MQL3=> $Param->{mql3} );
-$template->param( MQS3=> $Param->{mqs3} );
-$template->param( MWTDALLOW=> $Param->{mwtdallow} );
-$template->param( MWTDY0=> $Param->{mwtdy0} );
-$template->param( MWREDG0=> $Param->{mwredg0} );
-$template->param( MWREDY0=> $Param->{mwredy0} );
-$template->param( MWTDY1=> $Param->{mwtdy1} );
-$template->param( MWREDG1=> $Param->{mwredg1} );
-$template->param( MWREDY1=> $Param->{mwredy1} );
-$template->param( MWTDY2=> $Param->{mwtdy2} );
-$template->param( MWREDG2=> $Param->{mwredg2} );
-$template->param( MWREDY2=> $Param->{mwredy2} );
-$template->param( MWTDY3=> $Param->{mwtdy3} );
-$template->param( MWREDG3=> $Param->{mwredg3} );
-$template->param( MWREDY3=> $Param->{mwredy3} );
-$template->param( ETHERNETSET=> $Param->{ethernetset} );
-$template->param( ETHERNETSCHEDULER=> $Param->{ethernetscheduler} );
-$template->param( ESPS0=> $Param->{esps0} );
-$template->param( ETHERNETSCHEDULERMODE=> $Param->{ethernetschedulermode} );
-$template->param( ETHERNETDEFPORTPRIO=> $Param->{ethernetdefportprio} );
-$template->param( ETHERNETDROPMODE=> $Param->{ethernetdropmode} );
-$template->param( EINTERPRIOALLOW=> $Param->{einterprioallow} );
-$template->param( FAKENAME0=> $Param->{fakename0} );
-$template->param( FAKENAME1=> $Param->{fakename1} );
-$template->param( FAKENAME2=> $Param->{fakename2} );
-$template->param( FAKENAME3=> $Param->{fakename3} );
-$template->param( FAKENAME4=> $Param->{fakename4} );
-$template->param( FAKENAME5=> $Param->{fakename5} );
-$template->param( FAKENAME6=> $Param->{fakename6} );
-$template->param( FAKENAME7=> $Param->{fakename7} );
-$template->param( ETHERNETINTERNALPRI0=> $Param->{ethernetinternalpri0} );
-$template->param( ETHERNETINTERNALPRI1=> $Param->{ethernetinternalpri1} );
-$template->param( ETHERNETINTERNALPRI2=> $Param->{ethernetinternalpri2} );
-$template->param( ETHERNETINTERNALPRI3=> $Param->{ethernetinternalpri3} );
-$template->param( ETHERNETINTERNALPRI4=> $Param->{ethernetinternalpri4} );
-$template->param( ETHERNETINTERNALPRI5=> $Param->{ethernetinternalpri5} );
-$template->param( ETHERNETINTERNALPRI6=> $Param->{ethernetinternalpri6} );
-$template->param( ETHERNETINTERNALPRI7=> $Param->{ethernetinternalpri7} );
-$template->param( EDWRRALLOW=> $Param->{edwrrallow} );
-$template->param( EDWRR0=> $Param->{edwrr0} );
-$template->param( EQL0=> $Param->{eql0} );
-$template->param( EQS0=> $Param->{eqs0} );
-$template->param( EDWRR1=> $Param->{edwrr1} );
-$template->param( EQL1=> $Param->{eql1} );
-$template->param( EQS1=> $Param->{eqs1} );
-$template->param( EDWRR2=> $Param->{edwrr2} );
-$template->param( EQL2=> $Param->{eql2} );
-$template->param( EQS2=> $Param->{eqs2} );
-$template->param( EDWRR3=> $Param->{edwrr3} );
-$template->param( EQL3=> $Param->{eql3} );
-$template->param( EQS3=> $Param->{eqs3} );
-$template->param( EWTDALLOW=> $Param->{ewtdallow} );
-$template->param( EWTDY0=> $Param->{ewtdy0} );
-$template->param( EWREDG0=> $Param->{ewredg0} );
-$template->param( EWREDY0=> $Param->{ewredy0} );
-$template->param( EWTDY1=> $Param->{ewtdy1} );
-$template->param( EWREDG1=> $Param->{ewredg1} );
-$template->param( EWREDY1=> $Param->{ewredy1} );
-$template->param( EWTDY2=> $Param->{ewtdy2} );
-$template->param( EWREDG2=> $Param->{ewredg2} );
-$template->param( EWREDY2=> $Param->{ewredy2} );
-$template->param( EWTDY3=> $Param->{ewtdy3} );
-$template->param( EWREDG3=> $Param->{ewredg3} );
-$template->param( EWREDY3=> $Param->{ewredy3} );
+}	
+		
+foreach $y ( qw( Que_num queset modemport modemset modemscheduler modemschedulermode modemdefportprio modemdropmode 
+minterprioallow fakename0 fakename1 fakename2 fakename3 fakename4 fakename5 fakename6 fakename7 modeminternalpri0 
+modeminternalpri1 modeminternalpri2 modeminternalpri3 modeminternalpri4 modeminternalpri5 modeminternalpri6 modeminternalpri7 
+mdwrrallow mdwrr0 mql0 mqs0 mdwrr1 mql1 mqs1 mdwrr2 mql2 mqs2 mdwrr3 mql3 mqs3 mwtdallow mwtdy0 mwredg0 mwredy0 mwtdy1 
+mwredg1 mwredy1 mwtdy2 mwredg2 mwredy2 mwtdy3 mwredg3 mwredy3 
+ethernetset ethernetscheduler esps0 ethernetschedulermode ethernetdefportprio ethernetdropmode einterprioallow 
+fakename0 fakename1 fakename2 fakename3 fakename4 fakename5 fakename6 fakename7 ethernetinternalpri0 ethernetinternalpri1 
+ethernetinternalpri2 ethernetinternalpri3 ethernetinternalpri4 ethernetinternalpri5 ethernetinternalpri6 ethernetinternalpri7 
+edwrrallow edwrr0 eql0 eqs0 edwrr1 eql1 eqs1 edwrr2 eql2 eqs2 edwrr3 eql3 eqs3 ewtdallow ewtdy0 ewredg0 ewredy0 ewtdy1 ewredg1 
+ewredy1 ewtdy2 ewredg2 ewredy2 ewtdy3 ewredg3 ewredy3
+ethernetslot ethernetport
+)) {
+	my $Y=uc($y);
+	$template->param( $Y => $Param->{ $y } );
+	$template->param( "${Y}_$Param->{ $y }" => 1 ) if( $Param->{ $y } );
+}
+		
 
-	 
+	
+#message2( "<pre>".Dumper($template)."</pre>");		 
 
 # print the template output
 $template->param( MESSAGES=> $message );
@@ -243,20 +228,18 @@ db_disconnect( $dbh );
 
 ##############################################
 
-sub Action {
-	if( $Param->{save} ) {
-		return( check_record()  );
-	}	
-return 0;
-}
 
 
 
 sub check_record {
 	my $retval=1;
-	unless( CheckField ( $Param->{Que_num} ,'int', "Field 'Number of queues' " )) {
+		unless( CheckField ( $Param->{Que_num} ,'int', "Field 'Number of queues' " )) {
 			$retval=0;
 	} 		
+	if( 1 == $Param->{task_start_type} && !require_authorisation() ) { 
+			message2( "Only authorised user can add crontab task" );
+			$retval=0;
+	}	
 	unless( CheckField ( $Param->{ip} ,'ip_op_empty', "Field 'ip' " )) {
 			$retval=0;
 	} 
@@ -266,12 +249,30 @@ sub check_record {
 	unless( CheckField ( $Param->{all_ipasolink} ,'boolean', "Field 'IP list for all iPasolink' ") ){
 		$retval=0;
 	}
-	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
-		$retval=0;
-	}
+#	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
+#		$retval=0;
+#	}
 	if( !$Param->{ip} && !$Param->{group} && !$Param->{all_ipasolink} ) {
 		message2( "Must be set 'ip address' or 'group' or 'IP list for all iPasolink'" );
 		$retval=0;
 	}
 	return $retval;
 }
+
+sub check_record2 {
+	my $retval=1;
+	if( 1 == $Param->{task_start_type} ) {
+		unless( CheckField ( $Param->{cron} ,'cron', "Field 'Crontab' ") ){
+			$retval=0;
+		}
+		unless( require_authorisation() ) { 
+			message2( "Only authorised user can add crontab task" );
+			$retval=0;
+		}
+	}
+	unless( CheckField ( $Param->{desc} ,'desc', "Field 'Description' ") ){
+		$retval=0;
+	}
+	return $retval;
+}
+
