@@ -86,6 +86,7 @@ sub cron_tasks{
 			$nrow->{sname}=$row->{sname} ;
 			$nrow->{login}=$row->{login} ;
 			$nrow->{param}=$row->{param};
+			$nrow->{crontaskid}=$row->{id};
 			$nrow->{worker_threads}=$row->{worker_threads};
 			$nrow->{status}=1 ; # added
 			$nrow->{mess}='' ;

@@ -477,10 +477,30 @@ sub GetNextSequence {
 	return ( $row->{id} );	
 }
 
-
-
-
 sub GetCountRecords {
+	my $dbh=shift;
+	my $table=shift;
+	my $Where=shift; # ref to array
+
+	my $stmt ="";
+	if( $#{Where} > -1 ) {
+		$stmt ="SELECT COUNT(*) as count FROM  $table where " . join( ' and ',  @{Where} )." ;";
+	} else {
+		$stmt ="SELECT COUNT(*) as count FROM  $table ;";
+	}
+		my $sth = $dbh->prepare( $stmt );
+		unless ( my $rv = $sth->execute( ) || $rv < 0 ) {
+			message2 ( "Someting wrong with database  : $DBI::errstr" );
+			w2log ( "Sql( $stmt ) Someting wrong with database  : $DBI::errstr" );
+			return 0;
+		}
+	return ( $sth->fetchrow_hashref->{count} );		   
+}
+
+
+
+
+sub GetCountRecords1 {
 	my $dbh=shift;
 	my $table=shift;
 	my $Where=shift;

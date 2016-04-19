@@ -43,8 +43,6 @@ $Param->{lines_per_page}=25 if( !$Param->{lines_per_page} || !$Param->{lines_per
 $Param->{filter_sname}='' if( !$Param->{filter_sname} || !$Param->{lines_per_page}=~/^\w+$/ ) ;
 
 
-
-
 if( $Param->{del} ) {
 	if (  require_authorisation() ) { # we require authorisation for delete tasks
 		$template->param( REQUEST_URI => "$ENV{'SCRIPT_NAME'}" );
@@ -79,6 +77,7 @@ if( $Param->{edit} ) {
 				$template->param( DT=>  get_date($row->{dt}) ); 
 				$template->param( SDT=> get_date( $row->{sdt} ) ); 
 				$template->param( STATUS=> $Task->{ $row->{status} } ); 
+				$template->param( CRONTASKID=> $Task->{ $row->{crontaskid} } ); 
 				$template->param( PROGRESS=> "$row->{progress} %"  ); 
 					if( 2==$row->{status} || 4==$row->{status}  ) {
 						$template->param( STATUS_GREEN=>1 );
@@ -110,31 +109,26 @@ if( $Param->{edit} ) {
 	$template->param( SHOWFORM=>0 );
 	$template->param( REFRESH_PAGE => 1 );
 
-	my $Where;
-	$Where->{ sname }=$Param->{filter_sname} if( $Param->{filter_sname} );	
-	
-	my @F=();
-	my @V=();	
-	foreach( keys %{ $Where }) {
-		push ( @F, " $_ = ? " );
-		push ( @V , $Where->{$_} );
-	}
-	my $stmt ="";
 
-	if( $#F > -1 ) {
-		$stmt ="SELECT * FROM  $table where " . join( ' and ',  @F )." order by dt DESC LIMIT ? OFFSET ? ;";		
-		$sth = $dbh->prepare( $stmt );
-		unless ( $rv = $sth->execute( @V, $Param->{lines_per_page}, $Param->{lines_per_page}*($Param->{page}-1) ) || $rv < 0 ) {
-			message2 ( "Someting wrong with database  : $DBI::errstr" );
-			w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
-		}
+my @Where=();
+push( @Where , "sname = '$Param->{filter_sname}' " ) if( $Param->{filter_sname} );
+push( @Where , "crontaskid > 0 " ) if( 1==$Param->{filter_cron} && !$Param->{filter_crontaskid} ) ;
+push( @Where , "crontaskid is null " ) if( 2==$Param->{filter_cron} ) ;
+	if( $Param->{filter_crontaskid} ) {
+		push( @Where , "crontaskid = $Param->{filter_crontaskid}" ) 	;
+		$Param->{filter_cron}=1;
+	} 
+	
+
+	if( $#Where > -1 ) {
+		$stmt ="SELECT * FROM  $table where " . join( ' and ',  @Where )." order by dt DESC LIMIT ? OFFSET ? ;";		
 	} else {
 		$stmt ="SELECT * FROM  $table order by dt DESC LIMIT ? OFFSET ? ;";		
-		$sth = $dbh->prepare( $stmt );
-		unless ( $rv = $sth->execute( $Param->{lines_per_page}, $Param->{lines_per_page}*($Param->{page}-1) ) || $rv < 0 ) {
-			message2 ( "Someting wrong with database  : $DBI::errstr" );
-			w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
-		}
+	}
+	$sth = $dbh->prepare( $stmt );
+	unless ( $rv = $sth->execute( $Param->{lines_per_page}, $Param->{lines_per_page}*($Param->{page}-1) ) || $rv < 0 ) {
+		message2 ( "Someting wrong with database  : $DBI::errstr" );
+		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
 	}
 	
 
@@ -150,6 +144,7 @@ if( $Param->{edit} ) {
 		$row_data{ STATUS }=$Task->{ $row->{status} }  ; 
 		$row_data{ WORKER }=$Task->{ $row->{worker} }  ; 
 		$row_data{ WORKER_THREADS }=$row->{worker_threads} || 1  ; 
+		$row_data{ CRONTASKID }=$row->{crontaskid}   ; 
 		$row_data{ PROGRESS }= "$row->{progress} %"  ; 
 				if( 2==$row->{status} || 4==$row->{status} ) {
 					$row_data{ STATUS_GREEN }=1 ;
@@ -172,6 +167,9 @@ if( $Param->{edit} ) {
 }
 
 
+$Param->{filter_cron}='0' unless( $Param->{filter_cron} );
+$template->param( "FILTER_CRON_$Param->{filter_cron}" => 1  ); 
+$template->param( FILTER_CRON=> $Param->{filter_sname}  ); 
 
 $template->param( FILTER_SNAME=> $Param->{filter_sname}  ); 
 $template->param( PAGE=> $Param->{page} ); 
@@ -179,21 +177,30 @@ $template->param( LINES_PER_PAGE=> $Param->{lines_per_page} );
 
 @loop_data=();
 my $Cfg=ReadConfig();
-foreach $w ( sort( split(/,/, $Cfg->{approved_application_for_no_authentication}), split(/,/,$Cfg->{approved_application_for_authentication}) ) ) {
+foreach my $w ( sort( split(/,/, $Cfg->{approved_application_for_no_authentication}), split(/,/,$Cfg->{approved_application_for_authentication}) ) ) {
 	my %row_data;   
 	$row_data{ LOOP_SNAME }=$w;
 	push(@loop_data, \%row_data);
 }
 $template->param(SNAME_LIST_LOOP => \@loop_data);
 
+@loop_data=();
+foreach my $w ( get_crontaskid_list( $dbh ) ) {
+	my %row_data;   
+	$row_data{ LOOP_CRONTASKID }=$w;
+	push(@loop_data, \%row_data);
+}
+$template->param( CRONTASKID_LIST_LOOP => \@loop_data);
+$template->param( FILTER_CRONTASKID => $Param->{filter_crontaskid} ) if( $Param->{filter_crontaskid} );
 
-my $Where;
-$Where->{ sname }=$Param->{filter_sname} if( $Param->{filter_sname} );
 
+my @Where;
+push( @Where , "sname = '$Param->{filter_sname}' " ) if( $Param->{filter_sname} );
+push( @$Where , "crontaskid = $Param->{filter_crontaskid}" ) if( $Param->{filter_crontaskid} ) ;
+push( @$Where , "crontaskid > 0 " ) if( 1==$Param->{filter_cron} && !$Param->{filter_crontaskid} ) ;
+push( @$Where , "crontaskid is null " ) if( 2==$Param->{filter_cron} ) ;
 
-
-my $count=GetCountRecords( $dbh, $table, $Where );
-#my $pages=$count/$Param->{lines_per_page};
+my $count=GetCountRecords( $dbh, $table, \@Where );
 
 my @loop_data=();
 foreach $i ( 1..( $count/$Param->{lines_per_page}+1 ) ) {
@@ -202,7 +209,7 @@ foreach $i ( 1..( $count/$Param->{lines_per_page}+1 ) ) {
 			$row_data{ PAGE_SELECTED_BGCOLOR }=1 ;
 		}
 		$row_data{ PAGE }=$i ; 
-		$row_data{ PAGE_PARAM }="?page=$i&filter_sname=$Param->{filter_sname}&lines_per_page=$Param->{lines_per_page}" ; 
+		$row_data{ PAGE_PARAM }="?page=$i&filter_sname=$Param->{filter_sname}&filter_cron=$Param->{filter_cron}&filter_crontaskid=$Param->{filter_crontaskid}&lines_per_page=$Param->{lines_per_page}" ; 
 		push(@loop_data, \%row_data);	
 }
 $template->param(PAGER_LOOP => \@loop_data);
@@ -216,6 +223,20 @@ print  $template->output;
 db_disconnect( $dbh );
 
 
+sub get_crontaskid_list {
+		my $dbh=shift;
+		my $stmt ="SELECT distinct crontaskid FROM tasks where crontaskid>0 order by crontaskid ;";		
+		my $sth = $dbh->prepare( $stmt );
+		unless ( my $rv = $sth->execute( ) || $rv < 0 ) {
+			message2 ( "Someting wrong with database  : $DBI::errstr" );
+			w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
+		}
+		my @ret;
+		while (my $row = $sth->fetchrow_hashref) {
+			push( @ret , $row->{crontaskid} );
+		}
+	return @ret;
+}
 
 
 

@@ -38,6 +38,10 @@
 			<tr valign='top'>
 			<td> Type of task </td>
 			<td> <TMPL_VAR NAME=SNAME> </td>
+			
+			<tr valign='top'>
+			<td> Crontab task id </td>
+			<td> <TMPL_VAR NAME=CRONTASKID> </td>
 
 			<tr valign='top'>
 			<td> Description </td>
@@ -77,7 +81,6 @@
 			</TMPL_IF>	
 			<TMPL_IF NAME="STATUS_YELLOW">	
 				bgcolor='#ECF6CE'
-			</TM			
 			</TMPL_IF>	
 			<TMPL_IF NAME="STATUS_GREEN">	
 				bgcolor='#CEF6CE'
@@ -123,6 +126,8 @@
 	<table border=1> 
 		<tr>
 			<td> Select type of tasks </td>
+			<td> How to started tasks </td>
+			<td> Crontask ID </td>
 			<td> Records per page </td>
 		</tr>			
 		<tr>
@@ -137,6 +142,26 @@
 
 					<TMPL_LOOP NAME=SNAME_LIST_LOOP>
 						<option  value=<TMPL_VAR NAME=LOOP_SNAME>><TMPL_VAR NAME=LOOP_SNAME></option>						
+					</TMPL_LOOP>
+				</select>
+			</td>
+			<td>
+				<select name=filter_cron>
+						<option  <TMPL_IF NAME=FILTER_CRON_0>selected</TMPL_IF>  value=0> All tasks</option>
+						<option  <TMPL_IF NAME=FILTER_CRON_1>selected</TMPL_IF>  value=1> Cron tasks</option>
+						<option  <TMPL_IF NAME=FILTER_CRON_2>selected</TMPL_IF>  value=2> Once running tasks </option>
+				</select>
+			</td>
+			<td>
+				<select name=filter_crontaskid>
+					<TMPL_IF NAME=FILTER_CRONTASKID>
+					<option  selected  value=<TMPL_VAR NAME=FILTER_CRONTASKID> ><TMPL_VAR NAME=FILTER_CRONTASKID></option>
+					<option  value=''>All</option>
+					<TMPL_ELSE>					
+					<option  selected value=''>All</option>
+					</TMPL_IF> 				
+					<TMPL_LOOP NAME=CRONTASKID_LIST_LOOP>
+						<option  value=<TMPL_VAR NAME=LOOP_CRONTASKID> ><TMPL_VAR NAME=LOOP_CRONTASKID></option>						
 					</TMPL_LOOP>
 				</select>
 			</td>
@@ -164,6 +189,7 @@
 	<tr>
 		<td> Description </td>
 		<td> Type of task </td>
+		<td> Crontask id </td>
 		<!-- <td> User </td> -->
 		<td> Threads </td>
 		<td> Task added </td>
@@ -180,6 +206,12 @@
 
 		<td> <a href='<TMPL_VAR NAME=ACTION>?edit=1&id=<TMPL_VAR NAME=ID>'> <TMPL_VAR NAME=DESC> </a> </td>
 		<td> <TMPL_VAR NAME=SNAME></td>
+		<td 
+			<TMPL_IF NAME=CRONTASKID> 
+				bgcolor='#ECF6CE' 
+			</TMPL_IF> > 
+			<TMPL_VAR NAME=CRONTASKID> </td>
+		
 		<!-- <td> <TMPL_VAR NAME=LOGIN></td> -->
 		<td> <TMPL_VAR NAME=WORKER_THREADS></td>
 		<td> <TMPL_VAR NAME=DT></td>
@@ -189,14 +221,13 @@
 				bgcolor='#FBEFF2'
 			</TMPL_IF>	
 			<TMPL_IF NAME="STATUS_YELLOW">	
-				bgcolor='#ECF6CE'
-			</TM			
+				bgcolor='#ECF6CE'	
 			</TMPL_IF>	
 			<TMPL_IF NAME="STATUS_GREEN">	
 				bgcolor='#CEF6CE'
 			</TMPL_IF>				
-		
-		> <TMPL_VAR NAME=STATUS></td>
+			> <TMPL_VAR NAME=STATUS></td>
+			
 		<td> <TMPL_VAR NAME=PROGRESS></td>
 		<td> 
 			<TMPL_IF NAME="OUTFILE">	
