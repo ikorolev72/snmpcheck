@@ -29,12 +29,13 @@ my $json_text=ReadFile( $json_file );
 
 my $Param =JSON->new->utf8->decode($json_text);
 my $val_param=JSON->new->utf8->decode($Param->{param});
+
 my $Cfg=ReadConfig();
 
 
 my $outfile="$Paths->{OUTFILE_DIR}/$val_param->{sname}_".generate_filename()."_$Param->{id}_log.csv";
 if( 1==$val_param->{task_start_type} ) { # if cron
-	$outfile="$Paths->{OUTFILE_DIR}/$val_param->{sname}_".generate_filename()."_$Param->{id}_cron_$val_param->{id}_log.csv";
+	$outfile="$Paths->{OUTFILE_DIR}/$val_param->{sname}_".generate_filename()."_$Param->{id}_cron_$Param->{crontaskid}_log.csv";
 }
 
 my $json_out="$Paths->{JSON}/$Param->{id}.out.json";

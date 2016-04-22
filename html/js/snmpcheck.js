@@ -123,7 +123,7 @@ function getSelection(name) {
 		var all_selected = [];
 		var a=getObj(name);
 		for ( var index=a.options.length -1 ; index >= 0; --index) {
-			console.log(a.options.length);
+			//console.log(a.options.length);
 
 			if(a[index].selected) {
 				if( a[index].value == '*' ) {

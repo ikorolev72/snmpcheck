@@ -71,7 +71,7 @@ if( 1==$Param->{Que_num} ) {
 my $save_Que_num=$Param->{Que_num};
 $dbh=db_connect() ;
 if( $Param->{new} ) {
-	my $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname );
+	my $row=GetRecordByField( $dbh, 'def_val', 'sname', "${sname}_$Param->{Que_num}" );
 	if( $row ) {
 		my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
 		$Param=$coder->decode ($row->{val});
@@ -86,7 +86,6 @@ if( $Param->{new} ) {
 }
 
 $Param->{Que_num}=$save_Que_num;
-
 
 my $show_form=1;
 
@@ -117,13 +116,13 @@ if( $Param->{save_as_default} ) {
 		my $coder = JSON::XS->new->utf8->pretty->allow_nonref; # bugs with JSON module and threads. we need use JSON::XS
 		my $json = $coder->encode ($Param);
 		my $row;
-		if( $row=GetRecordByField( $dbh, 'def_val', 'sname', $sname )  ) {
+		if( $row=GetRecordByField( $dbh, 'def_val', 'sname', "${sname}_$Param->{Que_num}" )  ) {
 			$row->{ val }=$coder->encode ($Param);
 			$result=UpdateRecord( $dbh, $row->{id}, 'def_val', $row );
 		} else {
 			$row->{id}=GetNextSequence($dbh);
 			$row->{ val }=$coder->encode ($Param);
-			$row->{ sname }=$sname;			
+			$row->{ sname }="${sname}_$Param->{Que_num}";			
 			$result=InsertRecord( $dbh, $row->{id}, 'def_val', $row );
 		}
 		if( $result) {

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # korolev-ia [at] yandex.ru
-# version 1.2 2016.04.22
+# version 1.1 2016.04.11
 use lib "/home/nems/client_persist/htdocs/bulktool4/lib" ;
 use lib "C:\GIT\snmpcheck\lib" ;
 use lib "/opt/snmpcheck/lib" ;
@@ -53,8 +53,6 @@ if( -f $pid_file ) {
 		
 		
 $dbh=db_connect() ;
-# check the finished tasks
-update_tasks($dbh);
 
 $table='crontasks';
 
@@ -80,9 +78,13 @@ sub cron_tasks{
 		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
 		return 0;
 	}
+	w2log( "cron sql: $stmt ");
 	while (my $row = $sth->fetchrow_hashref) { 
+		w2log( Dumper( $row ) );
 		my $cron = DateTime::Cron::Simple->new( $row->{cron} );
+		w2log( "cron".Dumper( $cron ) );
 		if ($cron->validate_time) {
+			w2log( "cron: start task" );
 			my $nrow;			
 			$nrow->{id}=GetNextSequence( $dbh ) ;
 			$nrow->{sname}=$row->{sname} ;

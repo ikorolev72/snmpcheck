@@ -232,7 +232,7 @@
 			</td>			
 			<tr valign='top'>
             <td><input name='save_as_default' type='submit' id='save_as_default' value='Save form values as default'></td>
-            <td><input name='save_first' type='submit' id='save_first' value='Submit'></td>
+<td><input name='save_first' type='submit' id='save_first' value='Next'></td>
           </tr>
 		  
   </table>
@@ -268,9 +268,6 @@
 	<input name='ntp4_poll' type='hidden' value='<TMPL_VAR NAME=NTP4_POLL>'>  	
 	
   <table border='1' cellspacing='0' cellpadding='2'>
-			<tr valign='top'>
-			<td> Add task for worker </td>
-			<td> <input name='sname' type='hidden' value='<TMPL_VAR NAME=SNAME>'> <TMPL_VAR NAME=SNAME> </td>
 		<TMPL_IF NAME=MS5000>
 			<tr valign='top'>
 			<td> Selected IP </td>
@@ -526,7 +523,13 @@ Result Crontab Line:<br />
 			
 			<tr valign='top'>
             <td>&nbsp;</td>
-            <td>&nbsp;[ <a href="" onclick="confirm_prompt( 'Cancel process task add','<TMPL_VAR NAME=ACTION>'); return false;">Cancel</a> ] &nbsp; <input name='save_second' type='submit' id='save_second' value='Submit task'></td>
+
+		<TMPL_UNLESS  NAME=TASK_START_TYPE_CRON>
+			<td> Start once immediatly now  </td>
+			<tr valign='top'>
+            <td>&nbsp;</td>
+		</TMPL_UNLESS>
+			<td>&nbsp;[ <a href="" onclick="confirm_prompt( 'Cancel process task add','<TMPL_VAR NAME=ACTION>'); return false;">Cancel</a> ] &nbsp; <input name='save_second' type='submit' id='save_second' value='Next'></td>
           </tr>
 		  
   </table>
