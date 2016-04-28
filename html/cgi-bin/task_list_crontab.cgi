@@ -22,32 +22,50 @@ $ENV{ "HTML_TEMPLATE_ROOT" }=$Paths->{TEMPLATE};
 $template = HTML::Template->new(filename => 'task_list_crontab.htm', die_on_bad_params=>0 );
 
 $table='crontasks';
-#$sname=$Param->{sname};
 
 $template->param( AUTHORISED=>1 );
 
 $dbh=db_connect() ;
 
-#update_tasks($dbh);
 
-$template->param( REQUEST_URI => $ENV{REQUEST_URI} );
 
+my $request_uri=$ENV{REQUEST_URI};
+$request_uri=~s/\?.+$//g unless( $Param->{edit} );
+$template->param( REQUEST_URI => $request_uri );
 
 
 if( $Param->{del} ) {
 	my $row=GetRecord( $dbh , $Param->{id}, $table  );
-	if( $row ) {
+	if( $row ) {		
 		if (  1==require_authorisation() || (require_authorisation() && ( $row->{login} eq get_login() )) ) { # we require authorisation for delete tasks
 				$template->param( REQUEST_URI => $ENV{SCRIPT_NAME} );
 				DeleteRecord( $dbh, $Param->{id}, $table  );
 		} else{
-			message2( "Only root or owner can remove crontab record" );
+			message2( "Only root or owner can delete or change the status of crontasks" );
 		}
 	} else {
 				message2( "Cannot found the record with id: $Param->{id}" ) ;
 	}
 }
 
+
+if( $Param->{save_pending} || $Param->{save_running} ) {
+	if (  1==require_authorisation() || (require_authorisation() && ( $row->{login} eq get_login() )) ) { # we require authorisation for change status  tasks
+		foreach ( 0..1000 ) {
+			if( $Param->{"cb_$_"} && $Param->{"cb_$_"}=~/^\d+$/ ) {
+				my $mrow;
+				$mrow->{id}=$Param->{"cb_$_"} ;
+				$mrow->{status}=7 if( $Param->{save_pending} ) ; 
+				$mrow->{status}=3 if( $Param->{save_running} ) ; 		
+				if ( UpdateRecord ( $dbh, $Param->{"cb_$_"}, $table, $mrow ) ) {
+					message2( "<font color=green>Changed the status of crontask ".$Param->{"cb_$_"}."</font>" );
+				};
+			}
+		}
+	} else{
+			message2( "Only root or owner can delete or change the status of crontasks" );
+	}
+}
 
 if( $Param->{edit} ) {
 		# if we will show full page of one task
@@ -68,7 +86,12 @@ if( $Param->{edit} ) {
 				$template->param( DT=>  get_date($row->{dt}) ); 
 				$template->param( CRON=>  encode_entities($row->{cron}) ); 		
 				$template->param( WORKER_THREADS=>$row->{worker_threads} ); 
-				
+					if( 3==$row->{status}  ) {
+						$template->param( STATUS_GREEN=>1 );
+					}
+					if( 7==$row->{status} ) {
+						$template->param( STATUS_YELLOW=>1 );
+					}
 				
 			} else {
 				message2( "Do not found the record with id=$Param->{id}");
@@ -89,10 +112,11 @@ if( $Param->{edit} ) {
 		message2 ( "Someting wrong with database  : $DBI::errstr" );
 		w2log( "Sql ($stmt) Someting wrong with database  : $DBI::errstr"  );
 	}
-
+	my $cbn=0;
 	while (my $row = $sth->fetchrow_hashref) {
 		my %row_data;   		
 		
+				$row_data{ CBN }=$cbn++ ;
 				$row_data{ ID }=$row->{id} ;
 				$row_data{ TASKID }=$row->{taskid} ;
 				$row_data{ STATUS }= $Task->{ $row->{status} } ;
@@ -106,6 +130,12 @@ if( $Param->{edit} ) {
 				$row_data{ ACTION_TASK_LIST} = $Url->{ACTION_TASK_LIST} ;
 				$row_data{ ACTION } =  $ENV{SCRIPT_NAME} ;
 				$row_data{ WORKER_THREADS } =  $row->{worker_threads} ;
+				if( 3==$row->{status} ) {
+					$row_data{ STATUS_GREEN }=1 ;
+				}
+				if( 7==$row->{status} ) {
+					$row_data{  STATUS_YELLOW }=1 ;
+				}
 
 		push(@loop_data, \%row_data);
 	}
@@ -113,6 +143,7 @@ if( $Param->{edit} ) {
 	$template->param( TITLE=>" Crontab list records " );	
 		
 }
+
 
 
 $template->param( ACTION_TASK_LIST => $Url->{ACTION_TASK_LIST} );

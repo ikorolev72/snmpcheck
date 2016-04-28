@@ -100,6 +100,7 @@ sub cron_tasks{
 			
 			my $mrow;
 			$mrow->{taskid}=$nrow->{id};
+			$mrow->{sdt}=$nrow->{dt};
 		
 			if ( InsertRecord ( $dbh, $nrow->{id}, 'tasks', $nrow ) && UpdateRecord ( $dbh, $row->{id}, 'crontasks', $mrow )) {				
 				w2log( "Cron: user '$nrow->{login}' add task '$nrow->{desc}' for worker '$row->{sname}'. Parameters: $nrow->{param}" );
