@@ -78,6 +78,10 @@ $Param->{inop}=$Param->{inop}?1:0;
 $Param->{ucon}=$Param->{ucon}?1:0;
 $Param->{umng}=$Param->{umng}?1:0;
 
+$Param->{gbemtuallow}=$Param->{gbemtuallow}?1:0;
+$Param->{femtuallow}=$Param->{femtuallow}?1:0;
+
+
 
 $template->param( SHOWFORM_FIRST=> 1 );
 $template->param( SHOWFORM_SECOND=> 0 );

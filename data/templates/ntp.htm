@@ -40,24 +40,23 @@
 				<select id = "ntp1_poll" NAME="ntp1_poll" SIZE=1>
 
 			
-				<TMPL_IF NAME=NTP1_POLL> 
-					<option VALUE='<TMPL_VAR NAME=NTP1_POLL>' selected>value <TMPL_VAR NAME=NTP1_POLL>: </option> 
-					<option value = "9" >value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				<TMPL_ELSE>  
+				<TMPL_UNLESS NAME=NTP1_POLL> 				
 					<option value = "9" selected>value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				</TMPL_IF>
-				<option value = "6" >value 6:  1 [min] 4 [sec] (64 [sec])</option>
-				<option value = "7" >value 7:  2 [min] 8 [sec] (128 [sec])</option>
-				<option value = "8" >value 8:  4 [min] 16 [sec] (256 [sec])</option>
-				<option value = "9" >value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				<option value = "10">value 10: 17 [min] 4 [sec] (1024 [sec])</option>
-				<option value = "11">value 11: 34 [min] 8 [sec] (2048 [sec])</option>
-				<option value = "12">value 12: 1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
-				<option value = "13">value 13: 2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
-				<option value = "14">value 14: 4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
-				<option value = "15">value 15: 9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
-				<option value = "16">value 16: 18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
-				<option value = "17">value 17: 36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				</TMPL_UNLESS>
+
+				<option value = "6" <TMPL_IF NAME=NTP1_POLL_6>selected</TMPL_IF>   >1 [min] 4 [sec] (64 [sec])</option>
+				<option value = "7" <TMPL_IF NAME=NTP1_POLL_7>selected</TMPL_IF>   >2 [min] 8 [sec] (128 [sec])</option>
+				<option value = "8" <TMPL_IF NAME=NTP1_POLL_8>selected</TMPL_IF>   >4 [min] 16 [sec] (256 [sec])</option>
+				<option value = "9" <TMPL_IF NAME=NTP1_POLL_9>selected</TMPL_IF>   >8 [min] 32 [sec] (512 [sec])</option>
+				<option value = "10" <TMPL_IF NAME=NTP1_POLL_10>selected</TMPL_IF> >17 [min] 4 [sec] (1024 [sec])</option>
+				<option value = "11" <TMPL_IF NAME=NTP1_POLL_11>selected</TMPL_IF> >34 [min] 8 [sec] (2048 [sec])</option>
+				<option value = "12" <TMPL_IF NAME=NTP1_POLL_12>selected</TMPL_IF> >1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
+				<option value = "13" <TMPL_IF NAME=NTP1_POLL_13>selected</TMPL_IF> >2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
+				<option value = "14" <TMPL_IF NAME=NTP1_POLL_14>selected</TMPL_IF> >4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
+				<option value = "15" <TMPL_IF NAME=NTP1_POLL_15>selected</TMPL_IF> >9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
+				<option value = "16" <TMPL_IF NAME=NTP1_POLL_16>selected</TMPL_IF> >18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
+				<option value = "17" <TMPL_IF NAME=NTP1_POLL_17>selected</TMPL_IF> >36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+			
 				</select>
 			</td>
 
@@ -71,24 +70,25 @@
 				<select id = "ntp2_poll" NAME="ntp2_poll" SIZE=1>
 
 			
-				<TMPL_IF NAME=NTP2_POLL> 
-					<option VALUE='<TMPL_VAR NAME=NTP2_POLL>' selected>value  <TMPL_VAR NAME=NTP2_POLL>: </option> 
-					<option value = "9" >value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				<TMPL_ELSE>  
+			
+				<TMPL_UNLESS NAME=NTP2_POLL> 				
 					<option value = "9" selected>value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				</TMPL_IF>
-				<option value = "6" >value 6:  1 [min] 4 [sec] (64 [sec])</option>
-				<option value = "7" >value 7:  2 [min] 8 [sec] (128 [sec])</option>
-				<option value = "8" >value 8:  4 [min] 16 [sec] (256 [sec])</option>
-				<option value = "9" >value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				<option value = "10">value 10: 17 [min] 4 [sec] (1024 [sec])</option>
-				<option value = "11">value 11: 34 [min] 8 [sec] (2048 [sec])</option>
-				<option value = "12">value 12: 1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
-				<option value = "13">value 13: 2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
-				<option value = "14">value 14: 4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
-				<option value = "15">value 15: 9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
-				<option value = "16">value 16: 18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
-				<option value = "17">value 17: 36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				</TMPL_UNLESS>
+				<option value = "6" <TMPL_IF NAME=NTP2_POLL_6>selected</TMPL_IF>   >1 [min] 4 [sec] (64 [sec])</option>
+				<option value = "7" <TMPL_IF NAME=NTP2_POLL_7>selected</TMPL_IF>   >2 [min] 8 [sec] (128 [sec])</option>
+				<option value = "8" <TMPL_IF NAME=NTP2_POLL_8>selected</TMPL_IF>   >4 [min] 16 [sec] (256 [sec])</option>
+				<option value = "9" <TMPL_IF NAME=NTP2_POLL_9>selected</TMPL_IF>   >8 [min] 32 [sec] (512 [sec])</option>
+				<option value = "10" <TMPL_IF NAME=NTP2_POLL_10>selected</TMPL_IF> >17 [min] 4 [sec] (1024 [sec])</option>
+				<option value = "11" <TMPL_IF NAME=NTP2_POLL_11>selected</TMPL_IF> >34 [min] 8 [sec] (2048 [sec])</option>
+				<option value = "12" <TMPL_IF NAME=NTP2_POLL_12>selected</TMPL_IF> >1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
+				<option value = "13" <TMPL_IF NAME=NTP2_POLL_13>selected</TMPL_IF> >2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
+				<option value = "14" <TMPL_IF NAME=NTP2_POLL_14>selected</TMPL_IF> >4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
+				<option value = "15" <TMPL_IF NAME=NTP2_POLL_15>selected</TMPL_IF> >9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
+				<option value = "16" <TMPL_IF NAME=NTP2_POLL_16>selected</TMPL_IF> >18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
+				<option value = "17" <TMPL_IF NAME=NTP2_POLL_17>selected</TMPL_IF> >36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				
+			
+
 				</select>
 			</td>
 
@@ -103,24 +103,24 @@
 				<select id = "ntp3_poll" NAME="ntp3_poll" SIZE=1>
 
 			
-				<TMPL_IF NAME=NTP3_POLL> 
-					<option VALUE='<TMPL_VAR NAME=NTP3_POLL>' selected>value <TMPL_VAR NAME=NTP3_POLL>: </option> 
-					<option value = "9" >value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				<TMPL_ELSE>  
+				<TMPL_UNLESS NAME=NTP3_POLL> 				
 					<option value = "9" selected>value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				</TMPL_IF>
-				<option value = "6" >value 6:  1 [min] 4 [sec] (64 [sec])</option>
-				<option value = "7" >value 7:  2 [min] 8 [sec] (128 [sec])</option>
-				<option value = "8" >value 8:  4 [min] 16 [sec] (256 [sec])</option>
-				<option value = "9" >value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				<option value = "10">value 10: 17 [min] 4 [sec] (1024 [sec])</option>
-				<option value = "11">value 11: 34 [min] 8 [sec] (2048 [sec])</option>
-				<option value = "12">value 12: 1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
-				<option value = "13">value 13: 2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
-				<option value = "14">value 14: 4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
-				<option value = "15">value 15: 9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
-				<option value = "16">value 16: 18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
-				<option value = "17">value 17: 36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				</TMPL_UNLESS>
+				<option value = "6" <TMPL_IF NAME=NTP3_POLL_6>selected</TMPL_IF>   >1 [min] 4 [sec] (64 [sec])</option>
+				<option value = "7" <TMPL_IF NAME=NTP3_POLL_7>selected</TMPL_IF>   >2 [min] 8 [sec] (128 [sec])</option>
+				<option value = "8" <TMPL_IF NAME=NTP3_POLL_8>selected</TMPL_IF>   >4 [min] 16 [sec] (256 [sec])</option>
+				<option value = "9" <TMPL_IF NAME=NTP3_POLL_9>selected</TMPL_IF>   >8 [min] 32 [sec] (512 [sec])</option>
+				<option value = "10" <TMPL_IF NAME=NTP3_POLL_10>selected</TMPL_IF> >17 [min] 4 [sec] (1024 [sec])</option>
+				<option value = "11" <TMPL_IF NAME=NTP3_POLL_11>selected</TMPL_IF> >34 [min] 8 [sec] (2048 [sec])</option>
+				<option value = "12" <TMPL_IF NAME=NTP3_POLL_12>selected</TMPL_IF> >1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
+				<option value = "13" <TMPL_IF NAME=NTP3_POLL_13>selected</TMPL_IF> >2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
+				<option value = "14" <TMPL_IF NAME=NTP3_POLL_14>selected</TMPL_IF> >4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
+				<option value = "15" <TMPL_IF NAME=NTP3_POLL_15>selected</TMPL_IF> >9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
+				<option value = "16" <TMPL_IF NAME=NTP3_POLL_16>selected</TMPL_IF> >18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
+				<option value = "17" <TMPL_IF NAME=NTP3_POLL_17>selected</TMPL_IF> >36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				
+			
+
 				</select>
 			</td>
 			
@@ -135,24 +135,25 @@
 				<select id = "ntp4_poll" NAME="ntp4_poll" SIZE=1>
 
 			
-				<TMPL_IF NAME=NTP4_POLL> 
-					<option VALUE='<TMPL_VAR NAME=NTP4_POLL>' selected>value <TMPL_VAR NAME=NTP4_POLL>: </option> 
-					<option value = "9" >value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				<TMPL_ELSE>  
+			
+				<TMPL_UNLESS NAME=NTP4_POLL> 				
 					<option value = "9" selected>value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				</TMPL_IF>
-				<option value = "6" >value 6:  1 [min] 4 [sec] (64 [sec])</option>
-				<option value = "7" >value 7:  2 [min] 8 [sec] (128 [sec])</option>
-				<option value = "8" >value 8:  4 [min] 16 [sec] (256 [sec])</option>
-				<option value = "9" >value 9:  8 [min] 32 [sec] (512 [sec])</option>
-				<option value = "10">value 10: 17 [min] 4 [sec] (1024 [sec])</option>
-				<option value = "11">value 11: 34 [min] 8 [sec] (2048 [sec])</option>
-				<option value = "12">value 12: 1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
-				<option value = "13">value 13: 2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
-				<option value = "14">value 14: 4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
-				<option value = "15">value 15: 9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
-				<option value = "16">value 16: 18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
-				<option value = "17">value 17: 36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				</TMPL_UNLESS>
+				<option value = "6" <TMPL_IF NAME=NTP4_POLL_6>selected</TMPL_IF>   >1 [min] 4 [sec] (64 [sec])</option>
+				<option value = "7" <TMPL_IF NAME=NTP4_POLL_7>selected</TMPL_IF>   >2 [min] 8 [sec] (128 [sec])</option>
+				<option value = "8" <TMPL_IF NAME=NTP4_POLL_8>selected</TMPL_IF>   >4 [min] 16 [sec] (256 [sec])</option>
+				<option value = "9" <TMPL_IF NAME=NTP4_POLL_9>selected</TMPL_IF>   >8 [min] 32 [sec] (512 [sec])</option>
+				<option value = "10" <TMPL_IF NAME=NTP4_POLL_10>selected</TMPL_IF> >17 [min] 4 [sec] (1024 [sec])</option>
+				<option value = "11" <TMPL_IF NAME=NTP4_POLL_11>selected</TMPL_IF> >34 [min] 8 [sec] (2048 [sec])</option>
+				<option value = "12" <TMPL_IF NAME=NTP4_POLL_12>selected</TMPL_IF> >1 [hour] 8 [min] 16 [sec] (4096 [sec])</option>
+				<option value = "13" <TMPL_IF NAME=NTP4_POLL_13>selected</TMPL_IF> >2 [hour] 16 [min] 32 [sec] (8192 [sec])</option>
+				<option value = "14" <TMPL_IF NAME=NTP4_POLL_14>selected</TMPL_IF> >4 [hour] 33 [min] 4 [sec] (16384 [sec])</option>
+				<option value = "15" <TMPL_IF NAME=NTP4_POLL_15>selected</TMPL_IF> >9 [hour] 6 [min] 8 [sec] (32768 [sec])</option>
+				<option value = "16" <TMPL_IF NAME=NTP4_POLL_16>selected</TMPL_IF> >18 [hour] 12 [min] 16 [sec] (65536 [sec])</option>
+				<option value = "17" <TMPL_IF NAME=NTP4_POLL_17>selected</TMPL_IF> >36 [hour] 24 [min] 32 [sec] (131072 [sec])</option>
+				
+			
+
 				</select>
 			</td>
   
@@ -180,7 +181,7 @@
 					</TMPL_LOOP>					
 				</select>
 					Include subgroups
-					<input name='subgroup' type='checkbox' <TMPL_IF NAME=SUBGROUP>selected</TMPL_IF> >
+<input name='subgroup' type='checkbox' <TMPL_IF NAME=SUBGROUP>checked</TMPL_IF> >
 				</td>
 				<tr valign='top'>
 				<td> Generate IP list for all iPasolink</td>

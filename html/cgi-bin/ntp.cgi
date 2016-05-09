@@ -199,6 +199,14 @@ $template->param( NTP2_POLL=> $Param->{ntp2_poll} );
 $template->param( NTP3_POLL=> $Param->{ntp3_poll} );
 $template->param( NTP4_POLL=> $Param->{ntp4_poll} );	
 
+$template->param( "NTP1_POLL_$Param->{ntp1_poll}"=> 1 );
+$template->param( "NTP2_POLL_$Param->{ntp2_poll}"=> 1 );
+$template->param( "NTP3_POLL_$Param->{ntp3_poll}"=> 1 );
+$template->param( "NTP4_POLL_$Param->{ntp4_poll}"=> 1 );
+
+
+
+
 #message2( "<pre>".Dumper($template)."</pre>");		 
 
 # print the template output

@@ -64,7 +64,7 @@ if(  Action() ==0 ) {
 		my $str="Successful login with  name '$Param->{login}' from :";
 		map{ $str.=" $_ = $ENV{$_}; " } qw( REMOTE_HOST REMOTE_ADDR REMOTE_PORT HTTP_USER_AGENT ) ;		
 		w2log( $str );
-	message2 ( "Login successfull" );
+	message2 ( "<font color=green>Login successfull</font>" );
 	$show_form=0;
 }
 
