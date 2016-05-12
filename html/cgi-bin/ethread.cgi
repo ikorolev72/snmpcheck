@@ -162,11 +162,11 @@ if( $Param->{save_second} ) {
 
 my @loop_data=();
 	my $grp=get_groups(  $Cfg->{iplistdb} );
-	$grp->{' '}='';
+	$grp->{''}='';
 	foreach $group ( sort keys( %{$grp} ) ) {
 		my %row_data;   
 		$row_data{ SELECTED }=' selected ' if( $Param->{group} eq $group );
-		$row_data{ SELECTED }=' selected ' if( !$Param->{group} and $grp eq ' ' ) ;
+		$row_data{ SELECTED }=' selected ' if( !$Param->{group} and $grp eq '' ) ;
 		$row_data{ GROUP }=$group;
 		$row_data{ GROUP_NAME }=$grp->{$group};		
 		push(@loop_data, \%row_data);

@@ -34,21 +34,29 @@ tmp=/tmp/worker.$$
 mkdir $tmp
 cd $tmp
 error=0
+
+erplist='erplist'`echo $$`
+erplist1='erplist1'`echo $$`
+sepch=' '
+
 ###########
 
+echo 'IP,ERP ID,ERP ID Start,ERP ID stop,ERP list,ERP list1' >> /home/nems/client_persist/htdocs/bulktool4/erp.debug
+echo $IP','$erpid','$erpidstart','$erpidstop','$erplist','$erplist1 >> /home/nems/client_persist/htdocs/bulktool4/erp.debug
 
-accessible=`snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.11.1 2>/dev/null`
+
+accessible=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.11.1 2>/dev/null`
 lengthaccessible=${#accessible}
 if (($lengthaccessible != 0))
 then
-ne_name=`snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.3.1 2>/dev/null | cut -d '"' -f 2`
+ne_name=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.3.1 2>/dev/null | cut -d '"' -f 2`
 ne_type=$accessible
 
-erpgeneral=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 2 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.10.1.3.1 2>/dev/null | cut -d ' ' -f 2`
+erpgeneral=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.10.1.3.1 2>/dev/null | cut -d ' ' -f 2`
 if [ $erpgeneral'a' == '2a' ]
 then
-snmpwalk -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -On $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.1.1.6 2>/dev/null | cut -d '.' -f 18 | cut -d ' ' -f 1 > $erplist
-snmpwalk -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -On $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.2.1.8 2>/dev/null | cut -d '.' -f 18 | cut -d ' ' -f 1 > $erplist1
+snmpwalk -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -On $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.1.1.6 2>/dev/null | cut -d '.' -f 18 | cut -d ' ' -f 1 > $erplist
+snmpwalk -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -On $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.2.1.8 2>/dev/null | cut -d '.' -f 18 | cut -d ' ' -f 1 > $erplist1
 
 # -------------------- major and sub -----------------------
 
@@ -57,11 +65,12 @@ maxcurr=$((`cat $erplist | wc -l` + `cat $erplist1 | wc -l`))
 
 while read erpid
 do
+
 if (( $erpid >= $erpidstart )) && (( $erpid <= $erpidstop ))
 then
-erpname=`snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.1.1.4.$erpid 2>/dev/null | cut -d '"' -f 2`
-erpversion=`snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.1.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
-ringtype=`snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.1.1.7.$erpid 2>/dev/null | cut -d ' ' -f 2`
+erpname=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.1.1.4.$erpid 2>/dev/null | cut -d '"' -f 2`
+erpversion=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.1.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
+ringtype=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.1.1.7.$erpid 2>/dev/null | cut -d ' ' -f 2`
 if [ $ringtype'a' == '1a' ]
 then
 ringstype='major'
@@ -70,8 +79,8 @@ if [ $ringtype'a' == '2a' ]
 then
 ringstype='sub'
 fi
-port1id=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.5.$erpid.1 2>/dev/null | cut -d ' ' -f 2`
-port2id=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.5.$erpid.2 2>/dev/null | cut -d ' ' -f 2`
+port1id=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.5.$erpid.1 2>/dev/null | cut -d ' ' -f 2`
+port2id=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.5.$erpid.2 2>/dev/null | cut -d ' ' -f 2`
 slot1=$(( port1id / 8388608 - 1 ))
 slot2=$(( port2id / 8388608 - 1))
 port1=$(( (port1id - (slot1+1)*8388608)/65536))
@@ -104,12 +113,12 @@ fi
 fi
 
 
-rplowner=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
+rplowner=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
 if [ $rplowner'a' == '2a' ]
 then
 rplowns='RPL'
-rplport=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
-revert=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.5.$erpid 2>/dev/null | cut -d ' ' -f 2`
+rplport=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
+revert=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.5.$erpid 2>/dev/null | cut -d ' ' -f 2`
 revertive=''
 if [ $revert'a' == '2a' ]
 then
@@ -119,7 +128,7 @@ if [ $revert'a' == '1a' ]
 then
 revertive='revertive'
 fi
-wtrtimer=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.8.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
+wtrtimer=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.8.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
 if [ $rplport'a' == '1a' ]
 then
 rplports=$ports0
@@ -134,13 +143,13 @@ rplports=''
 wtrtimer=''
 revertive=''
 fi
-guardtimer=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.8.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
+guardtimer=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.8.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
 guardtimer=$(( guardtimer *10 ))
-controlvlan=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
+controlvlan=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
 mep0=''
 mep1=''
-mep0=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.6.$erpid.1 2>/dev/null | cut -d ' ' -f 2`
-mep1=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.6.$erpid.2 2>/dev/null | cut -d ' ' -f 2`
+mep0=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.6.$erpid.1 2>/dev/null | cut -d ' ' -f 2`
+mep1=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.6.$erpid.2 2>/dev/null | cut -d ' ' -f 2`
 if [ $mep0'a' == '0a' ]
 then
 mep0=''
@@ -149,16 +158,16 @@ if [ $mep1'a' == '0a' ]
 then
 mep1=''
 fi
-maclast=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
+maclast=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
 printf -v machex "%02X" "$maclast"
 mac='01:19:A7:00:00:'$machex
-rapsmeg=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.5.$erpid 2>/dev/null | cut -d ' ' -f 2`
-rapsprio=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.6.$erpid 2>/dev/null | cut -d ' ' -f 2`
+rapsmeg=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.5.$erpid 2>/dev/null | cut -d ' ' -f 2`
+rapsprio=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.6.$erpid 2>/dev/null | cut -d ' ' -f 2`
 
 
 
 vlantemp='vlantemp'`echo $$`
-snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt  -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.6.1.3.$erpid > $vlantemp
+snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt  -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.6.1.3.$erpid > $vlantemp
 i=0
 vlanlist=''
 while read vlanline && (( i < 32 ))
@@ -324,11 +333,11 @@ while read erpid
 do
 if (( $erpid >= $erpidstart )) && (( $erpid <= $erpidstop ))
 then
-erpname=`snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.2.1.5.$erpid 2>/dev/null | cut -d '"' -f 2`
-erpversion=`snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.2.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
+erpname=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.2.1.5.$erpid 2>/dev/null | cut -d '"' -f 2`
+erpversion=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.2.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
 ringstype='Interconnection'
-upperring=`snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.2.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
-port1id=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.5.$erpid.1 2>/dev/null | cut -d ' ' -f 2`
+upperring=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.2.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
+port1id=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.5.$erpid.1 2>/dev/null | cut -d ' ' -f 2`
 slot1=$(( port1id / 8388608 - 1 ))
 port1=$(( (port1id - (slot1+1)*8388608)/65536))
 
@@ -346,12 +355,12 @@ fi
 fi
 
 
-rplowner=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
+rplowner=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
 if [ $rplowner'a' == '2a' ]
 then
 rplowns='RPL'
-rplport=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
-revert=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.5.$erpid 2>/dev/null | cut -d ' ' -f 2`
+rplport=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
+revert=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.7.1.5.$erpid 2>/dev/null | cut -d ' ' -f 2`
 revertive=''
 if [ $revert'a' == '2a' ]
 then
@@ -361,7 +370,7 @@ if [ $revert'a' == '1a' ]
 then
 revertive='revertive'
 fi
-wtrtimer=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.8.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
+wtrtimer=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.8.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
 if [ $rplport'a' == '1a' ]
 then
 rplports=$ports0
@@ -376,25 +385,25 @@ rplports=''
 wtrtimer=''
 revertive=''
 fi
-guardtimer=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.8.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
+guardtimer=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.8.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
 guardtimer=$(( guardtimer *10 ))
-controlvlan=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
+controlvlan=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.3.$erpid 2>/dev/null | cut -d ' ' -f 2`
 mep0=''
-mep0=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.6.$erpid.1 2>/dev/null | cut -d ' ' -f 2`
+mep0=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.3.1.6.$erpid.1 2>/dev/null | cut -d ' ' -f 2`
 if [ $mep0'a' == '0a' ]
 then
 mep0=''
 fi
-maclast=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
+maclast=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.4.$erpid 2>/dev/null | cut -d ' ' -f 2`
 printf -v machex "%02X" "$maclast"
 mac='01:19:A7:00:00:'$machex
-rapsmeg=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.5.$erpid 2>/dev/null | cut -d ' ' -f 2`
-rapsprio=`snmpget -v 3 -a MD5 -u Admin -A password01 -x DES -X password02 -l AuthPriv -r 3 -t 1 -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.6.$erpid 2>/dev/null | cut -d ' ' -f 2`
+rapsmeg=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.5.$erpid 2>/dev/null | cut -d ' ' -f 2`
+rapsprio=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.5.1.6.$erpid 2>/dev/null | cut -d ' ' -f 2`
 
 
 
 vlantemp='vlantemp'`echo $$`
-snmpget -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt  -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.6.1.3.$erpid > $vlantemp
+snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt  -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.39.6.1.3.$erpid > $vlantemp
 i=0
 vlanlist=''
 while read vlanline && (( i < 32 ))
