@@ -54,15 +54,44 @@ fi
 
 accessible=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r 2 -t 3 -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.11.1 2>/dev/null`
 lengthaccessible=${#accessible}
-if (($lengthaccessible != 0))
-then
 ne_name=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.3.1 2>/dev/null | cut -d '"' -f 2`
-snmpwalk -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -On $IP .1.3.6.1.4.1.119.2.3.69.501.5.20.5.1.3 > $vlanlist
+snmpwalk -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -On -Lf vlanlist.err $IP .1.3.6.1.4.1.119.2.3.69.501.5.20.5.1.3 > $vlanlist
 
 if [ $portassignment'a' == 'ona' ]
 then
-snmpwalk -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -On $IP .1.3.6.1.4.1.119.2.3.69.501.5.20.2.1.4 > $portlist
+
+vlanmodesnm=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.5.20.1.1.3.1 2>/dev/null | cut -d ' ' -f 2`
+if [ $vlanmodesnm'a' == 'a' ]
+then
+error=1
+vlanmode='unknown'
+vlanoid=0
+elif [ $vlanmodesnm'a' == '1a' ]
+then
+vlanmode='802.1Q'
+vlanoid=2
+elif [ $vlanmodesnm'a' == '2a' ]
+then
+vlanmode='802.1ad'
+vlanoid=3
+else
+vlanmode='N/A'
 fi
+
+
+snmpwalk -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -On -Lf portlist.err $IP .1.3.6.1.4.1.119.2.3.69.501.5.20.$vlanoid.1.4 > $portlist
+fi
+
+canaccess=0
+if (( $lengthaccessible == 0 ))
+then
+canaccess=1
+fi
+canaccess=$(( canaccess + `cat vlanlist.ett portlist.err | wc -l ` ))
+
+
+if (($canaccess == 0))
+then
 
 while read vlanline
 do
@@ -98,6 +127,10 @@ fi
 fi
 
 mode=`echo $portline | cut -d ' ' -f 4`
+
+if [ $vlanmodesnm'a' == '1a' ]
+then
+
 if (( $mode == 1 ))
 then
 modestr='Access'
@@ -110,7 +143,25 @@ if (( $mode == 3 ))
 then
 modestr='Trunk'
 fi
-echo $ne_name','$IP','$vlanid','$vlanname',Assigned,'$slot','$port','$modestr',COMPLETED' >> $logfile
+
+elif [ $vlanmodesnm'a' == '2a' ]
+then
+
+if (( $mode == 1 ))
+then
+modestr='C-Access'
+fi
+if (( $mode == 2 ))
+then
+modestr='S-Trunk'
+fi
+
+else
+modestr='N/A'
+fi
+
+
+echo $ne_name','$IP','$vlanid','$vlanname',Assigned,'$slot','$port','$modestr','$vlanmode',COMPLETED' >> $logfile
 fi
 
 done < $portlist

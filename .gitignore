@@ -1,4 +1,5 @@
 *.tar
+*.tgz
 *.tar.gz
 *.db
 *.json

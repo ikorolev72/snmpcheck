@@ -24,7 +24,6 @@ cd $tmp
 error=0
 
 
-
 accessible=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.5.1.1.1.11.1 2>/dev/null`
 lengthaccessible=${#accessible}
 if (($lengthaccessible != 0))
@@ -164,7 +163,7 @@ ssmusages='N/A'
 fssm='N/A'
 
 
-clockstatus1=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.3.$i 2>/dev/null | cut -d ' ' -f 2`
+clockstatus1=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.3.1 2>/dev/null | cut -d ' ' -f 2`
 if [ $clockstatus1'a' == 'a' ]
 then
 clockstatus='unknown'
@@ -172,8 +171,7 @@ error=1
 elif [ $clockstatus1'a' == '1a' ]
 then
 
-
-clockstatus2=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.4.$i 2>/dev/null | cut -d ' ' -f 2`
+clockstatus2=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.4.1 2>/dev/null | cut -d ' ' -f 2`
 if [ $clockstatus2'a' == 'a' ]
 then
 clockstatus='unknown'
@@ -181,7 +179,7 @@ error=1
 elif [ $clockstatus2'a' == '1a' ]
 then
 
-clockstatus3=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.5.$i 2>/dev/null | cut -d ' ' -f 2`
+clockstatus3=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.5.1 2>/dev/null | cut -d ' ' -f 2`
 if [ $clockstatus3'a' == 'a' ]
 then
 clockstatus='unknown'
@@ -211,7 +209,10 @@ result='COMPLETED'
 else
 result='ERROR'
 fi
-echo $ne_name','$IP','$result','$ne_type','$clkmodes','$ssmglobmode','$i','$slots','$modules','$port','$prio','$ssmusages','$clockstatus','$lockout','$ssmstat','$fssm >> $logfile
+clkselect='N/A'
+clkstatus=$selectedclockstatus
+#echo $ne_name','$IP','$result','$ne_type','$clkmodes','$ssmglobmode','$i','$slots','$modules','$port','$prio','$ssmusages','$clockstatus','$lockout','$ssmstat','$fssm >> $logfile
+echo $ne_name','$IP','$result','$ne_type','$clkmodes','$ssmglobmode','$i','$slots','$modules','$port','$prio','$ssmusages','$clockstatus','$lockout','$ssmstat','$fssm','$clkselect','$clkstatus >> $logfile
 fi
 fi
 
@@ -349,7 +350,7 @@ lockout='N/A'
 ssmusages='N/A'
 
 
-clockstatus1=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.3.$i 2>/dev/null | cut -d ' ' -f 2`
+clockstatus1=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.3.1 2>/dev/null | cut -d ' ' -f 2`
 if [ $clockstatus1'a' == 'a' ]
 then
 clockstatus='unknown'
@@ -358,7 +359,7 @@ elif [ $clockstatus1'a' == '1a' ]
 then
 
 
-clockstatus2=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.4.$i 2>/dev/null | cut -d ' ' -f 2`
+clockstatus2=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.4.1 2>/dev/null | cut -d ' ' -f 2`
 if [ $clockstatus2'a' == 'a' ]
 then
 clockstatus='unknown'
@@ -366,7 +367,7 @@ error=1
 elif [ $clockstatus2'a' == '1a' ]
 then
 
-clockstatus3=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.5.$i 2>/dev/null | cut -d ' ' -f 2`
+clockstatus3=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.5.2.1.5.1 2>/dev/null | cut -d ' ' -f 2`
 if [ $clockstatus3'a' == 'a' ]
 then
 clockstatus='unknown'
@@ -394,7 +395,10 @@ result='COMPLETED'
 else
 result='ERROR'
 fi
-echo $ne_name','$IP','$result','$ne_type','$clkmodes','$ssmglobmode','$i','$slots','$modules','$port','$prio','$ssmusages','$clockstatus','$lockout','$ssmstat','$fssm >> $logfile
+clkselect='N/A'
+clkstatus=$selectedclockstatus
+#echo $ne_name','$IP','$result','$ne_type','$clkmodes','$ssmglobmode','$i','$slots','$modules','$port','$prio','$ssmusages','$clockstatus','$lockout','$ssmstat','$fssm >> $logfile
+echo $ne_name','$IP','$result','$ne_type','$clkmodes','$ssmglobmode','$i','$slots','$modules','$port','$prio','$ssmusages','$clockstatus','$lockout','$ssmstat','$fssm','$clkselect','$clkstatus >> $logfile
 fi
 fi
 
@@ -631,7 +635,7 @@ port='unknown'
 error=1
 fi
 
-elif (( $slot >= 3 )) && (( $slot <= 16 )) 
+elif (( $slot >= 3 )) && (( $slot <= 16 ))
 then
 slots=$(( slot - 2 ))
 module=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.4.1.1.3.$(( slot - 1 )) 2>/dev/null | cut -d ' ' -f 2`
@@ -872,10 +876,20 @@ error=1
 fi
 
 
+if (( $error == 0 ))
+then
+echo $ne_name' '$IP' passed<BR>'
 else
+echo $ne_name' '$IP' error<BR>'
+fi
+
+else
+ echo $ne_name' '$IP' inaccessible<BR>'
  echo $ne_name','$IP',FATAL' >> $logfile
  error=1
 fi
+
+
 
 
 ####

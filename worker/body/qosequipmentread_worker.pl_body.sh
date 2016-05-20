@@ -45,7 +45,7 @@ qosmode='equipment'
 elif (( $qosmode == 2 ))
 then
 qosmode='port'
-elif (( $qosmode == 2 ))
+elif (( $qosmode == 3 ))
 then
 qosmode='vlan'
 fi

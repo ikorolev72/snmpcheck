@@ -135,8 +135,20 @@ then
 iseth=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IPaddress .1.3.6.1.4.1.119.2.3.69.501.5.30.1.1.3.$portid 2>/dev/null | cut -d ' ' -f 2`
 if [ $iseth'a' == 'Sucha' ]
 then
+
+isstm1=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IPaddress .1.3.6.1.4.1.119.2.3.69.501.5.13.1.1.4.$portid 2>/dev/null | cut -d ' ' -f 2`
+if [ $isstm1'a' == 'Sucha' ]
+then
+
 porttype='U'
 nameoid='N/A'
+
+else
+porttype='S'
+nameoid='.1.3.6.1.4.1.119.2.3.69.501.5.13.1.1.3'
+nameportid=$portid
+fi
+
 else
 porttype='E'
 nameoid='.1.3.6.1.4.1.119.2.3.69.501.5.30.1.1.11'
@@ -213,6 +225,11 @@ porttypea='E1'
 elif [ $porttype'a' == 'Ma' ]
 then
 porttypea='Wireless'
+
+elif [ $porttype'a' == 'Sa' ]
+then
+porttypea='STM1'
+
 else
 porttypea='N/A'
 fi
@@ -247,6 +264,11 @@ porttypeb='E1'
 elif [ $porttype'a' == 'Ma' ]
 then
 porttypeb='Wireless'
+
+elif [ $porttype'a' == 'Sa' ]
+then
+porttypeb='STM1'
+
 else
 porttypeb='N/A'
 fi
@@ -305,6 +327,11 @@ porttypeaprot='E1'
 elif [ $porttype'a' == 'Ma' ]
 then
 porttypeaprot='Wireless'
+
+elif [ $porttype'a' == 'Sa' ]
+then
+porttypeaprot='STM1'
+
 else
 porttypeaprot='N/A'
 fi
@@ -369,6 +396,12 @@ porttypebprot='E1'
 elif [ $porttype'a' == 'Ma' ]
 then
 porttypebprot='Wireless'
+
+elif [ $porttype'a' == 'Sa' ]
+then
+porttypebprot='STM1'
+
+
 else
 porttypebprot='N/A'
 fi

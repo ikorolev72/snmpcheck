@@ -269,6 +269,32 @@ cportoper='down'
 elif [ $cportoper'a' == '2a' ]
 then
 cportoper='up'
+
+# New lines for version 1.0x.xx ------------ START ----------------------
+
+elif [ $cportoper'a' == 'Sucha' ]
+then
+
+if [ $portadm'a' == 'enableda' ]
+then
+
+linkstatus=`snmpget -v 3 -a $snmpapro -u $snmpuser -A $snmpap -x $snmppro -X $snmppk -l $snmplevel -r $snmpr -t $snmpt -Ov $IP .1.3.6.1.4.1.119.2.3.69.501.3.13.8.1.1.7.$portid | cut -d ' ' -f 2`
+if [ $linkstatus'a' == 'a' ]
+then
+error=1
+cportoper='unknown'
+elif [ $linkstatus'a' == '1a' ]
+then
+cportoper='up'
+else
+cportoper='down'
+fi
+else
+cportoper='down'
+fi
+
+#New lines for version 1.0x.xx --------------- END ------------------------
+
 else
 cportoper='N/A'
 fi
